@@ -2,7 +2,7 @@ import { Component, computed, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RoutinesStore } from '../../routines/stores/routines.store';
 import { PlatformIconComponent } from '../../routines/components/platform-icon/platform-icon';
-import { detectPlatform, getPlatformName } from '../../routines/utils/platform';
+import { detectPlatform, fetchVideoTitle, getPlatformName } from '../../routines/utils/platform';
 import { Section } from '../../routines/models/Section';
 import { LucideArrowLeft, LucideCheck } from '@lucide/angular';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
@@ -233,7 +233,13 @@ export class ShareComponent {
     this.videoUrl.set(extracted);
 
     const nameHint = titleParam || this.extractCaption(textParam);
-    if (nameHint) this.exerciseName.set(nameHint);
+    if (nameHint) {
+      this.exerciseName.set(nameHint);
+    } else if (extracted) {
+      fetchVideoTitle(extracted).then(title => {
+        if (title && !this.exerciseName().trim()) this.exerciseName.set(title);
+      });
+    }
 
     effect(() => {
       const id = this.selectedRoutineId();
