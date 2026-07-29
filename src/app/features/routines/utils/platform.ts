@@ -19,3 +19,34 @@ export function getPlatformName(platform: Platform): string {
   };
   return names[platform];
 }
+
+export function getYouTubeVideoId(url: string): string | null {
+  const patterns = [/[?&]v=([^&]+)/, /youtu\.be\/([^?]+)/, /shorts\/([^?/]+)/, /embed\/([^?/]+)/];
+  for (const p of patterns) {
+    const m = url.match(p);
+    if (m) return m[1];
+  }
+  return null;
+}
+
+export function getThumbnailUrl(url: string): string | null {
+  const id = getYouTubeVideoId(url);
+  return id ? `https://img.youtube.com/vi/${id}/mqdefault.jpg` : null;
+}
+
+export async function fetchVideoTitle(url: string): Promise<string | null> {
+  const platform = detectPlatform(url);
+  try {
+    if (platform === 'youtube') {
+      const res = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`);
+      if (!res.ok) return null;
+      return (await res.json()).title ?? null;
+    }
+    if (platform === 'tiktok') {
+      const res = await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`);
+      if (!res.ok) return null;
+      return (await res.json()).title ?? null;
+    }
+  } catch {}
+  return null;
+}

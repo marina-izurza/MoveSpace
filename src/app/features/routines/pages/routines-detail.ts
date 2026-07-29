@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RoutinesStore } from '../stores/routines.store';
 import { LucidePencil, LucideTrash, LucideCheck, LucideX, LucideGripVertical } from '@lucide/angular';
 import { PlatformIconComponent } from '../components/platform-icon/platform-icon';
-import { detectPlatform, getPlatformName } from '../utils/platform';
+import { detectPlatform, fetchVideoTitle, getPlatformName, getThumbnailUrl } from '../utils/platform';
 import { CdkDragDrop, CdkDropList, CdkDropListGroup, CdkDrag, CdkDragHandle, moveItemInArray } from '@angular/cdk/drag-drop';
 import { NgTemplateOutlet } from '@angular/common';
 import { Section } from '../models/Section';
@@ -59,7 +59,7 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
         <p class="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-3">{{ 'detail.addExercise' | t }}</p>
         <div class="space-y-2">
           <input class="w-full bg-canvas border border-edge rounded-xl px-3 py-2.5 text-base text-ink outline-none focus:border-brand transition" [placeholder]="'detail.namePlaceholder' | t" #name />
-          <input class="w-full bg-canvas border border-edge rounded-xl px-3 py-2.5 text-base text-ink outline-none focus:border-brand transition" [placeholder]="'detail.urlPlaceholder' | t" #url />
+          <input class="w-full bg-canvas border border-edge rounded-xl px-3 py-2.5 text-base text-ink outline-none focus:border-brand transition" [placeholder]="'detail.urlPlaceholder' | t" #url (blur)="autoFillTitle(url.value, name)" />
           <input class="w-full bg-canvas border border-edge rounded-xl px-3 py-2.5 text-base text-ink outline-none focus:border-brand transition" [placeholder]="'detail.notesPlaceholder' | t" #notes />
           <button
             class="bg-brand text-white px-4 py-2 rounded-xl cursor-pointer text-sm font-semibold shadow-sm shadow-brand/20 hover:bg-brand-dark transition"
@@ -183,7 +183,7 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
                 @if (addingToSection() === item.id) {
                   <div class="space-y-2 pt-1">
                     <input class="w-full bg-surface border border-edge rounded-xl px-3 py-2 text-base text-ink outline-none focus:border-brand transition" [placeholder]="'detail.namePlaceholder' | t" #sName />
-                    <input class="w-full bg-surface border border-edge rounded-xl px-3 py-2 text-base text-ink outline-none focus:border-brand transition" [placeholder]="'detail.urlPlaceholder' | t" #sUrl />
+                    <input class="w-full bg-surface border border-edge rounded-xl px-3 py-2 text-base text-ink outline-none focus:border-brand transition" [placeholder]="'detail.urlPlaceholder' | t" #sUrl (blur)="autoFillTitle(sUrl.value, sName)" />
                     <input class="w-full bg-surface border border-edge rounded-xl px-3 py-2 text-base text-ink outline-none focus:border-brand transition" [placeholder]="'detail.notesPlaceholder' | t" #sNotes />
                     <div class="flex gap-2">
                       <button class="bg-brand text-white px-3 py-1.5 rounded-lg cursor-pointer text-sm font-semibold"
@@ -222,7 +222,11 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
           <button cdkDragHandle class="text-edge hover:text-ink-muted cursor-grab active:cursor-grabbing touch-none shrink-0 transition">
             <svg lucideGripVertical [size]="16" [strokeWidth]="2"></svg>
           </button>
-          <app-platform-icon [url]="exercise.videoUrl" />
+          @if (thumbnail(exercise.videoUrl); as thumb) {
+            <img [src]="thumb" class="w-16 h-9 rounded-lg object-cover shrink-0 bg-edge" loading="lazy" />
+          } @else {
+            <app-platform-icon [url]="exercise.videoUrl" />
+          }
           <div class="min-w-0">
             <h3 class="font-semibold text-ink truncate text-sm">{{ exercise.name }}</h3>
             <a class="text-xs text-brand hover:text-brand-dark transition" [href]="exercise.videoUrl" target="_blank" rel="noopener noreferrer">
@@ -341,6 +345,16 @@ export class RoutinesDetailComponent {
 
   platformLabel(url: string): string {
     return getPlatformName(detectPlatform(url));
+  }
+
+  thumbnail(url: string): string | null {
+    return getThumbnailUrl(url);
+  }
+
+  async autoFillTitle(url: string, nameInput: HTMLInputElement) {
+    if (!url.trim() || nameInput.value.trim()) return;
+    const title = await fetchVideoTitle(url);
+    if (title && !nameInput.value.trim()) nameInput.value = title;
   }
 
   back() {
