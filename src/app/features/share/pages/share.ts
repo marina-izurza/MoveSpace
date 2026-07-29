@@ -231,7 +231,9 @@ export class ShareComponent {
 
     const extracted = urlParam || this.extractUrl(textParam);
     this.videoUrl.set(extracted);
-    if (titleParam) this.exerciseName.set(titleParam);
+
+    const nameHint = titleParam || this.extractCaption(textParam);
+    if (nameHint) this.exerciseName.set(nameHint);
 
     effect(() => {
       const id = this.selectedRoutineId();
@@ -242,6 +244,13 @@ export class ShareComponent {
   private extractUrl(text: string): string {
     const match = text.match(/https?:\/\/[^\s]+/);
     return match ? match[0] : '';
+  }
+
+  private extractCaption(text: string): string {
+    if (!text.trim()) return '';
+    // Strip URLs and hashtags, take first ~60 chars
+    const clean = text.replace(/https?:\/\/[^\s]+/g, '').replace(/#\w+/g, '').replace(/\s+/g, ' ').trim();
+    return clean.length > 60 ? clean.slice(0, 57) + '...' : clean;
   }
 
   selectRoutine(id: string) {

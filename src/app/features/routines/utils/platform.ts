@@ -54,6 +54,11 @@ export async function fetchVideoTitle(url: string): Promise<string | null> {
       if (!res.ok) return null;
       return (await res.json()).title ?? null;
     }
+    if (platform === 'instagram') {
+      const res = await fetch(`https://www.instagram.com/oembed/?url=${encodeURIComponent(url)}`);
+      if (!res.ok) return null;
+      return (await res.json()).title ?? null;
+    }
   } catch {}
   return null;
 }
