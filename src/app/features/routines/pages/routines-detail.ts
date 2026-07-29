@@ -1,9 +1,9 @@
 import { Component, computed, inject, signal, effect } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RoutinesStore } from '../stores/routines.store';
-import { LucidePencil, LucideTrash, LucideCheck, LucideX, LucideGripVertical } from '@lucide/angular';
+import { LucidePencil, LucideTrash, LucideCheck, LucideX, LucideGripVertical, LucideChevronDown } from '@lucide/angular';
 import { PlatformIconComponent } from '../components/platform-icon/platform-icon';
-import { detectPlatform, fetchPinterestThumbnail, fetchTikTokThumbnail, fetchVideoTitle, getPlatformName, getThumbnailUrl } from '../utils/platform';
+import { detectPlatform, fetchVideoInfo, fetchVideoTitle, getPlatformName, getThumbnailUrl, VideoInfo } from '../utils/platform';
 import { CdkDragDrop, CdkDropList, CdkDropListGroup, CdkDrag, CdkDragHandle, moveItemInArray } from '@angular/cdk/drag-drop';
 import { NgTemplateOutlet } from '@angular/common';
 import { Section } from '../models/Section';
@@ -11,7 +11,7 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 
 @Component({
   selector: 'app-routines-detail',
-  imports: [LucidePencil, LucideTrash, LucideCheck, LucideX, LucideGripVertical,
+  imports: [LucidePencil, LucideTrash, LucideCheck, LucideX, LucideGripVertical, LucideChevronDown,
             PlatformIconComponent, CdkDropListGroup, CdkDropList, CdkDrag, CdkDragHandle,
             NgTemplateOutlet, TranslatePipe],
   template: `
@@ -217,36 +217,60 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 
     <!-- Shared exercise row template -->
     <ng-template #exerciseRow let-exercise>
-      <div class="flex items-center justify-between gap-3">
-        <div class="flex items-center gap-3 min-w-0">
-          <button cdkDragHandle class="text-edge hover:text-ink-muted cursor-grab active:cursor-grabbing touch-none shrink-0 transition">
-            <svg lucideGripVertical [size]="16" [strokeWidth]="2"></svg>
-          </button>
-          @if (thumbnail(exercise.videoUrl); as thumb) {
-            <img [src]="thumb" class="w-16 h-9 rounded-lg object-cover shrink-0 bg-edge" loading="lazy" />
-          } @else {
-            <app-platform-icon [url]="exercise.videoUrl" />
-          }
-          <div class="min-w-0">
-            <h3 class="font-semibold text-ink truncate text-sm">{{ exercise.name }}</h3>
-            <a class="text-xs text-brand hover:text-brand-dark transition" [href]="exercise.videoUrl" target="_blank" rel="noopener noreferrer">
-              {{ 'detail.viewOn' | t }} {{ platformLabel(exercise.videoUrl) }}
-            </a>
-            @if (exercise.notes) {
-              <p class="text-xs text-ink-muted mt-0.5">{{ exercise.notes }}</p>
+      <div>
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-3 min-w-0 flex-1 cursor-pointer" (click)="toggleExpanded(exercise.id)">
+            <button cdkDragHandle class="text-edge hover:text-ink-muted cursor-grab active:cursor-grabbing touch-none shrink-0 transition" (click)="$event.stopPropagation()">
+              <svg lucideGripVertical [size]="16" [strokeWidth]="2"></svg>
+            </button>
+            @if (thumbnail(exercise.videoUrl); as thumb) {
+              <img [src]="thumb" class="w-16 h-9 rounded-lg object-cover shrink-0 bg-edge" loading="lazy" />
+            } @else {
+              <app-platform-icon [url]="exercise.videoUrl" />
             }
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-1 min-w-0">
+                <h3 class="font-semibold text-ink truncate text-sm">{{ exercise.name }}</h3>
+                <svg lucideChevronDown [size]="12" [strokeWidth]="2.5" class="shrink-0 text-ink-muted/50 transition-transform duration-200" [class.rotate-180]="expandedExerciseId() === exercise.id"></svg>
+              </div>
+              <a class="text-xs text-brand hover:text-brand-dark transition" [href]="exercise.videoUrl" target="_blank" rel="noopener noreferrer" (click)="$event.stopPropagation()">
+                {{ 'detail.viewOn' | t }} {{ platformLabel(exercise.videoUrl) }}
+              </a>
+              @if (exercise.notes) {
+                <p class="text-xs text-ink-muted mt-0.5">{{ exercise.notes }}</p>
+              }
+            </div>
+          </div>
+          <div class="flex items-center gap-0.5 shrink-0">
+            <button class="flex items-center justify-center w-8 h-8 rounded-xl text-ink-muted hover:text-brand hover:bg-brand-light transition cursor-pointer"
+              (click)="editingItemId.set(exercise.id)" title="Edit">
+              <svg lucidePencil [size]="14" [strokeWidth]="2"></svg>
+            </button>
+            <button class="flex items-center justify-center w-8 h-8 rounded-xl text-ink-muted hover:text-danger hover:bg-danger-muted transition cursor-pointer"
+              (click)="deleteExercise(exercise.id)" title="Delete">
+              <svg lucideTrash [size]="14" [strokeWidth]="2"></svg>
+            </button>
           </div>
         </div>
-        <div class="flex items-center gap-0.5 shrink-0">
-          <button class="flex items-center justify-center w-8 h-8 rounded-xl text-ink-muted hover:text-brand hover:bg-brand-light transition cursor-pointer"
-            (click)="editingItemId.set(exercise.id)" title="Edit">
-            <svg lucidePencil [size]="14" [strokeWidth]="2"></svg>
-          </button>
-          <button class="flex items-center justify-center w-8 h-8 rounded-xl text-ink-muted hover:text-danger hover:bg-danger-muted transition cursor-pointer"
-            (click)="deleteExercise(exercise.id)" title="Delete">
-            <svg lucideTrash [size]="14" [strokeWidth]="2"></svg>
-          </button>
-        </div>
+        @if (expandedExerciseId() === exercise.id) {
+          <div class="mt-2 pt-2 border-t border-edge/50 space-y-2">
+            @if (videoTitle(exercise.videoUrl); as vt) {
+              <div>
+                <p class="text-[10px] font-bold text-ink-muted uppercase tracking-widest mb-0.5">Título</p>
+                <p class="text-xs text-ink-muted">{{ vt }}</p>
+              </div>
+            }
+            @if (videoDesc(exercise.videoUrl); as vd) {
+              <div>
+                <p class="text-[10px] font-bold text-ink-muted uppercase tracking-widest mb-0.5">Descripción</p>
+                <p class="text-xs text-ink-muted whitespace-pre-line leading-relaxed">{{ vd }}</p>
+              </div>
+            }
+            @if (!videoTitle(exercise.videoUrl) && !videoDesc(exercise.videoUrl)) {
+              <p class="text-xs text-ink-muted/50 italic">Sin información disponible</p>
+            }
+          </div>
+        }
       </div>
     </ng-template>
   `
@@ -269,13 +293,14 @@ export class RoutinesDetailComponent {
     effect(() => this.store.loadRoutine(this.id()));
   }
 
-  private readonly thumbnailCache = signal<Record<string, string>>({});
+  private readonly mediaCache = signal<Record<string, VideoInfo>>({});
   private readonly fetchingUrls = new Set<string>();
 
   editingRoutineName = signal(false);
   editingItemId = signal<string | null>(null);
   addingSection = signal(false);
   addingToSection = signal<string | null>(null);
+  expandedExerciseId = signal<string | null>(null);
 
   addRootExercise(name: string, videoUrl: string, notes: string) {
     if (!name.trim() || !videoUrl.trim()) return;
@@ -351,24 +376,30 @@ export class RoutinesDetailComponent {
   }
 
   thumbnail(url: string): string | null {
-    const cache = this.thumbnailCache();
-    if (url in cache) return cache[url] || null;
+    if (!url) return null;
+    const cached = this.mediaCache()[url];
+    if (cached) return cached.thumb || null;
 
     const ytThumb = getThumbnailUrl(url);
-    if (ytThumb) return ytThumb;
-
-    const platform = detectPlatform(url);
-    const fetcher = platform === 'pinterest' ? fetchPinterestThumbnail
-                  : platform === 'tiktok'    ? fetchTikTokThumbnail
-                  : null;
-    if (fetcher && !this.fetchingUrls.has(url)) {
+    if (!this.fetchingUrls.has(url)) {
       this.fetchingUrls.add(url);
-      fetcher(url).then(thumb => {
-        this.thumbnailCache.update(c => ({ ...c, [url]: thumb ?? '' }));
+      fetchVideoInfo(url).then(info => {
+        this.mediaCache.update(c => ({ ...c, [url]: info }));
       });
     }
+    return ytThumb;
+  }
 
-    return null;
+  videoTitle(url: string): string | null {
+    return this.mediaCache()[url]?.title ?? null;
+  }
+
+  videoDesc(url: string): string | null {
+    return this.mediaCache()[url]?.desc ?? null;
+  }
+
+  toggleExpanded(id: string) {
+    this.expandedExerciseId.update(curr => curr === id ? null : id);
   }
 
   async autoFillTitle(url: string, nameInput: HTMLInputElement) {

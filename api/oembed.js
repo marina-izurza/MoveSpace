@@ -1,4 +1,5 @@
 const ENDPOINTS = {
+  youtube:   (url) => `https://www.youtube.com/oembed?url=${url}&format=json`,
   pinterest: (url) => `https://www.pinterest.com/oembed.json?url=${url}`,
   tiktok:    (url) => `https://www.tiktok.com/oembed?url=${url}`,
   instagram: (url) => `https://www.instagram.com/oembed/?url=${url}`,

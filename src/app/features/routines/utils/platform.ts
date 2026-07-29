@@ -1,5 +1,11 @@
 export type Platform = 'youtube' | 'tiktok' | 'instagram' | 'pinterest' | 'x' | 'unknown';
 
+export interface VideoInfo {
+  thumb: string | null;
+  title: string | null;
+  desc: string | null;
+}
+
 export function detectPlatform(url: string): Platform {
   const lower = url.toLowerCase();
   if (lower.includes('youtube.com') || lower.includes('youtu.be')) return 'youtube';
@@ -46,25 +52,20 @@ async function proxyOEmbed(provider: string, url: string): Promise<Record<string
   }
 }
 
-export async function fetchVideoTitle(url: string): Promise<string | null> {
+export async function fetchVideoInfo(url: string): Promise<VideoInfo> {
   const platform = detectPlatform(url);
-  try {
-    if (platform === 'youtube') {
-      const res = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`);
-      if (!res.ok) return null;
-      return (await res.json()).title ?? null;
-    }
-    if (platform === 'tiktok' || platform === 'pinterest' || platform === 'instagram') {
-      return (await proxyOEmbed(platform, url))?.['title'] ?? null;
-    }
-  } catch {}
-  return null;
+  if (platform === 'unknown' || platform === 'x') return { thumb: null, title: null, desc: null };
+
+  const data = await proxyOEmbed(platform, url);
+  if (!data) return { thumb: getThumbnailUrl(url), title: null, desc: null };
+
+  return {
+    thumb: data['thumbnail_url'] ?? getThumbnailUrl(url) ?? null,
+    title: data['title'] ?? null,
+    desc: data['description'] ?? null,
+  };
 }
 
-export async function fetchPinterestThumbnail(url: string): Promise<string | null> {
-  return (await proxyOEmbed('pinterest', url))?.['thumbnail_url'] ?? null;
-}
-
-export async function fetchTikTokThumbnail(url: string): Promise<string | null> {
-  return (await proxyOEmbed('tiktok', url))?.['thumbnail_url'] ?? null;
+export async function fetchVideoTitle(url: string): Promise<string | null> {
+  return (await fetchVideoInfo(url)).title;
 }
