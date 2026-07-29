@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RoutinesStore } from '../stores/routines.store';
 import { LucidePencil, LucideTrash, LucideCheck, LucideX, LucideGripVertical } from '@lucide/angular';
 import { PlatformIconComponent } from '../components/platform-icon/platform-icon';
-import { detectPlatform, fetchPinterestThumbnail, fetchVideoTitle, getPlatformName, getThumbnailUrl } from '../utils/platform';
+import { detectPlatform, fetchPinterestThumbnail, fetchTikTokThumbnail, fetchVideoTitle, getPlatformName, getThumbnailUrl } from '../utils/platform';
 import { CdkDragDrop, CdkDropList, CdkDropListGroup, CdkDrag, CdkDragHandle, moveItemInArray } from '@angular/cdk/drag-drop';
 import { NgTemplateOutlet } from '@angular/common';
 import { Section } from '../models/Section';
@@ -357,9 +357,13 @@ export class RoutinesDetailComponent {
     const ytThumb = getThumbnailUrl(url);
     if (ytThumb) return ytThumb;
 
-    if (detectPlatform(url) === 'pinterest' && !this.fetchingUrls.has(url)) {
+    const platform = detectPlatform(url);
+    const fetcher = platform === 'pinterest' ? fetchPinterestThumbnail
+                  : platform === 'tiktok'    ? fetchTikTokThumbnail
+                  : null;
+    if (fetcher && !this.fetchingUrls.has(url)) {
       this.fetchingUrls.add(url);
-      fetchPinterestThumbnail(url).then(thumb => {
+      fetcher(url).then(thumb => {
         this.thumbnailCache.update(c => ({ ...c, [url]: thumb ?? '' }));
       });
     }

@@ -63,12 +63,20 @@ export async function fetchVideoTitle(url: string): Promise<string | null> {
   return null;
 }
 
-export async function fetchPinterestThumbnail(url: string): Promise<string | null> {
+async function fetchOEmbedThumbnail(oembedUrl: string): Promise<string | null> {
   try {
-    const res = await fetch(`https://www.pinterest.com/oembed.json?url=${encodeURIComponent(url)}`);
+    const res = await fetch(oembedUrl);
     if (!res.ok) return null;
     return (await res.json()).thumbnail_url ?? null;
   } catch {
     return null;
   }
+}
+
+export function fetchPinterestThumbnail(url: string): Promise<string | null> {
+  return fetchOEmbedThumbnail(`https://www.pinterest.com/oembed.json?url=${encodeURIComponent(url)}`);
+}
+
+export function fetchTikTokThumbnail(url: string): Promise<string | null> {
+  return fetchOEmbedThumbnail(`https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`);
 }
