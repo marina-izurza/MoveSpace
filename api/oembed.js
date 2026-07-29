@@ -4,13 +4,26 @@ const ENDPOINTS = {
   instagram: (url) => `https://www.instagram.com/oembed/?url=${url}`,
 };
 
+async function resolveUrl(url) {
+  // pin.it short links redirect to the canonical pin URL — follow the redirect server-side
+  if (!url.includes('pin.it')) return url;
+  try {
+    const r = await fetch(url, { redirect: 'follow' });
+    return r.url || url;
+  } catch {
+    return url;
+  }
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
 
-  const { url, provider } = req.query;
+  let { url, provider } = req.query;
   if (!url || !provider || !ENDPOINTS[provider]) {
     return res.status(400).end();
   }
+
+  url = await resolveUrl(url);
 
   try {
     const upstream = await fetch(ENDPOINTS[provider](encodeURIComponent(url)));
