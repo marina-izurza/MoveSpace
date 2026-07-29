@@ -36,6 +36,16 @@ export function getThumbnailUrl(url: string): string | null {
   return id ? `https://img.youtube.com/vi/${id}/mqdefault.jpg` : null;
 }
 
+async function proxyOEmbed(provider: string, url: string): Promise<Record<string, string> | null> {
+  try {
+    const res = await fetch(`/api/oembed?provider=${provider}&url=${encodeURIComponent(url)}`);
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
 export async function fetchVideoTitle(url: string): Promise<string | null> {
   const platform = detectPlatform(url);
   try {
@@ -44,39 +54,17 @@ export async function fetchVideoTitle(url: string): Promise<string | null> {
       if (!res.ok) return null;
       return (await res.json()).title ?? null;
     }
-    if (platform === 'tiktok') {
-      const res = await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`);
-      if (!res.ok) return null;
-      return (await res.json()).title ?? null;
-    }
-    if (platform === 'pinterest') {
-      const res = await fetch(`https://www.pinterest.com/oembed.json?url=${encodeURIComponent(url)}`);
-      if (!res.ok) return null;
-      return (await res.json()).title ?? null;
-    }
-    if (platform === 'instagram') {
-      const res = await fetch(`https://www.instagram.com/oembed/?url=${encodeURIComponent(url)}`);
-      if (!res.ok) return null;
-      return (await res.json()).title ?? null;
+    if (platform === 'tiktok' || platform === 'pinterest' || platform === 'instagram') {
+      return (await proxyOEmbed(platform, url))?.['title'] ?? null;
     }
   } catch {}
   return null;
 }
 
-async function fetchOEmbedThumbnail(oembedUrl: string): Promise<string | null> {
-  try {
-    const res = await fetch(oembedUrl);
-    if (!res.ok) return null;
-    return (await res.json()).thumbnail_url ?? null;
-  } catch {
-    return null;
-  }
+export async function fetchPinterestThumbnail(url: string): Promise<string | null> {
+  return (await proxyOEmbed('pinterest', url))?.['thumbnail_url'] ?? null;
 }
 
-export function fetchPinterestThumbnail(url: string): Promise<string | null> {
-  return fetchOEmbedThumbnail(`https://www.pinterest.com/oembed.json?url=${encodeURIComponent(url)}`);
-}
-
-export function fetchTikTokThumbnail(url: string): Promise<string | null> {
-  return fetchOEmbedThumbnail(`https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`);
+export async function fetchTikTokThumbnail(url: string): Promise<string | null> {
+  return (await proxyOEmbed('tiktok', url))?.['thumbnail_url'] ?? null;
 }
