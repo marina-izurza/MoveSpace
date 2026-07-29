@@ -1,10 +1,11 @@
-export type Platform = 'youtube' | 'tiktok' | 'instagram' | 'x' | 'unknown';
+export type Platform = 'youtube' | 'tiktok' | 'instagram' | 'pinterest' | 'x' | 'unknown';
 
 export function detectPlatform(url: string): Platform {
   const lower = url.toLowerCase();
   if (lower.includes('youtube.com') || lower.includes('youtu.be')) return 'youtube';
   if (lower.includes('tiktok.com')) return 'tiktok';
   if (lower.includes('instagram.com')) return 'instagram';
+  if (lower.includes('pinterest.com') || lower.includes('pin.it')) return 'pinterest';
   if (lower.includes('twitter.com') || lower.includes('x.com')) return 'x';
   return 'unknown';
 }
@@ -14,6 +15,7 @@ export function getPlatformName(platform: Platform): string {
     youtube: 'YouTube',
     tiktok: 'TikTok',
     instagram: 'Instagram',
+    pinterest: 'Pinterest',
     x: 'X',
     unknown: 'video'
   };
@@ -47,6 +49,21 @@ export async function fetchVideoTitle(url: string): Promise<string | null> {
       if (!res.ok) return null;
       return (await res.json()).title ?? null;
     }
+    if (platform === 'pinterest') {
+      const res = await fetch(`https://www.pinterest.com/oembed.json?url=${encodeURIComponent(url)}`);
+      if (!res.ok) return null;
+      return (await res.json()).title ?? null;
+    }
   } catch {}
   return null;
+}
+
+export async function fetchPinterestThumbnail(url: string): Promise<string | null> {
+  try {
+    const res = await fetch(`https://www.pinterest.com/oembed.json?url=${encodeURIComponent(url)}`);
+    if (!res.ok) return null;
+    return (await res.json()).thumbnail_url ?? null;
+  } catch {
+    return null;
+  }
 }

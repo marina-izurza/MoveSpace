@@ -30,6 +30,13 @@ import { detectPlatform, getPlatformName, Platform } from '../../utils/platform'
           </svg>
         }
 
+        @case ('pinterest') {
+          <svg viewBox="0 0 20 20" width="20" height="20" fill="none">
+            <rect width="20" height="20" rx="4" fill="#E60023"/>
+            <path d="M10 3a7 7 0 0 0-2.6 13.5c0-.6 0-1.4.1-2l1-4.2s-.3-.5-.3-1.3c0-1.2.7-2.1 1.6-2.1.8 0 1.1.6 1.1 1.3 0 .8-.5 2-.8 3-.2.9.4 1.6 1.3 1.6 1.6 0 2.6-2 2.6-4.4 0-1.8-1.2-3.1-3.1-3.1-2.1 0-3.4 1.6-3.4 3.3 0 .6.2 1.3.5 1.7.1.1.1.2 0 .3l-.3 1.2c0 .2-.2.2-.3.1C6.5 11.5 6 10.4 6 9.2c0-2.5 2-5.2 5.6-5.2 3 0 5 2 5 4.7 0 3.1-1.7 5.4-4.3 5.4-.9 0-1.7-.5-2-1l-.5 2c-.2.7-.7 1.6-1 2.1A7 7 0 1 0 10 3z" fill="white"/>
+          </svg>
+        }
+
         @case ('x') {
           <svg viewBox="0 0 20 20" width="20" height="20" fill="none">
             <rect width="20" height="20" rx="4" fill="#000"/>
