@@ -1,0 +1,189 @@
+import { Component, computed, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from '../../../core/auth.service';
+import { ThemeService } from '../../../core/theme.service';
+import { LanguageService } from '../../../core/language.service';
+import { RoutinesStore } from '../../routines/stores/routines.store';
+import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
+import {
+  LucideSun, LucideMoon, LucideLogOut, LucideBell, LucideShield,
+  LucideChevronRight, LucideChevronDown, LucideLanguages
+} from '@lucide/angular';
+
+@Component({
+  selector: 'app-profile',
+  imports: [
+    LucideSun, LucideMoon, LucideLogOut, LucideBell, LucideShield,
+    LucideChevronRight, LucideChevronDown, LucideLanguages, TranslatePipe
+  ],
+  template: `
+    <div class="flex flex-col min-h-full">
+
+      <!-- Gradient header -->
+      <div class="bg-linear-to-br from-brand to-[#4338CA] px-5 pt-14 pb-12 flex flex-col items-center text-center">
+        <div class="w-20 h-20 rounded-full bg-white/20 border-2 border-white/30 flex items-center justify-center mb-4 shadow-xl">
+          <span class="text-3xl font-bold text-white select-none">{{ initial() }}</span>
+        </div>
+        <p class="text-base font-semibold text-white">{{ email() }}</p>
+        <p class="text-white/50 text-xs mt-1">{{ 'profile.member' | t }}</p>
+      </div>
+
+      <!-- Stats card (overlaps header) -->
+      <div class="px-5 -mt-6 z-10 relative">
+        <div class="bg-surface rounded-2xl border border-edge shadow-md p-4 flex">
+          <div class="flex-1 text-center">
+            <p class="text-2xl font-bold text-ink">{{ store.routines().length }}</p>
+            <p class="text-xs text-ink-muted mt-0.5">{{ 'profile.routines' | t }}</p>
+          </div>
+          <div class="w-px bg-edge"></div>
+          <div class="flex-1 text-center">
+            <p class="text-2xl font-bold text-ink">{{ totalExercises() }}</p>
+            <p class="text-xs text-ink-muted mt-0.5">{{ 'profile.exercises' | t }}</p>
+          </div>
+          <div class="w-px bg-edge"></div>
+          <div class="flex-1 text-center">
+            <p class="text-2xl font-bold text-ink">—</p>
+            <p class="text-xs text-ink-muted mt-0.5">{{ 'profile.thisWeek' | t }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-5 mt-5 space-y-3 pb-8">
+
+        <!-- Appearance -->
+        <div class="bg-surface rounded-2xl border border-edge shadow-sm overflow-hidden">
+          <p class="px-4 pt-4 pb-1 text-[10px] font-bold text-ink-muted uppercase tracking-widest">{{ 'profile.appearance' | t }}</p>
+          <div class="px-4 py-3.5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-brand-light flex items-center justify-center">
+                @if (theme.dark()) {
+                  <svg lucideMoon [size]="17" class="text-brand" [strokeWidth]="1.8"></svg>
+                } @else {
+                  <svg lucideSun [size]="17" class="text-brand" [strokeWidth]="1.8"></svg>
+                }
+              </div>
+              <div>
+                <p class="text-sm font-medium text-ink">{{ 'profile.darkMode' | t }}</p>
+                <p class="text-xs text-ink-muted">{{ theme.dark() ? ('profile.on' | t) : ('profile.off' | t) }}</p>
+              </div>
+            </div>
+            <button
+              class="w-12 h-6 rounded-full relative transition-colors duration-300 focus:outline-none shrink-0"
+              [class.bg-brand]="theme.dark()"
+              [class.bg-edge]="!theme.dark()"
+              (click)="theme.toggle()"
+            >
+              <span
+                class="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-all duration-300"
+                [style.left]="theme.dark() ? '26px' : '2px'"
+              ></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Language -->
+        <div class="bg-surface rounded-2xl border border-edge shadow-sm overflow-hidden">
+          <p class="px-4 pt-4 pb-1 text-[10px] font-bold text-ink-muted uppercase tracking-widest">Language</p>
+          <button
+            class="w-full px-4 py-3.5 flex items-center justify-between"
+            (click)="showLangPicker.set(!showLangPicker())"
+          >
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-brand-light flex items-center justify-center">
+                <svg lucideLanguages [size]="17" class="text-brand" [strokeWidth]="1.8"></svg>
+              </div>
+              <div class="text-left">
+                <p class="text-sm font-medium text-ink">{{ currentLang().label }}</p>
+                <p class="text-xs text-ink-muted">{{ ls.locale().toUpperCase() }}</p>
+              </div>
+            </div>
+            <svg
+              [class.rotate-180]="showLangPicker()"
+              class="transition-transform duration-200 text-ink-muted"
+              lucideChevronDown [size]="16" [strokeWidth]="2">
+            </svg>
+          </button>
+
+          @if (showLangPicker()) {
+            <div class="border-t border-edge">
+              @for (lang of ls.available; track lang.code) {
+                <button
+                  class="w-full flex items-center gap-3 px-4 py-3 text-left transition hover:bg-canvas"
+                  [class.bg-brand-light]="ls.locale() === lang.code"
+                  (click)="setLang(lang.code)"
+                >
+                  <span class="text-xl w-7 text-center leading-none">{{ lang.flag }}</span>
+                  <span class="flex-1 text-sm font-medium text-ink">{{ lang.label }}</span>
+                  @if (ls.locale() === lang.code) {
+                    <span class="w-2 h-2 rounded-full bg-brand shrink-0"></span>
+                  }
+                </button>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Preferences -->
+        <div class="bg-surface rounded-2xl border border-edge shadow-sm overflow-hidden">
+          <p class="px-4 pt-4 pb-1 text-[10px] font-bold text-ink-muted uppercase tracking-widest">{{ 'profile.preferences' | t }}</p>
+
+          <div class="px-4 py-3.5 flex items-center justify-between opacity-50">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-brand-light flex items-center justify-center">
+                <svg lucideBell [size]="17" class="text-brand" [strokeWidth]="1.8"></svg>
+              </div>
+              <span class="text-sm font-medium text-ink">{{ 'profile.notifications' | t }}</span>
+            </div>
+            <span class="text-xs bg-brand-light text-brand px-2.5 py-1 rounded-full font-semibold">{{ 'profile.soon' | t }}</span>
+          </div>
+
+          <div class="border-t border-edge mx-4"></div>
+
+          <div class="px-4 py-3.5 flex items-center justify-between opacity-50">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-brand-light flex items-center justify-center">
+                <svg lucideShield [size]="17" class="text-brand" [strokeWidth]="1.8"></svg>
+              </div>
+              <span class="text-sm font-medium text-ink">{{ 'profile.privacy' | t }}</span>
+            </div>
+            <svg lucideChevronRight [size]="16" class="text-ink-muted" [strokeWidth]="2"></svg>
+          </div>
+        </div>
+
+        <!-- Sign out -->
+        <button
+          class="w-full flex items-center justify-center gap-2 py-4 rounded-2xl border border-danger/25 text-danger font-semibold text-sm cursor-pointer hover:bg-danger-muted transition"
+          (click)="signOut()"
+        >
+          <svg lucideLogOut [size]="17" [strokeWidth]="1.8"></svg>
+          {{ 'profile.signOut' | t }}
+        </button>
+
+      </div>
+    </div>
+  `
+})
+export class ProfileComponent {
+  readonly theme = inject(ThemeService);
+  readonly ls = inject(LanguageService);
+  readonly store = inject(RoutinesStore);
+  private auth = inject(AuthService);
+  private router = inject(Router);
+
+  showLangPicker = signal(false);
+
+  email = computed(() => this.auth.user()?.email ?? '');
+  initial = computed(() => this.email().charAt(0).toUpperCase() || '?');
+  totalExercises = computed(() => this.store.routines().reduce((s, r) => s + r.exerciseCount, 0));
+  currentLang = computed(() => this.ls.available.find(l => l.code === this.ls.locale())!);
+
+  setLang(code: typeof this.ls.locale extends () => infer T ? T : never) {
+    this.ls.set(code as any);
+    this.showLangPicker.set(false);
+  }
+
+  async signOut() {
+    await this.auth.signOut();
+    this.router.navigate(['/login']);
+  }
+}

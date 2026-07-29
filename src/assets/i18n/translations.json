@@ -1,0 +1,994 @@
+{
+  "en": {
+    "nav": {
+      "home": "Home",
+      "explore": "Explore",
+      "saved": "Saved",
+      "profile": "Profile"
+    },
+    "auth": {
+      "tagline": "Organise your training routines",
+      "signIn": "Sign in",
+      "createAccount": "Create account",
+      "email": "Email",
+      "password": "Password",
+      "loading": "Loading...",
+      "lightMode": "Light mode",
+      "darkMode": "Dark mode"
+    },
+    "routines": {
+      "welcome": "Welcome back 👋",
+      "title": "My routines",
+      "newRoutine": "New routine",
+      "placeholder": "e.g. Monday strength…",
+      "create": "Create",
+      "cancel": "Cancel",
+      "empty": "No routines yet",
+      "emptyHint": "Tap + to create your first routine"
+    },
+    "detail": {
+      "back": "Back",
+      "exercises": "exercises",
+      "addExercise": "Add exercise",
+      "namePlaceholder": "Name",
+      "urlPlaceholder": "URL (YouTube, TikTok, Instagram…)",
+      "notesPlaceholder": "Optional notes",
+      "add": "Add",
+      "addSection": "+ Add section",
+      "sectionPlaceholder": "Section name (e.g. Warm-up)",
+      "save": "Save",
+      "cancel": "Cancel",
+      "noExercises": "No exercises yet",
+      "noExercisesHint": "Add your first exercise above",
+      "noExercisesSection": "No exercises — add one below",
+      "addExerciseSection": "+ Add exercise",
+      "viewOn": "View on"
+    },
+    "explore": {
+      "title": "Explore",
+      "subtitle": "Discover new routines",
+      "search": "Search routines, exercises…",
+      "featured": "Featured programs",
+      "comingSoon": "Coming soon",
+      "dailyTip": "Daily tip",
+      "tipText": "Remember to stay hydrated before, during and after your workout. Good hydration can improve performance by up to",
+      "categories": {
+        "all": "All",
+        "strength": "Strength",
+        "cardio": "Cardio",
+        "hiit": "HIIT",
+        "flexibility": "Flexibility",
+        "core": "Core",
+        "legs": "Legs"
+      },
+      "programs": {
+        "totalStrength": {
+          "title": "Total Strength",
+          "subtitle": "6 weeks · 4 days per week",
+          "tag": "Most popular",
+          "badges": ["Intermediate", "45 min", "24 sessions"]
+        },
+        "cardioBurn": {
+          "title": "Cardio Burn",
+          "subtitle": "Progressive intensity · No equipment",
+          "tag": "New",
+          "badges": ["30 min", "All levels"]
+        },
+        "fullBody": {
+          "title": "Full Body",
+          "subtitle": "8 weeks · 3 days per week",
+          "tag": "Featured",
+          "badges": ["Beginner", "40 min"]
+        }
+      }
+    },
+    "saved": {
+      "title": "Saved",
+      "subtitle": "Your favourite routines",
+      "empty": "Nothing saved yet",
+      "emptyHint": "Routines and programs you bookmark will appear here",
+      "comingSoon": "✨ Coming soon"
+    },
+    "profile": {
+      "member": "MoveSpace member",
+      "routines": "Routines",
+      "exercises": "Exercises",
+      "thisWeek": "This week",
+      "appearance": "Appearance",
+      "darkMode": "Dark mode",
+      "on": "On",
+      "off": "Off",
+      "preferences": "Preferences",
+      "notifications": "Notifications",
+      "soon": "Soon",
+      "privacy": "Privacy",
+      "signOut": "Sign out"
+    },
+    "share": {
+      "title": "Add to routine",
+      "noVideo": "No video detected",
+      "noVideoHint": "Share a YouTube, TikTok or Instagram video from their app",
+      "backToRoutines": "Back to routines",
+      "exerciseAdded": "Exercise added!",
+      "redirecting": "Redirecting to your routine…",
+      "exerciseName": "Exercise name",
+      "exercisePlaceholder": "e.g. Deep squat…",
+      "routine": "Routine",
+      "noRoutines": "You don't have any routines yet. Create one first.",
+      "videos": "videos",
+      "section": "Section",
+      "optional": "(optional)",
+      "noSection": "No section",
+      "addToRoutine": "Add to routine",
+      "adding": "Adding…"
+    }
+  },
+  "es": {
+    "nav": {
+      "home": "Inicio",
+      "explore": "Explorar",
+      "saved": "Guardados",
+      "profile": "Perfil"
+    },
+    "auth": {
+      "tagline": "Organiza tus rutinas de entrenamiento",
+      "signIn": "Entrar",
+      "createAccount": "Crear cuenta",
+      "email": "Email",
+      "password": "Contraseña",
+      "loading": "Cargando...",
+      "lightMode": "Modo claro",
+      "darkMode": "Modo oscuro"
+    },
+    "routines": {
+      "welcome": "Bienvenida 👋",
+      "title": "Mis rutinas",
+      "newRoutine": "Nueva rutina",
+      "placeholder": "Ej. Fuerza lunes…",
+      "create": "Crear",
+      "cancel": "Cancelar",
+      "empty": "Sin rutinas todavía",
+      "emptyHint": "Pulsa + para crear tu primera rutina"
+    },
+    "detail": {
+      "back": "Volver",
+      "exercises": "ejercicios",
+      "addExercise": "Añadir ejercicio",
+      "namePlaceholder": "Nombre",
+      "urlPlaceholder": "URL (YouTube, TikTok, Instagram…)",
+      "notesPlaceholder": "Notas opcionales",
+      "add": "Añadir",
+      "addSection": "+ Añadir sección",
+      "sectionPlaceholder": "Nombre de la sección (ej. Calentamiento)",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "noExercises": "Sin ejercicios todavía",
+      "noExercisesHint": "Añade tu primer ejercicio arriba",
+      "noExercisesSection": "Sin ejercicios — añade uno abajo",
+      "addExerciseSection": "+ Añadir ejercicio",
+      "viewOn": "Ver en"
+    },
+    "explore": {
+      "title": "Explorar",
+      "subtitle": "Descubre nuevas rutinas",
+      "search": "Buscar rutinas, ejercicios…",
+      "featured": "Programas destacados",
+      "comingSoon": "Próximamente",
+      "dailyTip": "Consejo del día",
+      "tipText": "Recuerda hidratarte bien antes, durante y después del entrenamiento. Una buena hidratación mejora el rendimiento hasta un",
+      "categories": {
+        "all": "Todo",
+        "strength": "Fuerza",
+        "cardio": "Cardio",
+        "hiit": "HIIT",
+        "flexibility": "Flexibilidad",
+        "core": "Core",
+        "legs": "Piernas"
+      },
+      "programs": {
+        "totalStrength": {
+          "title": "Fuerza Total",
+          "subtitle": "6 semanas · 4 días por semana",
+          "tag": "Más popular",
+          "badges": ["Nivel medio", "45 min", "24 sesiones"]
+        },
+        "cardioBurn": {
+          "title": "Cardio Quema",
+          "subtitle": "Intensidad progresiva · Sin equipo",
+          "tag": "Nuevo",
+          "badges": ["30 min", "Todos los niveles"]
+        },
+        "fullBody": {
+          "title": "Cuerpo Completo",
+          "subtitle": "8 semanas · 3 días por semana",
+          "tag": "Destacado",
+          "badges": ["Principiante", "40 min"]
+        }
+      }
+    },
+    "saved": {
+      "title": "Guardados",
+      "subtitle": "Tus rutinas favoritas",
+      "empty": "Sin guardados todavía",
+      "emptyHint": "Aquí aparecerán las rutinas y programas que marques como favoritos",
+      "comingSoon": "✨ Próximamente"
+    },
+    "profile": {
+      "member": "Miembro de MoveSpace",
+      "routines": "Rutinas",
+      "exercises": "Ejercicios",
+      "thisWeek": "Esta semana",
+      "appearance": "Apariencia",
+      "darkMode": "Modo oscuro",
+      "on": "Activado",
+      "off": "Desactivado",
+      "preferences": "Preferencias",
+      "notifications": "Notificaciones",
+      "soon": "Pronto",
+      "privacy": "Privacidad",
+      "signOut": "Cerrar sesión"
+    },
+    "share": {
+      "title": "Añadir a rutina",
+      "noVideo": "No se detectó ningún vídeo",
+      "noVideoHint": "Comparte un vídeo de YouTube, TikTok o Instagram desde su app",
+      "backToRoutines": "Volver a rutinas",
+      "exerciseAdded": "¡Ejercicio añadido!",
+      "redirecting": "Redirigiendo a tu rutina…",
+      "exerciseName": "Nombre del ejercicio",
+      "exercisePlaceholder": "Ej. Sentadilla profunda…",
+      "routine": "Rutina",
+      "noRoutines": "Aún no tienes rutinas. Crea una primero.",
+      "videos": "vídeos",
+      "section": "Sección",
+      "optional": "(opcional)",
+      "noSection": "Sin sección",
+      "addToRoutine": "Añadir a la rutina",
+      "adding": "Añadiendo…"
+    }
+  },
+  "fr": {
+    "nav": {
+      "home": "Accueil",
+      "explore": "Explorer",
+      "saved": "Enregistrés",
+      "profile": "Profil"
+    },
+    "auth": {
+      "tagline": "Organisez vos routines d'entraînement",
+      "signIn": "Se connecter",
+      "createAccount": "Créer un compte",
+      "email": "E-mail",
+      "password": "Mot de passe",
+      "loading": "Chargement…",
+      "lightMode": "Mode clair",
+      "darkMode": "Mode sombre"
+    },
+    "routines": {
+      "welcome": "Bon retour 👋",
+      "title": "Mes routines",
+      "newRoutine": "Nouvelle routine",
+      "placeholder": "ex. Force lundi…",
+      "create": "Créer",
+      "cancel": "Annuler",
+      "empty": "Aucune routine pour l'instant",
+      "emptyHint": "Appuyez sur + pour créer votre première routine"
+    },
+    "detail": {
+      "back": "Retour",
+      "exercises": "exercices",
+      "addExercise": "Ajouter un exercice",
+      "namePlaceholder": "Nom",
+      "urlPlaceholder": "URL (YouTube, TikTok, Instagram…)",
+      "notesPlaceholder": "Notes optionnelles",
+      "add": "Ajouter",
+      "addSection": "+ Ajouter une section",
+      "sectionPlaceholder": "Nom de la section (ex. Échauffement)",
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "noExercises": "Aucun exercice pour l'instant",
+      "noExercisesHint": "Ajoutez votre premier exercice ci-dessus",
+      "noExercisesSection": "Aucun exercice — ajoutez-en un ci-dessous",
+      "addExerciseSection": "+ Ajouter un exercice",
+      "viewOn": "Voir sur"
+    },
+    "explore": {
+      "title": "Explorer",
+      "subtitle": "Découvrez de nouvelles routines",
+      "search": "Rechercher des routines, des exercices…",
+      "featured": "Programmes vedettes",
+      "comingSoon": "Bientôt disponible",
+      "dailyTip": "Conseil du jour",
+      "tipText": "Pensez à bien vous hydrater avant, pendant et après votre entraînement. Une bonne hydratation peut améliorer les performances jusqu'à",
+      "categories": {
+        "all": "Tout",
+        "strength": "Force",
+        "cardio": "Cardio",
+        "hiit": "HIIT",
+        "flexibility": "Souplesse",
+        "core": "Core",
+        "legs": "Jambes"
+      },
+      "programs": {
+        "totalStrength": {
+          "title": "Force Totale",
+          "subtitle": "6 semaines · 4 jours par semaine",
+          "tag": "Le plus populaire",
+          "badges": ["Intermédiaire", "45 min", "24 séances"]
+        },
+        "cardioBurn": {
+          "title": "Cardio Brûlant",
+          "subtitle": "Intensité progressive · Sans équipement",
+          "tag": "Nouveau",
+          "badges": ["30 min", "Tous niveaux"]
+        },
+        "fullBody": {
+          "title": "Corps Complet",
+          "subtitle": "8 semaines · 3 jours par semaine",
+          "tag": "À la une",
+          "badges": ["Débutant", "40 min"]
+        }
+      }
+    },
+    "saved": {
+      "title": "Enregistrés",
+      "subtitle": "Vos routines favorites",
+      "empty": "Rien d'enregistré pour l'instant",
+      "emptyHint": "Les routines et programmes que vous marquez apparaîtront ici",
+      "comingSoon": "✨ Bientôt disponible"
+    },
+    "profile": {
+      "member": "Membre MoveSpace",
+      "routines": "Routines",
+      "exercises": "Exercices",
+      "thisWeek": "Cette semaine",
+      "appearance": "Apparence",
+      "darkMode": "Mode sombre",
+      "on": "Activé",
+      "off": "Désactivé",
+      "preferences": "Préférences",
+      "notifications": "Notifications",
+      "soon": "Bientôt",
+      "privacy": "Confidentialité",
+      "signOut": "Se déconnecter"
+    },
+    "share": {
+      "title": "Ajouter à une routine",
+      "noVideo": "Aucune vidéo détectée",
+      "noVideoHint": "Partagez une vidéo YouTube, TikTok ou Instagram depuis leur application",
+      "backToRoutines": "Retour aux routines",
+      "exerciseAdded": "Exercice ajouté !",
+      "redirecting": "Redirection vers votre routine…",
+      "exerciseName": "Nom de l'exercice",
+      "exercisePlaceholder": "ex. Squat profond…",
+      "routine": "Routine",
+      "noRoutines": "Vous n'avez pas encore de routines. Créez-en une d'abord.",
+      "videos": "vidéos",
+      "section": "Section",
+      "optional": "(optionnel)",
+      "noSection": "Sans section",
+      "addToRoutine": "Ajouter à la routine",
+      "adding": "Ajout en cours…"
+    }
+  },
+  "de": {
+    "nav": {
+      "home": "Startseite",
+      "explore": "Entdecken",
+      "saved": "Gespeichert",
+      "profile": "Profil"
+    },
+    "auth": {
+      "tagline": "Organisiere deine Trainingspläne",
+      "signIn": "Anmelden",
+      "createAccount": "Konto erstellen",
+      "email": "E-Mail",
+      "password": "Passwort",
+      "loading": "Laden…",
+      "lightMode": "Heller Modus",
+      "darkMode": "Dunkler Modus"
+    },
+    "routines": {
+      "welcome": "Willkommen zurück 👋",
+      "title": "Meine Routinen",
+      "newRoutine": "Neue Routine",
+      "placeholder": "z. B. Kraft montags…",
+      "create": "Erstellen",
+      "cancel": "Abbrechen",
+      "empty": "Noch keine Routinen",
+      "emptyHint": "Tippe auf + um deine erste Routine zu erstellen"
+    },
+    "detail": {
+      "back": "Zurück",
+      "exercises": "Übungen",
+      "addExercise": "Übung hinzufügen",
+      "namePlaceholder": "Name",
+      "urlPlaceholder": "URL (YouTube, TikTok, Instagram…)",
+      "notesPlaceholder": "Optionale Notizen",
+      "add": "Hinzufügen",
+      "addSection": "+ Abschnitt hinzufügen",
+      "sectionPlaceholder": "Abschnittsname (z. B. Aufwärmen)",
+      "save": "Speichern",
+      "cancel": "Abbrechen",
+      "noExercises": "Noch keine Übungen",
+      "noExercisesHint": "Füge oben deine erste Übung hinzu",
+      "noExercisesSection": "Keine Übungen — füge eine unten hinzu",
+      "addExerciseSection": "+ Übung hinzufügen",
+      "viewOn": "Ansehen auf"
+    },
+    "explore": {
+      "title": "Entdecken",
+      "subtitle": "Neue Routinen entdecken",
+      "search": "Routinen, Übungen suchen…",
+      "featured": "Vorgestellte Programme",
+      "comingSoon": "Demnächst",
+      "dailyTip": "Tipp des Tages",
+      "tipText": "Denke daran, vor, während und nach dem Training ausreichend zu trinken. Eine gute Hydratation kann die Leistung um bis zu",
+      "categories": {
+        "all": "Alle",
+        "strength": "Kraft",
+        "cardio": "Cardio",
+        "hiit": "HIIT",
+        "flexibility": "Flexibilität",
+        "core": "Core",
+        "legs": "Beine"
+      },
+      "programs": {
+        "totalStrength": {
+          "title": "Gesamtkraft",
+          "subtitle": "6 Wochen · 4 Tage pro Woche",
+          "tag": "Am beliebtesten",
+          "badges": ["Mittelstufe", "45 Min", "24 Einheiten"]
+        },
+        "cardioBurn": {
+          "title": "Cardio Burn",
+          "subtitle": "Progressive Intensität · Kein Equipment",
+          "tag": "Neu",
+          "badges": ["30 Min", "Alle Level"]
+        },
+        "fullBody": {
+          "title": "Ganzkörper",
+          "subtitle": "8 Wochen · 3 Tage pro Woche",
+          "tag": "Empfohlen",
+          "badges": ["Anfänger", "40 Min"]
+        }
+      }
+    },
+    "saved": {
+      "title": "Gespeichert",
+      "subtitle": "Deine Lieblingsroutinen",
+      "empty": "Noch nichts gespeichert",
+      "emptyHint": "Routinen und Programme, die du als Favorit markierst, erscheinen hier",
+      "comingSoon": "✨ Demnächst"
+    },
+    "profile": {
+      "member": "MoveSpace-Mitglied",
+      "routines": "Routinen",
+      "exercises": "Übungen",
+      "thisWeek": "Diese Woche",
+      "appearance": "Darstellung",
+      "darkMode": "Dunkler Modus",
+      "on": "An",
+      "off": "Aus",
+      "preferences": "Einstellungen",
+      "notifications": "Benachrichtigungen",
+      "soon": "Bald",
+      "privacy": "Datenschutz",
+      "signOut": "Abmelden"
+    },
+    "share": {
+      "title": "Zu Routine hinzufügen",
+      "noVideo": "Kein Video erkannt",
+      "noVideoHint": "Teile ein YouTube-, TikTok- oder Instagram-Video aus der jeweiligen App",
+      "backToRoutines": "Zurück zu Routinen",
+      "exerciseAdded": "Übung hinzugefügt!",
+      "redirecting": "Weiterleitung zu deiner Routine…",
+      "exerciseName": "Name der Übung",
+      "exercisePlaceholder": "z. B. Tiefer Kniebeuge…",
+      "routine": "Routine",
+      "noRoutines": "Du hast noch keine Routinen. Erstelle zuerst eine.",
+      "videos": "Videos",
+      "section": "Abschnitt",
+      "optional": "(optional)",
+      "noSection": "Kein Abschnitt",
+      "addToRoutine": "Zur Routine hinzufügen",
+      "adding": "Wird hinzugefügt…"
+    }
+  },
+  "pt": {
+    "nav": {
+      "home": "Início",
+      "explore": "Explorar",
+      "saved": "Salvos",
+      "profile": "Perfil"
+    },
+    "auth": {
+      "tagline": "Organize suas rotinas de treino",
+      "signIn": "Entrar",
+      "createAccount": "Criar conta",
+      "email": "E-mail",
+      "password": "Senha",
+      "loading": "Carregando…",
+      "lightMode": "Modo claro",
+      "darkMode": "Modo escuro"
+    },
+    "routines": {
+      "welcome": "Bem-vindo de volta 👋",
+      "title": "Minhas rotinas",
+      "newRoutine": "Nova rotina",
+      "placeholder": "ex. Força segunda-feira…",
+      "create": "Criar",
+      "cancel": "Cancelar",
+      "empty": "Nenhuma rotina ainda",
+      "emptyHint": "Toque em + para criar sua primeira rotina"
+    },
+    "detail": {
+      "back": "Voltar",
+      "exercises": "exercícios",
+      "addExercise": "Adicionar exercício",
+      "namePlaceholder": "Nome",
+      "urlPlaceholder": "URL (YouTube, TikTok, Instagram…)",
+      "notesPlaceholder": "Notas opcionais",
+      "add": "Adicionar",
+      "addSection": "+ Adicionar seção",
+      "sectionPlaceholder": "Nome da seção (ex. Aquecimento)",
+      "save": "Salvar",
+      "cancel": "Cancelar",
+      "noExercises": "Nenhum exercício ainda",
+      "noExercisesHint": "Adicione seu primeiro exercício acima",
+      "noExercisesSection": "Sem exercícios — adicione um abaixo",
+      "addExerciseSection": "+ Adicionar exercício",
+      "viewOn": "Ver em"
+    },
+    "explore": {
+      "title": "Explorar",
+      "subtitle": "Descubra novas rotinas",
+      "search": "Buscar rotinas, exercícios…",
+      "featured": "Programas em destaque",
+      "comingSoon": "Em breve",
+      "dailyTip": "Dica do dia",
+      "tipText": "Lembre-se de se hidratar bem antes, durante e após o treino. Uma boa hidratação pode melhorar o desempenho em até",
+      "categories": {
+        "all": "Tudo",
+        "strength": "Força",
+        "cardio": "Cardio",
+        "hiit": "HIIT",
+        "flexibility": "Flexibilidade",
+        "core": "Core",
+        "legs": "Pernas"
+      },
+      "programs": {
+        "totalStrength": {
+          "title": "Força Total",
+          "subtitle": "6 semanas · 4 dias por semana",
+          "tag": "Mais popular",
+          "badges": ["Intermediário", "45 min", "24 sessões"]
+        },
+        "cardioBurn": {
+          "title": "Cardio Queima",
+          "subtitle": "Intensidade progressiva · Sem equipamento",
+          "tag": "Novo",
+          "badges": ["30 min", "Todos os níveis"]
+        },
+        "fullBody": {
+          "title": "Corpo Inteiro",
+          "subtitle": "8 semanas · 3 dias por semana",
+          "tag": "Destaque",
+          "badges": ["Iniciante", "40 min"]
+        }
+      }
+    },
+    "saved": {
+      "title": "Salvos",
+      "subtitle": "Suas rotinas favoritas",
+      "empty": "Nada salvo ainda",
+      "emptyHint": "As rotinas e programas que você marcar aparecerão aqui",
+      "comingSoon": "✨ Em breve"
+    },
+    "profile": {
+      "member": "Membro do MoveSpace",
+      "routines": "Rotinas",
+      "exercises": "Exercícios",
+      "thisWeek": "Esta semana",
+      "appearance": "Aparência",
+      "darkMode": "Modo escuro",
+      "on": "Ativado",
+      "off": "Desativado",
+      "preferences": "Preferências",
+      "notifications": "Notificações",
+      "soon": "Em breve",
+      "privacy": "Privacidade",
+      "signOut": "Sair"
+    },
+    "share": {
+      "title": "Adicionar à rotina",
+      "noVideo": "Nenhum vídeo detectado",
+      "noVideoHint": "Compartilhe um vídeo do YouTube, TikTok ou Instagram pelo app deles",
+      "backToRoutines": "Voltar às rotinas",
+      "exerciseAdded": "Exercício adicionado!",
+      "redirecting": "Redirecionando para sua rotina…",
+      "exerciseName": "Nome do exercício",
+      "exercisePlaceholder": "ex. Agachamento profundo…",
+      "routine": "Rotina",
+      "noRoutines": "Você ainda não tem rotinas. Crie uma primeiro.",
+      "videos": "vídeos",
+      "section": "Seção",
+      "optional": "(opcional)",
+      "noSection": "Sem seção",
+      "addToRoutine": "Adicionar à rotina",
+      "adding": "Adicionando…"
+    }
+  },
+  "it": {
+    "nav": {
+      "home": "Home",
+      "explore": "Esplora",
+      "saved": "Salvati",
+      "profile": "Profilo"
+    },
+    "auth": {
+      "tagline": "Organizza le tue routine di allenamento",
+      "signIn": "Accedi",
+      "createAccount": "Crea account",
+      "email": "Email",
+      "password": "Password",
+      "loading": "Caricamento…",
+      "lightMode": "Modalità chiara",
+      "darkMode": "Modalità scura"
+    },
+    "routines": {
+      "welcome": "Bentornata 👋",
+      "title": "Le mie routine",
+      "newRoutine": "Nuova routine",
+      "placeholder": "es. Forza lunedì…",
+      "create": "Crea",
+      "cancel": "Annulla",
+      "empty": "Nessuna routine ancora",
+      "emptyHint": "Tocca + per creare la tua prima routine"
+    },
+    "detail": {
+      "back": "Indietro",
+      "exercises": "esercizi",
+      "addExercise": "Aggiungi esercizio",
+      "namePlaceholder": "Nome",
+      "urlPlaceholder": "URL (YouTube, TikTok, Instagram…)",
+      "notesPlaceholder": "Note opzionali",
+      "add": "Aggiungi",
+      "addSection": "+ Aggiungi sezione",
+      "sectionPlaceholder": "Nome sezione (es. Riscaldamento)",
+      "save": "Salva",
+      "cancel": "Annulla",
+      "noExercises": "Nessun esercizio ancora",
+      "noExercisesHint": "Aggiungi il tuo primo esercizio sopra",
+      "noExercisesSection": "Nessun esercizio — aggiungine uno sotto",
+      "addExerciseSection": "+ Aggiungi esercizio",
+      "viewOn": "Guarda su"
+    },
+    "explore": {
+      "title": "Esplora",
+      "subtitle": "Scopri nuove routine",
+      "search": "Cerca routine, esercizi…",
+      "featured": "Programmi in evidenza",
+      "comingSoon": "Prossimamente",
+      "dailyTip": "Consiglio del giorno",
+      "tipText": "Ricorda di idratarti bene prima, durante e dopo l'allenamento. Una buona idratazione può migliorare le prestazioni fino al",
+      "categories": {
+        "all": "Tutto",
+        "strength": "Forza",
+        "cardio": "Cardio",
+        "hiit": "HIIT",
+        "flexibility": "Flessibilità",
+        "core": "Core",
+        "legs": "Gambe"
+      },
+      "programs": {
+        "totalStrength": {
+          "title": "Forza Totale",
+          "subtitle": "6 settimane · 4 giorni a settimana",
+          "tag": "Più popolare",
+          "badges": ["Intermedio", "45 min", "24 sessioni"]
+        },
+        "cardioBurn": {
+          "title": "Cardio Brucia",
+          "subtitle": "Intensità progressiva · Senza attrezzi",
+          "tag": "Nuovo",
+          "badges": ["30 min", "Tutti i livelli"]
+        },
+        "fullBody": {
+          "title": "Corpo Completo",
+          "subtitle": "8 settimane · 3 giorni a settimana",
+          "tag": "In evidenza",
+          "badges": ["Principiante", "40 min"]
+        }
+      }
+    },
+    "saved": {
+      "title": "Salvati",
+      "subtitle": "Le tue routine preferite",
+      "empty": "Niente salvato ancora",
+      "emptyHint": "Le routine e i programmi che aggiungi ai preferiti appariranno qui",
+      "comingSoon": "✨ Prossimamente"
+    },
+    "profile": {
+      "member": "Membro MoveSpace",
+      "routines": "Routine",
+      "exercises": "Esercizi",
+      "thisWeek": "Questa settimana",
+      "appearance": "Aspetto",
+      "darkMode": "Modalità scura",
+      "on": "Attiva",
+      "off": "Disattiva",
+      "preferences": "Preferenze",
+      "notifications": "Notifiche",
+      "soon": "Presto",
+      "privacy": "Privacy",
+      "signOut": "Esci"
+    },
+    "share": {
+      "title": "Aggiungi alla routine",
+      "noVideo": "Nessun video rilevato",
+      "noVideoHint": "Condividi un video di YouTube, TikTok o Instagram dalla loro app",
+      "backToRoutines": "Torna alle routine",
+      "exerciseAdded": "Esercizio aggiunto!",
+      "redirecting": "Reindirizzamento alla tua routine…",
+      "exerciseName": "Nome esercizio",
+      "exercisePlaceholder": "es. Squat profondo…",
+      "routine": "Routine",
+      "noRoutines": "Non hai ancora routine. Creane una prima.",
+      "videos": "video",
+      "section": "Sezione",
+      "optional": "(opzionale)",
+      "noSection": "Nessuna sezione",
+      "addToRoutine": "Aggiungi alla routine",
+      "adding": "Aggiunta in corso…"
+    }
+  },
+  "ja": {
+    "nav": {
+      "home": "ホーム",
+      "explore": "探索",
+      "saved": "保存済み",
+      "profile": "プロフィール"
+    },
+    "auth": {
+      "tagline": "トレーニングルーティンを整理しよう",
+      "signIn": "ログイン",
+      "createAccount": "アカウント作成",
+      "email": "メールアドレス",
+      "password": "パスワード",
+      "loading": "読み込み中…",
+      "lightMode": "ライトモード",
+      "darkMode": "ダークモード"
+    },
+    "routines": {
+      "welcome": "おかえりなさい 👋",
+      "title": "マイルーティン",
+      "newRoutine": "新しいルーティン",
+      "placeholder": "例：月曜筋トレ…",
+      "create": "作成",
+      "cancel": "キャンセル",
+      "empty": "まだルーティンがありません",
+      "emptyHint": "+ を押して最初のルーティンを作成しましょう"
+    },
+    "detail": {
+      "back": "戻る",
+      "exercises": "エクササイズ",
+      "addExercise": "エクササイズを追加",
+      "namePlaceholder": "名前",
+      "urlPlaceholder": "URL（YouTube、TikTok、Instagram…）",
+      "notesPlaceholder": "任意のメモ",
+      "add": "追加",
+      "addSection": "+ セクションを追加",
+      "sectionPlaceholder": "セクション名（例：ウォームアップ）",
+      "save": "保存",
+      "cancel": "キャンセル",
+      "noExercises": "まだエクササイズがありません",
+      "noExercisesHint": "上に最初のエクササイズを追加してください",
+      "noExercisesSection": "エクササイズなし — 下に追加してください",
+      "addExerciseSection": "+ エクササイズを追加",
+      "viewOn": "で見る"
+    },
+    "explore": {
+      "title": "探索",
+      "subtitle": "新しいルーティンを発見しよう",
+      "search": "ルーティン、エクササイズを検索…",
+      "featured": "注目のプログラム",
+      "comingSoon": "近日公開",
+      "dailyTip": "今日のヒント",
+      "tipText": "トレーニングの前・中・後にしっかり水分補給することを忘れずに。水分補給で最大",
+      "categories": {
+        "all": "すべて",
+        "strength": "筋力",
+        "cardio": "有酸素",
+        "hiit": "HIIT",
+        "flexibility": "柔軟性",
+        "core": "体幹",
+        "legs": "脚"
+      },
+      "programs": {
+        "totalStrength": {
+          "title": "トータルストレングス",
+          "subtitle": "6週間 · 週4日",
+          "tag": "最人気",
+          "badges": ["中級", "45分", "24セッション"]
+        },
+        "cardioBurn": {
+          "title": "カーディオバーン",
+          "subtitle": "漸進的強度 · 器具不要",
+          "tag": "新着",
+          "badges": ["30分", "全レベル"]
+        },
+        "fullBody": {
+          "title": "全身トレーニング",
+          "subtitle": "8週間 · 週3日",
+          "tag": "おすすめ",
+          "badges": ["初心者", "40分"]
+        }
+      }
+    },
+    "saved": {
+      "title": "保存済み",
+      "subtitle": "お気に入りのルーティン",
+      "empty": "まだ保存されていません",
+      "emptyHint": "ブックマークしたルーティンとプログラムがここに表示されます",
+      "comingSoon": "✨ 近日公開"
+    },
+    "profile": {
+      "member": "MoveSpaceメンバー",
+      "routines": "ルーティン",
+      "exercises": "エクササイズ",
+      "thisWeek": "今週",
+      "appearance": "外観",
+      "darkMode": "ダークモード",
+      "on": "オン",
+      "off": "オフ",
+      "preferences": "設定",
+      "notifications": "通知",
+      "soon": "近日公開",
+      "privacy": "プライバシー",
+      "signOut": "ログアウト"
+    },
+    "share": {
+      "title": "ルーティンに追加",
+      "noVideo": "動画が検出されませんでした",
+      "noVideoHint": "YouTube、TikTok、InstagramのアプリからビデオをシェアしてMoveSpaceに追加できます",
+      "backToRoutines": "ルーティンに戻る",
+      "exerciseAdded": "エクササイズを追加しました！",
+      "redirecting": "ルーティンにリダイレクト中…",
+      "exerciseName": "エクササイズ名",
+      "exercisePlaceholder": "例：深いスクワット…",
+      "routine": "ルーティン",
+      "noRoutines": "まだルーティンがありません。先に作成してください。",
+      "videos": "動画",
+      "section": "セクション",
+      "optional": "（任意）",
+      "noSection": "セクションなし",
+      "addToRoutine": "ルーティンに追加",
+      "adding": "追加中…"
+    }
+  },
+  "zh": {
+    "nav": {
+      "home": "首页",
+      "explore": "探索",
+      "saved": "已保存",
+      "profile": "我的"
+    },
+    "auth": {
+      "tagline": "整理您的训练计划",
+      "signIn": "登录",
+      "createAccount": "创建账户",
+      "email": "邮箱",
+      "password": "密码",
+      "loading": "加载中…",
+      "lightMode": "浅色模式",
+      "darkMode": "深色模式"
+    },
+    "routines": {
+      "welcome": "欢迎回来 👋",
+      "title": "我的计划",
+      "newRoutine": "新建计划",
+      "placeholder": "例如：周一力量训练…",
+      "create": "创建",
+      "cancel": "取消",
+      "empty": "还没有计划",
+      "emptyHint": "点击 + 创建您的第一个计划"
+    },
+    "detail": {
+      "back": "返回",
+      "exercises": "个动作",
+      "addExercise": "添加动作",
+      "namePlaceholder": "名称",
+      "urlPlaceholder": "URL（YouTube、TikTok、Instagram…）",
+      "notesPlaceholder": "可选备注",
+      "add": "添加",
+      "addSection": "+ 添加分组",
+      "sectionPlaceholder": "分组名称（例如：热身）",
+      "save": "保存",
+      "cancel": "取消",
+      "noExercises": "还没有动作",
+      "noExercisesHint": "在上方添加您的第一个动作",
+      "noExercisesSection": "暂无动作 — 在下方添加",
+      "addExerciseSection": "+ 添加动作",
+      "viewOn": "在以下平台查看"
+    },
+    "explore": {
+      "title": "探索",
+      "subtitle": "发现新的训练计划",
+      "search": "搜索计划、动作…",
+      "featured": "精选计划",
+      "comingSoon": "即将上线",
+      "dailyTip": "今日提示",
+      "tipText": "记得在训练前、中、后保持充分补水。良好的水分补充可以将表现提升高达",
+      "categories": {
+        "all": "全部",
+        "strength": "力量",
+        "cardio": "有氧",
+        "hiit": "高强度间歇",
+        "flexibility": "柔韧性",
+        "core": "核心",
+        "legs": "腿部"
+      },
+      "programs": {
+        "totalStrength": {
+          "title": "全面力量",
+          "subtitle": "6周 · 每周4天",
+          "tag": "最受欢迎",
+          "badges": ["中级", "45分钟", "24节课"]
+        },
+        "cardioBurn": {
+          "title": "有氧燃脂",
+          "subtitle": "渐进式强度 · 无需器械",
+          "tag": "新上线",
+          "badges": ["30分钟", "适合所有级别"]
+        },
+        "fullBody": {
+          "title": "全身训练",
+          "subtitle": "8周 · 每周3天",
+          "tag": "推荐",
+          "badges": ["初学者", "40分钟"]
+        }
+      }
+    },
+    "saved": {
+      "title": "已保存",
+      "subtitle": "您的收藏计划",
+      "empty": "还没有保存内容",
+      "emptyHint": "您收藏的计划和课程将显示在这里",
+      "comingSoon": "✨ 即将上线"
+    },
+    "profile": {
+      "member": "MoveSpace会员",
+      "routines": "计划",
+      "exercises": "动作",
+      "thisWeek": "本周",
+      "appearance": "外观",
+      "darkMode": "深色模式",
+      "on": "开",
+      "off": "关",
+      "preferences": "偏好设置",
+      "notifications": "通知",
+      "soon": "即将推出",
+      "privacy": "隐私",
+      "signOut": "退出登录"
+    },
+    "share": {
+      "title": "添加到计划",
+      "noVideo": "未检测到视频",
+      "noVideoHint": "从 YouTube、TikTok 或 Instagram 应用中分享视频",
+      "backToRoutines": "返回计划",
+      "exerciseAdded": "动作已添加！",
+      "redirecting": "正在跳转到您的计划…",
+      "exerciseName": "动作名称",
+      "exercisePlaceholder": "例如：深蹲…",
+      "routine": "计划",
+      "noRoutines": "您还没有计划，请先创建一个。",
+      "videos": "个视频",
+      "section": "分组",
+      "optional": "（可选）",
+      "noSection": "无分组",
+      "addToRoutine": "添加到计划",
+      "adding": "添加中…"
+    }
+  }
+}

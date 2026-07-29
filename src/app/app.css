@@ -1,0 +1,20 @@
+.nav-item {
+  position: relative;
+  transition: color 0.15s ease;
+}
+
+.nav-item.nav-active {
+  color: #7B6CF6;
+}
+
+.nav-item.nav-active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 2px;
+  background: #7B6CF6;
+  border-radius: 0 0 3px 3px;
+}
