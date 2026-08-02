@@ -26,12 +26,23 @@ import { LucideSun, LucideMoon } from '@lucide/angular';
 
       <!-- Logo area -->
       <div class="mb-10 text-center">
-        <div class="w-16 h-16 bg-brand rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-brand/30">
-          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="32" height="32">
-            <path d="M6.5 6.5h11M6.5 12h11M6.5 17.5h11"/>
-            <circle cx="3.5" cy="6.5" r="1"/>
-            <circle cx="3.5" cy="12" r="1"/>
-            <circle cx="3.5" cy="17.5" r="1"/>
+        <div class="w-18 h-18 rounded-[20px] flex items-center justify-center mx-auto mb-4" style="background:#100F1E;box-shadow:0 8px 28px rgba(123,108,246,0.40)">
+          <svg viewBox="0 0 100 120" width="50" height="60" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="kb-s" cx="33%" cy="28%" r="72%">
+                <stop offset="0%" stop-color="#CAC3FF"/>
+                <stop offset="38%" stop-color="#8E80FB"/>
+                <stop offset="72%" stop-color="#5B4DD4"/>
+                <stop offset="100%" stop-color="#352AA0"/>
+              </radialGradient>
+              <radialGradient id="kb-h" cx="30%" cy="22%" r="78%">
+                <stop offset="0%" stop-color="#BCB6FF"/>
+                <stop offset="100%" stop-color="#5042C2"/>
+              </radialGradient>
+            </defs>
+            <rect x="30" y="5" width="40" height="14" rx="7" fill="url(#kb-h)"/>
+            <circle cx="50" cy="74" r="42" fill="url(#kb-s)"/>
+            <polygon points="36,61 36,87 70,74" fill="white" stroke="white" stroke-width="8" stroke-linejoin="round" paint-order="stroke fill" opacity="0.95"/>
           </svg>
         </div>
         <h1 class="text-2xl font-bold text-ink">MoveSpace</h1>
