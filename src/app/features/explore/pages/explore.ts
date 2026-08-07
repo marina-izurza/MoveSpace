@@ -1,126 +1,160 @@
-import { Component, computed, inject, signal } from '@angular/core';
-import { LucideSearch } from '@lucide/angular';
-import { LanguageService } from '../../../core/language.service';
+import { Component, computed, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { SessionsStore } from '../../sessions/stores/sessions.store';
+import { sessionDurationSeconds, formatDuration } from '../../sessions/models/WorkoutSession';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
+import { LanguageService } from '../../../core/language.service';
 
 @Component({
   selector: 'app-explore',
-  imports: [LucideSearch, TranslatePipe],
+  imports: [TranslatePipe],
   template: `
-    <div class="flex flex-col min-h-full">
+    <div class="flex flex-col min-h-full pb-8">
 
       <!-- Header -->
-      <div class="px-5 pt-10 pb-4">
-        <h1 class="text-2xl font-bold text-ink">{{ 'explore.title' | t }}</h1>
-        <p class="text-sm text-ink-muted mt-0.5">{{ 'explore.subtitle' | t }}</p>
+      <div class="px-5 pt-10 pb-5">
+        <p class="text-ink-muted text-sm">{{ 'history.subtitle' | t }}</p>
+        <h1 class="text-2xl font-bold text-ink mt-0.5">{{ 'history.title' | t }}</h1>
       </div>
 
-      <!-- Search (visual) -->
-      <div class="px-5 mb-5">
-        <div class="flex items-center gap-3 bg-surface border border-edge rounded-2xl px-4 py-3 shadow-sm">
-          <svg lucideSearch [size]="18" class="text-ink-muted shrink-0" [strokeWidth]="1.8"></svg>
-          <span class="text-ink-muted text-[15px]">{{ 'explore.search' | t }}</span>
+      @if (store.loading()) {
+        <div class="flex justify-center py-16">
+          <div class="w-8 h-8 rounded-full border-2 border-brand border-t-transparent animate-spin"></div>
         </div>
-      </div>
+      } @else if (store.sessions().length === 0) {
 
-      <!-- Category chips -->
-      <div class="flex gap-2 px-5 mb-6 overflow-x-auto no-scrollbar pb-0.5">
-        @for (cat of categories; track cat.key) {
+        <!-- Empty state -->
+        <div class="flex-1 flex flex-col items-center justify-center px-8 text-center">
+          <div class="w-20 h-20 bg-brand-light rounded-3xl flex items-center justify-center mb-5 shadow-sm">
+            <span class="text-4xl">📊</span>
+          </div>
+          <h2 class="text-lg font-bold text-ink">{{ 'history.noSessions' | t }}</h2>
+          <p class="text-sm text-ink-muted mt-2 leading-relaxed">{{ 'history.noSessionsHint' | t }}</p>
           <button
-            class="flex items-center gap-1.5 shrink-0 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
-            [class.bg-brand]="activeCategory() === cat.key"
-            [class.text-white]="activeCategory() === cat.key"
-            [class.shadow-sm]="activeCategory() === cat.key"
-            [class.bg-surface]="activeCategory() !== cat.key"
-            [class.text-ink-muted]="activeCategory() !== cat.key"
-            [class.border]="activeCategory() !== cat.key"
-            [class.border-edge]="activeCategory() !== cat.key"
-            (click)="activeCategory.set(cat.key)"
-          >
-            <span>{{ cat.emoji }}</span>
-            {{ 'explore.categories.' + cat.key | t }}
-          </button>
-        }
-      </div>
+            class="mt-6 bg-brand text-white px-6 py-3 rounded-xl font-semibold text-sm shadow-sm shadow-brand/20"
+            (click)="goToRoutines()"
+          >{{ 'history.goToRoutines' | t }}</button>
+        </div>
 
-      <!-- Featured programs -->
-      <div class="px-5 mb-5">
-        <p class="text-[10px] font-bold text-ink-muted uppercase tracking-widest mb-3">{{ 'explore.featured' | t }}</p>
-        <div class="space-y-3">
-          @for (p of programs(); track p.key) {
-            <div class="relative rounded-2xl overflow-hidden cursor-not-allowed"
-                 [style]="'background: linear-gradient(135deg, ' + p.from + ', ' + p.to + ')'">
-              <div class="p-5 pb-6">
-                <span class="text-[10px] font-bold text-white/60 uppercase tracking-widest">{{ p.tag }}</span>
-                <h3 class="text-[22px] font-bold text-white mt-1 leading-tight">{{ p.title }}</h3>
-                <p class="text-white/65 text-sm mt-1">{{ p.subtitle }}</p>
-                <div class="flex flex-wrap items-center gap-2 mt-3.5">
-                  @for (badge of p.badges; track badge) {
-                    <span class="text-xs bg-white/15 text-white px-2.5 py-1 rounded-full font-medium">{{ badge }}</span>
-                  }
-                </div>
-              </div>
-              <div class="absolute top-3.5 right-3.5 bg-black/20 backdrop-blur-sm rounded-full px-3 py-1.5">
-                <span class="text-[11px] font-bold text-white">{{ 'explore.comingSoon' | t }}</span>
-              </div>
+      } @else {
+
+        <!-- Stats row -->
+        <div class="px-5 mb-5">
+          <div class="bg-surface rounded-2xl border border-edge shadow-sm p-4 flex">
+            <div class="flex-1 text-center">
+              <p class="text-2xl font-bold text-ink">{{ store.streak() }}</p>
+              <p class="text-xs text-ink-muted mt-0.5">🔥 {{ 'history.streak' | t }}</p>
             </div>
-          }
+            <div class="w-px bg-edge"></div>
+            <div class="flex-1 text-center">
+              <p class="text-2xl font-bold text-ink">{{ store.weekSessions().length }}</p>
+              <p class="text-xs text-ink-muted mt-0.5">📅 {{ 'history.thisWeek' | t }}</p>
+            </div>
+            <div class="w-px bg-edge"></div>
+            <div class="flex-1 text-center">
+              <p class="text-2xl font-bold text-ink">{{ store.sessions().length }}</p>
+              <p class="text-xs text-ink-muted mt-0.5">💪 {{ 'history.total' | t }}</p>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <!-- Daily tip -->
-      <div class="px-5 pb-8">
-        <p class="text-[10px] font-bold text-ink-muted uppercase tracking-widest mb-3">{{ 'explore.dailyTip' | t }}</p>
-        <div class="bg-surface rounded-2xl border border-edge shadow-sm p-4 flex gap-3">
-          <span class="text-2xl">💧</span>
-          <p class="text-sm text-ink leading-relaxed">
-            {{ 'explore.tipText' | t }} <span class="font-semibold text-brand">20%</span>.
-          </p>
+        <!-- Week grid -->
+        <div class="px-5 mb-5">
+          <p class="text-[10px] font-bold text-ink-muted uppercase tracking-widest mb-3">{{ 'history.thisWeekDays' | t }}</p>
+          <div class="flex gap-1.5">
+            @for (day of store.weekDays(); track day.date.getTime()) {
+              <div class="flex-1 flex flex-col items-center gap-1.5">
+                <span class="text-[10px] font-semibold text-ink-muted">{{ dayLabel(day.date) }}</span>
+                <div
+                  class="w-full aspect-square rounded-xl transition-colors"
+                  [class.bg-brand]="day.active"
+                  [class.shadow-sm]="day.active"
+                  [class.bg-edge]="!day.active && !isToday(day.date)"
+                  [class.border-2]="isToday(day.date) && !day.active"
+                  [class.border-brand]="isToday(day.date) && !day.active"
+                  [class.bg-canvas]="isToday(day.date) && !day.active"
+                ></div>
+              </div>
+            }
+          </div>
         </div>
-      </div>
+
+        <!-- Top routines -->
+        @if (store.topRoutines().length > 0) {
+          <div class="px-5 mb-5">
+            <p class="text-[10px] font-bold text-ink-muted uppercase tracking-widest mb-3">{{ 'history.topRoutines' | t }}</p>
+            <div class="bg-surface rounded-2xl border border-edge shadow-sm overflow-hidden">
+              @for (r of store.topRoutines(); track r.name; let i = $index) {
+                <div class="flex items-center gap-3 px-4 py-3" [class.border-t]="i > 0" [class.border-edge]="i > 0">
+                  <span class="text-xs font-bold text-ink-muted w-4 text-center">{{ i + 1 }}</span>
+                  <div class="w-9 h-9 rounded-xl bg-brand-light flex items-center justify-center shrink-0 text-xl">
+                    @if (r.emoji) { {{ r.emoji }} } @else { 💪 }
+                  </div>
+                  <span class="flex-1 text-sm font-medium text-ink truncate">{{ r.name }}</span>
+                  <span class="text-xs text-ink-muted shrink-0">{{ r.count }}×</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Recent sessions -->
+        <div class="px-5">
+          <p class="text-[10px] font-bold text-ink-muted uppercase tracking-widest mb-3">{{ 'history.recent' | t }}</p>
+          <div class="space-y-2">
+            @for (session of store.sessions(); track session.id) {
+              <div class="bg-surface rounded-2xl border border-edge shadow-sm px-4 py-3 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-brand-light flex items-center justify-center shrink-0 text-xl">
+                  @if (session.routineEmoji) { {{ session.routineEmoji }} } @else { 💪 }
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-semibold text-ink truncate">{{ session.routineName }}</p>
+                  <p class="text-xs text-ink-muted">{{ relativeDate(session.startedAt) }}</p>
+                </div>
+                @if (durationOf(session); as dur) {
+                  <span class="text-xs font-semibold text-ink-muted bg-canvas border border-edge px-2.5 py-1 rounded-full shrink-0">{{ dur }}</span>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+      }
 
     </div>
   `
 })
 export class ExploreComponent {
+  readonly store = inject(SessionsStore);
   private ls = inject(LanguageService);
+  private router = inject(Router);
 
-  activeCategory = signal('all');
+  goToRoutines() {
+    this.router.navigate(['/routines']);
+  }
 
-  readonly categories = [
-    { key: 'all',         emoji: '✨' },
-    { key: 'strength',    emoji: '💪' },
-    { key: 'cardio',      emoji: '🏃' },
-    { key: 'hiit',        emoji: '⚡' },
-    { key: 'flexibility', emoji: '🧘' },
-    { key: 'core',        emoji: '🔥' },
-    { key: 'legs',        emoji: '🦵' },
-  ];
+  dayLabel(date: Date): string {
+    return date.toLocaleDateString(this.ls.locale(), { weekday: 'narrow' });
+  }
 
-  readonly programs = computed(() => [
-    {
-      key: 'totalStrength',
-      from: '#7B6CF6', to: '#4338CA',
-      title:   this.ls.t('explore.programs.totalStrength.title'),
-      subtitle: this.ls.t('explore.programs.totalStrength.subtitle'),
-      tag:     this.ls.t('explore.programs.totalStrength.tag'),
-      badges:  this.ls.ta('explore.programs.totalStrength.badges'),
-    },
-    {
-      key: 'cardioBurn',
-      from: '#F472B6', to: '#DB2777',
-      title:   this.ls.t('explore.programs.cardioBurn.title'),
-      subtitle: this.ls.t('explore.programs.cardioBurn.subtitle'),
-      tag:     this.ls.t('explore.programs.cardioBurn.tag'),
-      badges:  this.ls.ta('explore.programs.cardioBurn.badges'),
-    },
-    {
-      key: 'fullBody',
-      from: '#34D399', to: '#059669',
-      title:   this.ls.t('explore.programs.fullBody.title'),
-      subtitle: this.ls.t('explore.programs.fullBody.subtitle'),
-      tag:     this.ls.t('explore.programs.fullBody.tag'),
-      badges:  this.ls.ta('explore.programs.fullBody.badges'),
-    },
-  ]);
+  isToday(date: Date): boolean {
+    const today = new Date();
+    return date.toDateString() === today.toDateString();
+  }
+
+  relativeDate(iso: string): string {
+    const d = new Date(iso);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+
+    if (d.toDateString() === today.toDateString()) return this.ls.t('history.today');
+    if (d.toDateString() === yesterday.toDateString()) return this.ls.t('history.yesterday');
+    return d.toLocaleDateString(this.ls.locale(), { day: 'numeric', month: 'short' });
+  }
+
+  durationOf(session: Parameters<typeof sessionDurationSeconds>[0]): string | null {
+    const s = sessionDurationSeconds(session);
+    return s !== null ? formatDuration(s) : null;
+  }
 }

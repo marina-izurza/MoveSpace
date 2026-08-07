@@ -18,10 +18,19 @@ export class RoutinesStore {
 
   readonly routines = computed(() => this._listResource.value() ?? []);
   readonly listLoading = this._listResource.isLoading;
+  readonly inboxRoutine = computed(() => this.routines().find(r => r.isInbox) ?? null);
 
-  async addRoutine(name: string): Promise<void> {
-    const created = await this.api.createRoutine(name);
+  async addRoutine(name: string, emoji?: string): Promise<void> {
+    const created = await this.api.createRoutine(name, false, emoji);
     this._listResource.set([...this.routines(), created]);
+  }
+
+  async ensureInboxRoutine(defaultName: string): Promise<void> {
+    if (this.inboxRoutine()) return;
+    const inbox = await this.api.ensureInboxRoutine(defaultName);
+    if (!this.routines().find(r => r.id === inbox.id)) {
+      this._listResource.set([inbox, ...this.routines()]);
+    }
   }
 
   async deleteRoutine(id: string): Promise<void> {
@@ -56,12 +65,18 @@ export class RoutinesStore {
     if (current) this._detailResource.set(updater(current));
   }
 
-  // ── Renombrar rutina ──────────────────────────────────────────────────────
+  // ── Renombrar / emoji rutina ──────────────────────────────────────────────
 
   async renameRoutine(routineId: string, name: string): Promise<void> {
     this.patch(r => ({ ...r, name }));
     this._listResource.set(this.routines().map(r => r.id === routineId ? { ...r, name } : r));
     await this.api.renameRoutine(routineId, name);
+  }
+
+  async updateRoutineEmoji(routineId: string, emoji: string): Promise<void> {
+    const emojiVal = emoji || null;
+    this._listResource.set(this.routines().map(r => r.id === routineId ? { ...r, emoji: emoji || undefined } : r));
+    await this.api.updateRoutineEmoji(routineId, emojiVal);
   }
 
   // ── Reordenar ─────────────────────────────────────────────────────────────

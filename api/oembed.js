@@ -7,13 +7,15 @@ const ENDPOINTS = {
 
 async function resolveUrl(url) {
   // pin.it short links redirect to the canonical pin URL — follow the redirect server-side
-  if (!url.includes('pin.it')) return url;
-  try {
-    const r = await fetch(url, { redirect: 'follow' });
-    return r.url || url;
-  } catch {
-    return url;
+  if (url.includes('pin.it')) {
+    try {
+      const r = await fetch(url, { redirect: 'follow' });
+      url = r.url || url;
+    } catch {}
   }
+  // Localized Pinterest subdomains (es., de., fr., …) rejected by oEmbed — normalize to www
+  url = url.replace(/https?:\/\/[a-z]{2}\.pinterest\.com/, 'https://www.pinterest.com');
+  return url;
 }
 
 module.exports = async (req, res) => {

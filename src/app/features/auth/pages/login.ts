@@ -26,7 +26,9 @@ import { LucideSun, LucideMoon } from '@lucide/angular';
 
       <!-- Logo area -->
       <div class="mb-10 text-center">
-        <div class="w-18 h-18 rounded-[20px] flex items-center justify-center mx-auto mb-4" style="background:#100F1E;box-shadow:0 8px 28px rgba(123,108,246,0.40)">
+        <div class="w-18 h-18 rounded-[20px] flex items-center justify-center mx-auto mb-4"
+          [style.background]="theme.dark() ? '#100F1E' : '#EDE9FE'"
+          [style.box-shadow]="theme.dark() ? '0 8px 28px rgba(123,108,246,0.40)' : '0 8px 28px rgba(123,108,246,0.20)'">
           <svg viewBox="0 0 100 120" width="50" height="60" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <radialGradient id="kb-s" cx="33%" cy="28%" r="72%">

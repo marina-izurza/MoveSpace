@@ -6,11 +6,13 @@ import { ExploreComponent } from './features/explore/pages/explore';
 import { SavedComponent } from './features/saved/pages/saved';
 import { ProfileComponent } from './features/profile/pages/profile';
 import { ShareComponent } from './features/share/pages/share';
+import { RoutinePublicComponent } from './features/routines/pages/routine-public';
 import { authGuard } from './core/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'routines', pathMatch: 'full' },
-  { path: 'login', component: LoginComponent },
+  { path: 'login',        component: LoginComponent },
+  { path: 'r/:token',     component: RoutinePublicComponent },
   { path: 'routines',     component: RoutinesListComponent,   canActivate: [authGuard] },
   { path: 'routines/:id', component: RoutinesDetailComponent, canActivate: [authGuard] },
   { path: 'explore',      component: ExploreComponent,        canActivate: [authGuard] },

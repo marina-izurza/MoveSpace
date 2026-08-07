@@ -1,8 +1,12 @@
-import { Component, computed, inject, signal, effect } from '@angular/core';
+import { Component, computed, inject, signal, effect, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RoutinesStore } from '../stores/routines.store';
-import { LucidePencil, LucideTrash, LucideCheck, LucideX, LucideGripVertical, LucideChevronDown } from '@lucide/angular';
+import { RoutinesApiService } from '../services/routines-api.service';
+import { SessionsStore } from '../../sessions/stores/sessions.store';
+import { formatDuration } from '../../sessions/models/WorkoutSession';
+import { LucidePencil, LucideTrash, LucideCheck, LucideX, LucideGripVertical, LucideChevronDown, LucidePlay, LucideSquare } from '@lucide/angular';
 import { PlatformIconComponent } from '../components/platform-icon/platform-icon';
+import { EmojiPickerComponent } from '../../../shared/components/emoji-picker/emoji-picker';
 import { detectPlatform, fetchVideoInfo, fetchVideoTitle, getPlatformName, getThumbnailUrl, VideoInfo } from '../utils/platform';
 import { CdkDragDrop, CdkDropList, CdkDropListGroup, CdkDrag, CdkDragHandle, moveItemInArray } from '@angular/cdk/drag-drop';
 import { NgTemplateOutlet } from '@angular/common';
@@ -12,7 +16,8 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 @Component({
   selector: 'app-routines-detail',
   imports: [LucidePencil, LucideTrash, LucideCheck, LucideX, LucideGripVertical, LucideChevronDown,
-            PlatformIconComponent, CdkDropListGroup, CdkDropList, CdkDrag, CdkDragHandle,
+            LucidePlay, LucideSquare,
+            PlatformIconComponent, EmojiPickerComponent, CdkDropListGroup, CdkDropList, CdkDrag, CdkDragHandle,
             NgTemplateOutlet, TranslatePipe],
   template: `
     @if (routineLoading()) {
@@ -23,35 +28,81 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 
       <!-- Header -->
       <div class="px-5 pt-8 pb-4">
-        <button class="flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink cursor-pointer mb-4 transition" (click)="back()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-          {{ 'detail.back' | t }}
-        </button>
+        <div class="flex items-center justify-between mb-4">
+          <button class="flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink cursor-pointer transition" (click)="back()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+            {{ 'detail.back' | t }}
+          </button>
+          <button
+            class="w-9 h-9 rounded-xl flex items-center justify-center transition cursor-pointer"
+            [class.text-brand]="isPublic()"
+            [class.bg-brand-light]="isPublic()"
+            [class.text-ink-muted]="!isPublic()"
+            [class.hover:text-brand]="!isPublic()"
+            [class.hover:bg-brand-light]="!isPublic()"
+            (click)="showShareSheet.set(true)"
+            title="Compartir"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+              <polyline points="16 6 12 2 8 6"/>
+              <line x1="12" y1="2" x2="12" y2="15"/>
+            </svg>
+          </button>
+        </div>
 
-        @if (editingRoutineName()) {
-          <div class="flex items-center gap-2">
-            <input
-              class="text-2xl font-bold text-ink border-b-2 border-brand outline-none bg-transparent flex-1"
-              #renameInput [value]="routine.name"
-              (keyup.enter)="saveRoutineName(renameInput.value)"
-              (keyup.escape)="editingRoutineName.set(false)"
-            />
-            <button class="text-green-500 cursor-pointer p-1" (click)="saveRoutineName(renameInput.value)">
-              <svg lucideCheck [size]="18" [strokeWidth]="2"></svg>
-            </button>
-            <button class="text-ink-muted cursor-pointer p-1" (click)="editingRoutineName.set(false)">
-              <svg lucideX [size]="18" [strokeWidth]="2"></svg>
-            </button>
+        <div class="flex items-center gap-3">
+          <!-- Emoji button -->
+          <button
+            type="button"
+            class="w-12 h-12 rounded-2xl bg-brand-light flex items-center justify-center shrink-0 transition-colors hover:bg-brand/20"
+            [class.ring-2]="showEmojiPicker()"
+            [class.ring-brand]="showEmojiPicker()"
+            (click)="showEmojiPicker.update(v => !v)"
+          >
+            @if (routineEmoji()) {
+              <span class="text-2xl leading-none">{{ routineEmoji() }}</span>
+            } @else {
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" class="text-brand" width="22" height="22">
+                <path d="M6.5 6.5h11M6.5 12h11M6.5 17.5h11"/>
+                <circle cx="3.5" cy="6.5" r="1"/><circle cx="3.5" cy="12" r="1"/><circle cx="3.5" cy="17.5" r="1"/>
+              </svg>
+            }
+          </button>
+
+          <div class="flex-1 min-w-0">
+            @if (editingRoutineName()) {
+              <div class="flex items-center gap-2">
+                <input
+                  class="text-2xl font-bold text-ink border-b-2 border-brand outline-none bg-transparent min-w-0 flex-1"
+                  #renameInput [value]="routine.name"
+                  (keyup.enter)="saveRoutineName(renameInput.value)"
+                  (keyup.escape)="editingRoutineName.set(false)"
+                />
+                <button class="w-9 h-9 rounded-xl bg-brand flex items-center justify-center text-white shrink-0 shadow-sm shadow-brand/30 transition hover:bg-brand-dark" (click)="saveRoutineName(renameInput.value)">
+                  <svg lucideCheck [size]="16" [strokeWidth]="2.5"></svg>
+                </button>
+                <button class="w-9 h-9 rounded-xl bg-canvas flex items-center justify-center text-ink-muted shrink-0 transition hover:bg-edge" (click)="editingRoutineName.set(false)">
+                  <svg lucideX [size]="16" [strokeWidth]="2.5"></svg>
+                </button>
+              </div>
+            } @else {
+              <div class="flex items-center gap-2">
+                <h1 class="text-2xl font-bold text-ink truncate">{{ routine.name }}</h1>
+                <button class="text-ink-muted hover:text-brand cursor-pointer transition shrink-0" (click)="editingRoutineName.set(true)">
+                  <svg lucidePencil [size]="16" [strokeWidth]="2"></svg>
+                </button>
+              </div>
+            }
+            <p class="text-sm text-ink-muted mt-0.5">{{ exerciseCount() }} {{ 'detail.exercises' | t }}</p>
           </div>
-        } @else {
-          <div class="flex items-center gap-2">
-            <h1 class="text-2xl font-bold text-ink">{{ routine.name }}</h1>
-            <button class="text-ink-muted hover:text-brand cursor-pointer transition" (click)="editingRoutineName.set(true)">
-              <svg lucidePencil [size]="16" [strokeWidth]="2"></svg>
-            </button>
+        </div>
+
+        @if (showEmojiPicker()) {
+          <div class="mt-3 p-2 bg-canvas rounded-2xl border border-edge">
+            <app-emoji-picker [selected]="routineEmoji()" (pick)="onPickEmoji($event)" />
           </div>
         }
-        <p class="text-sm text-ink-muted mt-1">{{ exerciseCount() }} {{ 'detail.exercises' | t }}</p>
       </div>
 
       <!-- Add root exercise -->
@@ -94,7 +145,7 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
       </div>
 
       <!-- Root drop list -->
-      <div class="px-5 pb-4" cdkDropListGroup>
+      <div class="px-5 pb-40" cdkDropListGroup>
       <div class="space-y-2" cdkDropList [cdkDropListData]="'root'" (cdkDropListDropped)="onDrop($event)">
 
         @for (item of routine.items; track item.id) {
@@ -213,6 +264,95 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
       </div>
       </div>
 
+      <!-- Session FAB -->
+      <div class="fixed bottom-24 left-0 right-0 flex justify-center px-5 z-40 pointer-events-none">
+        @if (isActiveSession()) {
+          <div class="pointer-events-auto flex items-center gap-3 bg-surface border border-brand/20 rounded-2xl px-4 py-3 shadow-xl shadow-brand/15">
+            <div class="flex flex-col min-w-0">
+              <span class="text-[10px] font-bold text-brand uppercase tracking-widest">{{ 'session.inProgress' | t }}</span>
+              <span class="text-xl font-bold text-ink tabular-nums">{{ formatElapsed(elapsedSeconds()) }}</span>
+            </div>
+            <button
+              class="flex items-center gap-2 bg-brand text-white px-5 py-3 rounded-xl font-bold text-sm shadow-sm shadow-brand/30 transition hover:bg-brand-dark shrink-0"
+              (click)="finishSession()"
+            >
+              <svg lucideSquare [size]="15" [strokeWidth]="2" class="fill-white"></svg>
+              {{ 'session.finish' | t }}
+            </button>
+          </div>
+        } @else if (!sessions.activeSession()) {
+          <button
+            class="pointer-events-auto flex items-center gap-2.5 bg-brand text-white px-7 py-3.5 rounded-2xl font-bold text-sm shadow-xl shadow-brand/30 transition hover:bg-brand-dark"
+            (click)="startSession()"
+          >
+            <svg lucidePlay [size]="18" [strokeWidth]="2" class="fill-white"></svg>
+            {{ 'session.start' | t }}
+          </button>
+        }
+      </div>
+
+    }
+
+    <!-- Share sheet -->
+    @if (showShareSheet()) {
+      <div class="fixed inset-0 z-200 flex flex-col justify-end bg-black/40 backdrop-blur-sm" (click)="showShareSheet.set(false)">
+        <div class="bg-surface rounded-t-3xl border-t border-edge shadow-2xl px-5 pt-6 pb-14" (click)="$event.stopPropagation()">
+
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-lg font-bold text-ink">Compartir rutina</h2>
+            <button class="w-8 h-8 flex items-center justify-center rounded-xl bg-canvas text-ink-muted" (click)="showShareSheet.set(false)">
+              <svg lucideX [size]="16" [strokeWidth]="2.5"></svg>
+            </button>
+          </div>
+
+          <!-- Toggle -->
+          <div class="flex items-center justify-between bg-canvas rounded-2xl px-4 py-3.5 mb-4 border border-edge">
+            <div>
+              <p class="text-sm font-semibold text-ink">{{ isPublic() ? 'Rutina pública' : 'Rutina privada' }}</p>
+              <p class="text-xs text-ink-muted mt-0.5">{{ isPublic() ? 'Cualquiera con el enlace puede verla' : 'Solo tú puedes verla' }}</p>
+            </div>
+            <button
+              class="w-12 h-6 rounded-full transition-all duration-200 flex items-center shrink-0 ml-4"
+              [class.bg-brand]="isPublic()"
+              [class.bg-edge]="!isPublic()"
+              [disabled]="shareLoading()"
+              (click)="togglePublic()"
+            >
+              <span
+                class="w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200 block"
+                [class.translate-x-6]="isPublic()"
+                [class.translate-x-0.5]="!isPublic()"
+              ></span>
+            </button>
+          </div>
+
+          @if (isPublic() && shareUrl()) {
+            <div class="space-y-3">
+              <div class="flex items-center gap-2 bg-canvas rounded-2xl px-4 py-3 border border-edge">
+                <span class="text-xs text-ink-muted flex-1 truncate select-all">{{ shareUrl() }}</span>
+              </div>
+              <div class="flex gap-2">
+                <button
+                  class="flex-1 flex items-center justify-center gap-2 bg-brand text-white py-3.5 rounded-2xl font-semibold text-sm shadow-sm shadow-brand/20 transition"
+                  (click)="copyShareUrl()"
+                >
+                  <span>{{ shareCopied() ? '✅' : '🔗' }}</span>
+                  <span>{{ shareCopied() ? 'Copiado' : 'Copiar enlace' }}</span>
+                </button>
+                @if (canNativeShare) {
+                  <button
+                    class="flex items-center justify-center px-4 py-3.5 rounded-2xl bg-canvas border border-edge text-ink font-semibold text-sm"
+                    (click)="nativeShare()"
+                  >
+                    <span>📤</span>
+                  </button>
+                }
+              </div>
+            </div>
+          }
+
+        </div>
+      </div>
     }
 
     <!-- Shared exercise row template -->
@@ -226,7 +366,7 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
             @if (thumbnail(exercise.videoUrl); as thumb) {
               <img [src]="thumb" class="w-16 h-9 rounded-lg object-cover shrink-0 bg-edge" loading="lazy" />
             } @else {
-              <app-platform-icon [url]="exercise.videoUrl" />
+              <app-platform-icon [url]="exercise.videoUrl" mode="thumbnail" />
             }
             <div class="min-w-0 flex-1">
               <div class="flex items-center gap-1 min-w-0">
@@ -275,8 +415,10 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
     </ng-template>
   `
 })
-export class RoutinesDetailComponent {
+export class RoutinesDetailComponent implements OnDestroy {
   private store = inject(RoutinesStore);
+  private api = inject(RoutinesApiService);
+  readonly sessions = inject(SessionsStore);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
@@ -289,8 +431,44 @@ export class RoutinesDetailComponent {
       i.type === 'exercise' ? n + 1 : n + (i as Section).exercises.length, 0);
   });
 
+  readonly isActiveSession = computed(() => this.sessions.activeSession()?.routineId === this.id());
+
+  elapsedSeconds = signal(0);
+  private _timerRef: ReturnType<typeof setInterval> | null = null;
+
+  readonly formatElapsed = formatDuration;
+
   constructor() {
     effect(() => this.store.loadRoutine(this.id()));
+
+    effect(() => {
+      const active = this.sessions.activeSession();
+      if (active?.routineId === this.id()) {
+        const start = new Date(active.startedAt).getTime();
+        this.elapsedSeconds.set(Math.floor((Date.now() - start) / 1000));
+        if (this._timerRef) clearInterval(this._timerRef);
+        this._timerRef = setInterval(() => {
+          this.elapsedSeconds.set(Math.floor((Date.now() - start) / 1000));
+        }, 1000);
+      } else {
+        if (this._timerRef) { clearInterval(this._timerRef); this._timerRef = null; }
+        this.elapsedSeconds.set(0);
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    if (this._timerRef) clearInterval(this._timerRef);
+  }
+
+  async startSession() {
+    const r = this.routine();
+    if (!r) return;
+    await this.sessions.startSession(this.id(), r.name, this.routineEmoji() || undefined);
+  }
+
+  async finishSession() {
+    await this.sessions.completeSession();
   }
 
   private readonly mediaCache = signal<Record<string, VideoInfo>>({});
@@ -301,6 +479,33 @@ export class RoutinesDetailComponent {
   addingSection = signal(false);
   addingToSection = signal<string | null>(null);
   expandedExerciseId = signal<string | null>(null);
+  showEmojiPicker = signal(false);
+
+  showShareSheet = signal(false);
+  shareLoading = signal(false);
+  shareCopied = signal(false);
+  private _isPublicOverride = signal<boolean | null>(null);
+  private _shareTokenOverride = signal<string | null | undefined>(undefined);
+
+  readonly isPublic = computed(() => this._isPublicOverride() ?? this.store.routine()?.isPublic ?? false);
+  readonly shareToken = computed(() => {
+    const ov = this._shareTokenOverride();
+    return ov !== undefined ? ov : (this.store.routine()?.shareToken ?? null);
+  });
+  readonly shareUrl = computed(() => {
+    const t = this.shareToken();
+    return t ? `${window.location.origin}/r/${t}` : null;
+  });
+  readonly canNativeShare = typeof navigator !== 'undefined' && !!navigator.share;
+
+  readonly routineEmoji = computed(() =>
+    this.store.routines().find(r => r.id === this.id())?.emoji ?? ''
+  );
+
+  onPickEmoji(emoji: string) {
+    this.store.updateRoutineEmoji(this.id(), emoji);
+    this.showEmojiPicker.set(false);
+  }
 
   addRootExercise(name: string, videoUrl: string, notes: string) {
     if (!name.trim() || !videoUrl.trim()) return;
@@ -406,6 +611,32 @@ export class RoutinesDetailComponent {
     if (!url.trim() || nameInput.value.trim()) return;
     const title = await fetchVideoTitle(url);
     if (title && !nameInput.value.trim()) nameInput.value = title;
+  }
+
+  async togglePublic() {
+    const newValue = !this.isPublic();
+    this.shareLoading.set(true);
+    try {
+      const token = await this.api.setPublic(this.id(), newValue);
+      this._isPublicOverride.set(newValue);
+      if (token) this._shareTokenOverride.set(token);
+    } finally {
+      this.shareLoading.set(false);
+    }
+  }
+
+  async copyShareUrl() {
+    const url = this.shareUrl();
+    if (!url) return;
+    await navigator.clipboard.writeText(url);
+    this.shareCopied.set(true);
+    setTimeout(() => this.shareCopied.set(false), 2000);
+  }
+
+  async nativeShare() {
+    const url = this.shareUrl();
+    if (!url) return;
+    try { await navigator.share({ title: this.store.routine()?.name, url }); } catch {}
   }
 
   back() {

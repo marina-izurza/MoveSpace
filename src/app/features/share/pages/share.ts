@@ -86,7 +86,21 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
               <p class="text-sm text-ink-muted py-3">{{ 'share.noRoutines' | t }}</p>
             } @else {
               <div class="space-y-2">
-                @for (r of store.routines(); track r.id) {
+                @if (store.inboxRoutine(); as inbox) {
+                  <button
+                    class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl border-2 transition text-left"
+                    [class.border-brand]="selectedRoutineId() === inbox.id"
+                    [class.bg-brand-light]="selectedRoutineId() === inbox.id"
+                    [class.border-brand\/30]="selectedRoutineId() !== inbox.id"
+                    [class.bg-surface]="selectedRoutineId() !== inbox.id"
+                    (click)="selectRoutine(inbox.id)"
+                  >
+                    <span class="text-lg leading-none shrink-0">⚡</span>
+                    <span class="flex-1 text-sm font-semibold text-ink">{{ inbox.name }}</span>
+                    <span class="text-[10px] font-bold text-brand bg-brand/10 px-2 py-0.5 rounded-full uppercase tracking-wide">{{ 'share.quickSave' | t }}</span>
+                  </button>
+                }
+                @for (r of regularRoutines(); track r.id) {
                   <button
                     class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl border transition text-left"
                     [class.border-brand]="selectedRoutineId() === r.id"
@@ -212,6 +226,7 @@ export class ShareComponent {
 
   platformName = computed(() => getPlatformName(detectPlatform(this.videoUrl())));
   canAdd = computed(() => !!this.selectedRoutineId() && !!this.videoUrl());
+  regularRoutines = computed(() => this.store.routines().filter(r => !r.isInbox));
 
   private loadedRoutine = computed(() => {
     const r = this.store.routine();
@@ -244,6 +259,11 @@ export class ShareComponent {
     effect(() => {
       const id = this.selectedRoutineId();
       if (id) this.store.loadRoutine(id);
+    });
+
+    effect(() => {
+      const inbox = this.store.inboxRoutine();
+      if (inbox && !this.selectedRoutineId()) this.selectRoutine(inbox.id);
     });
   }
 

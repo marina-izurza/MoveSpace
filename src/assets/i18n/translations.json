@@ -24,7 +24,9 @@
       "create": "Create",
       "cancel": "Cancel",
       "empty": "No routines yet",
-      "emptyHint": "Tap + to create your first routine"
+      "emptyHint": "Tap + to create your first routine",
+      "inboxDefault": "Sort later",
+      "inboxBadge": "Inbox"
     },
     "detail": {
       "back": "Back",
@@ -84,10 +86,9 @@
     },
     "saved": {
       "title": "Saved",
-      "subtitle": "Your favourite routines",
-      "empty": "Nothing saved yet",
-      "emptyHint": "Routines and programs you bookmark will appear here",
-      "comingSoon": "✨ Coming soon"
+      "subtitle": "Routines you've liked",
+      "empty": "No liked routines yet",
+      "emptyHint": "Open a shared link and tap ❤️ to save routines here"
     },
     "profile": {
       "member": "MoveSpace member",
@@ -102,7 +103,31 @@
       "notifications": "Notifications",
       "soon": "Soon",
       "privacy": "Privacy",
-      "signOut": "Sign out"
+      "signOut": "Sign out",
+      "quickSave": "Quick save",
+      "quickSaveHint": "Rename your quick-save routine",
+      "save": "Save",
+      "accentColor": "Accent colour"
+    },
+    "session": {
+      "start": "Start workout",
+      "finish": "Finish",
+      "inProgress": "In progress"
+    },
+    "history": {
+      "title": "Progress",
+      "subtitle": "Your activity",
+      "streak": "Day streak",
+      "thisWeek": "This week",
+      "total": "Total",
+      "thisWeekDays": "This week",
+      "topRoutines": "Most practiced",
+      "recent": "Recent sessions",
+      "noSessions": "No sessions yet",
+      "noSessionsHint": "Start a workout from any routine to track your progress here",
+      "goToRoutines": "Go to routines",
+      "today": "Today",
+      "yesterday": "Yesterday"
     },
     "share": {
       "title": "Add to routine",
@@ -120,7 +145,8 @@
       "optional": "(optional)",
       "noSection": "No section",
       "addToRoutine": "Add to routine",
-      "adding": "Adding…"
+      "adding": "Adding…",
+      "quickSave": "Quick save"
     }
   },
   "es": {
@@ -148,7 +174,9 @@
       "create": "Crear",
       "cancel": "Cancelar",
       "empty": "Sin rutinas todavía",
-      "emptyHint": "Pulsa + para crear tu primera rutina"
+      "emptyHint": "Pulsa + para crear tu primera rutina",
+      "inboxDefault": "Sin clasificar",
+      "inboxBadge": "Inbox"
     },
     "detail": {
       "back": "Volver",
@@ -208,10 +236,9 @@
     },
     "saved": {
       "title": "Guardados",
-      "subtitle": "Tus rutinas favoritas",
-      "empty": "Sin guardados todavía",
-      "emptyHint": "Aquí aparecerán las rutinas y programas que marques como favoritos",
-      "comingSoon": "✨ Próximamente"
+      "subtitle": "Rutinas que te han gustado",
+      "empty": "Aún no hay rutinas guardadas",
+      "emptyHint": "Abre un enlace compartido y pulsa ❤️ para guardar rutinas aquí"
     },
     "profile": {
       "member": "Miembro de MoveSpace",
@@ -226,7 +253,31 @@
       "notifications": "Notificaciones",
       "soon": "Pronto",
       "privacy": "Privacidad",
-      "signOut": "Cerrar sesión"
+      "signOut": "Cerrar sesión",
+      "quickSave": "Guardar rápido",
+      "quickSaveHint": "Renombra tu rutina de guardado rápido",
+      "save": "Guardar",
+      "accentColor": "Color de acento"
+    },
+    "session": {
+      "start": "Empezar entrenamiento",
+      "finish": "Terminar",
+      "inProgress": "En progreso"
+    },
+    "history": {
+      "title": "Progreso",
+      "subtitle": "Tu actividad",
+      "streak": "Racha",
+      "thisWeek": "Esta semana",
+      "total": "Total",
+      "thisWeekDays": "Esta semana",
+      "topRoutines": "Más practicadas",
+      "recent": "Sesiones recientes",
+      "noSessions": "Sin sesiones todavía",
+      "noSessionsHint": "Empieza un entrenamiento desde cualquier rutina para registrar tu progreso aquí",
+      "goToRoutines": "Ir a rutinas",
+      "today": "Hoy",
+      "yesterday": "Ayer"
     },
     "share": {
       "title": "Añadir a rutina",
@@ -244,7 +295,8 @@
       "optional": "(opcional)",
       "noSection": "Sin sección",
       "addToRoutine": "Añadir a la rutina",
-      "adding": "Añadiendo…"
+      "adding": "Añadiendo…",
+      "quickSave": "Guardar rápido"
     }
   },
   "fr": {
@@ -272,7 +324,9 @@
       "create": "Créer",
       "cancel": "Annuler",
       "empty": "Aucune routine pour l'instant",
-      "emptyHint": "Appuyez sur + pour créer votre première routine"
+      "emptyHint": "Appuyez sur + pour créer votre première routine",
+      "inboxDefault": "À classer plus tard",
+      "inboxBadge": "Inbox"
     },
     "detail": {
       "back": "Retour",
@@ -332,10 +386,9 @@
     },
     "saved": {
       "title": "Enregistrés",
-      "subtitle": "Vos routines favorites",
-      "empty": "Rien d'enregistré pour l'instant",
-      "emptyHint": "Les routines et programmes que vous marquez apparaîtront ici",
-      "comingSoon": "✨ Bientôt disponible"
+      "subtitle": "Routines que vous aimez",
+      "empty": "Aucune routine aimée pour l'instant",
+      "emptyHint": "Ouvrez un lien partagé et appuyez sur ❤️ pour enregistrer des routines ici"
     },
     "profile": {
       "member": "Membre MoveSpace",
@@ -350,7 +403,30 @@
       "notifications": "Notifications",
       "soon": "Bientôt",
       "privacy": "Confidentialité",
-      "signOut": "Se déconnecter"
+      "signOut": "Se déconnecter",
+      "quickSave": "Sauvegarde rapide",
+      "quickSaveHint": "Renommez votre routine de sauvegarde rapide",
+      "save": "Enregistrer"
+    },
+    "session": {
+      "start": "Commencer l'entraînement",
+      "finish": "Terminer",
+      "inProgress": "En cours"
+    },
+    "history": {
+      "title": "Progrès",
+      "subtitle": "Votre activité",
+      "streak": "Jours consécutifs",
+      "thisWeek": "Cette semaine",
+      "total": "Total",
+      "thisWeekDays": "Cette semaine",
+      "topRoutines": "Les plus pratiquées",
+      "recent": "Séances récentes",
+      "noSessions": "Aucune séance encore",
+      "noSessionsHint": "Commencez un entraînement depuis n'importe quelle routine pour suivre votre progression ici",
+      "goToRoutines": "Aller aux routines",
+      "today": "Aujourd'hui",
+      "yesterday": "Hier"
     },
     "share": {
       "title": "Ajouter à une routine",
@@ -368,7 +444,8 @@
       "optional": "(optionnel)",
       "noSection": "Sans section",
       "addToRoutine": "Ajouter à la routine",
-      "adding": "Ajout en cours…"
+      "adding": "Ajout en cours…",
+      "quickSave": "Rapide"
     }
   },
   "de": {
@@ -396,7 +473,9 @@
       "create": "Erstellen",
       "cancel": "Abbrechen",
       "empty": "Noch keine Routinen",
-      "emptyHint": "Tippe auf + um deine erste Routine zu erstellen"
+      "emptyHint": "Tippe auf + um deine erste Routine zu erstellen",
+      "inboxDefault": "Später sortieren",
+      "inboxBadge": "Inbox"
     },
     "detail": {
       "back": "Zurück",
@@ -456,10 +535,9 @@
     },
     "saved": {
       "title": "Gespeichert",
-      "subtitle": "Deine Lieblingsroutinen",
-      "empty": "Noch nichts gespeichert",
-      "emptyHint": "Routinen und Programme, die du als Favorit markierst, erscheinen hier",
-      "comingSoon": "✨ Demnächst"
+      "subtitle": "Routinen, die dir gefallen",
+      "empty": "Noch keine gelikten Routinen",
+      "emptyHint": "Öffne einen geteilten Link und tippe ❤️ um Routinen hier zu speichern"
     },
     "profile": {
       "member": "MoveSpace-Mitglied",
@@ -474,7 +552,30 @@
       "notifications": "Benachrichtigungen",
       "soon": "Bald",
       "privacy": "Datenschutz",
-      "signOut": "Abmelden"
+      "signOut": "Abmelden",
+      "quickSave": "Schnellspeichern",
+      "quickSaveHint": "Benenne deine Schnellspeicher-Routine um",
+      "save": "Speichern"
+    },
+    "session": {
+      "start": "Training starten",
+      "finish": "Beenden",
+      "inProgress": "Läuft"
+    },
+    "history": {
+      "title": "Fortschritt",
+      "subtitle": "Deine Aktivität",
+      "streak": "Tage in Folge",
+      "thisWeek": "Diese Woche",
+      "total": "Gesamt",
+      "thisWeekDays": "Diese Woche",
+      "topRoutines": "Am häufigsten",
+      "recent": "Letzte Einheiten",
+      "noSessions": "Noch keine Einheiten",
+      "noSessionsHint": "Starte ein Training von einer Routine, um deinen Fortschritt hier zu verfolgen",
+      "goToRoutines": "Zu Routinen",
+      "today": "Heute",
+      "yesterday": "Gestern"
     },
     "share": {
       "title": "Zu Routine hinzufügen",
@@ -492,7 +593,8 @@
       "optional": "(optional)",
       "noSection": "Kein Abschnitt",
       "addToRoutine": "Zur Routine hinzufügen",
-      "adding": "Wird hinzugefügt…"
+      "adding": "Wird hinzugefügt…",
+      "quickSave": "Schnell"
     }
   },
   "pt": {
@@ -520,7 +622,9 @@
       "create": "Criar",
       "cancel": "Cancelar",
       "empty": "Nenhuma rotina ainda",
-      "emptyHint": "Toque em + para criar sua primeira rotina"
+      "emptyHint": "Toque em + para criar sua primeira rotina",
+      "inboxDefault": "Classificar depois",
+      "inboxBadge": "Inbox"
     },
     "detail": {
       "back": "Voltar",
@@ -580,10 +684,9 @@
     },
     "saved": {
       "title": "Salvos",
-      "subtitle": "Suas rotinas favoritas",
-      "empty": "Nada salvo ainda",
-      "emptyHint": "As rotinas e programas que você marcar aparecerão aqui",
-      "comingSoon": "✨ Em breve"
+      "subtitle": "Rotinas que você curtiu",
+      "empty": "Nenhuma rotina curtida ainda",
+      "emptyHint": "Abra um link compartilhado e toque ❤️ para salvar rotinas aqui"
     },
     "profile": {
       "member": "Membro do MoveSpace",
@@ -598,7 +701,30 @@
       "notifications": "Notificações",
       "soon": "Em breve",
       "privacy": "Privacidade",
-      "signOut": "Sair"
+      "signOut": "Sair",
+      "quickSave": "Salvar rápido",
+      "quickSaveHint": "Renomeie sua rotina de salvamento rápido",
+      "save": "Salvar"
+    },
+    "session": {
+      "start": "Iniciar treino",
+      "finish": "Terminar",
+      "inProgress": "Em andamento"
+    },
+    "history": {
+      "title": "Progresso",
+      "subtitle": "Sua atividade",
+      "streak": "Sequência",
+      "thisWeek": "Esta semana",
+      "total": "Total",
+      "thisWeekDays": "Esta semana",
+      "topRoutines": "Mais praticadas",
+      "recent": "Sessões recentes",
+      "noSessions": "Nenhuma sessão ainda",
+      "noSessionsHint": "Inicie um treino em qualquer rotina para acompanhar seu progresso aqui",
+      "goToRoutines": "Ir para rotinas",
+      "today": "Hoje",
+      "yesterday": "Ontem"
     },
     "share": {
       "title": "Adicionar à rotina",
@@ -616,7 +742,8 @@
       "optional": "(opcional)",
       "noSection": "Sem seção",
       "addToRoutine": "Adicionar à rotina",
-      "adding": "Adicionando…"
+      "adding": "Adicionando…",
+      "quickSave": "Rápido"
     }
   },
   "it": {
@@ -644,7 +771,9 @@
       "create": "Crea",
       "cancel": "Annulla",
       "empty": "Nessuna routine ancora",
-      "emptyHint": "Tocca + per creare la tua prima routine"
+      "emptyHint": "Tocca + per creare la tua prima routine",
+      "inboxDefault": "Da classificare dopo",
+      "inboxBadge": "Inbox"
     },
     "detail": {
       "back": "Indietro",
@@ -704,10 +833,9 @@
     },
     "saved": {
       "title": "Salvati",
-      "subtitle": "Le tue routine preferite",
-      "empty": "Niente salvato ancora",
-      "emptyHint": "Le routine e i programmi che aggiungi ai preferiti appariranno qui",
-      "comingSoon": "✨ Prossimamente"
+      "subtitle": "Routine a cui hai messo like",
+      "empty": "Nessuna routine salvata ancora",
+      "emptyHint": "Apri un link condiviso e tocca ❤️ per salvare routine qui"
     },
     "profile": {
       "member": "Membro MoveSpace",
@@ -722,7 +850,30 @@
       "notifications": "Notifiche",
       "soon": "Presto",
       "privacy": "Privacy",
-      "signOut": "Esci"
+      "signOut": "Esci",
+      "quickSave": "Salvataggio rapido",
+      "quickSaveHint": "Rinomina la tua routine di salvataggio rapido",
+      "save": "Salva"
+    },
+    "session": {
+      "start": "Inizia allenamento",
+      "finish": "Termina",
+      "inProgress": "In corso"
+    },
+    "history": {
+      "title": "Progressi",
+      "subtitle": "La tua attività",
+      "streak": "Giorni consecutivi",
+      "thisWeek": "Questa settimana",
+      "total": "Totale",
+      "thisWeekDays": "Questa settimana",
+      "topRoutines": "Più praticate",
+      "recent": "Sessioni recenti",
+      "noSessions": "Nessuna sessione ancora",
+      "noSessionsHint": "Inizia un allenamento da qualsiasi routine per tracciare i tuoi progressi qui",
+      "goToRoutines": "Vai alle routine",
+      "today": "Oggi",
+      "yesterday": "Ieri"
     },
     "share": {
       "title": "Aggiungi alla routine",
@@ -740,7 +891,8 @@
       "optional": "(opzionale)",
       "noSection": "Nessuna sezione",
       "addToRoutine": "Aggiungi alla routine",
-      "adding": "Aggiunta in corso…"
+      "adding": "Aggiunta in corso…",
+      "quickSave": "Rapido"
     }
   },
   "ja": {
@@ -768,7 +920,9 @@
       "create": "作成",
       "cancel": "キャンセル",
       "empty": "まだルーティンがありません",
-      "emptyHint": "+ を押して最初のルーティンを作成しましょう"
+      "emptyHint": "+ を押して最初のルーティンを作成しましょう",
+      "inboxDefault": "あとで整理",
+      "inboxBadge": "受信トレイ"
     },
     "detail": {
       "back": "戻る",
@@ -828,10 +982,9 @@
     },
     "saved": {
       "title": "保存済み",
-      "subtitle": "お気に入りのルーティン",
-      "empty": "まだ保存されていません",
-      "emptyHint": "ブックマークしたルーティンとプログラムがここに表示されます",
-      "comingSoon": "✨ 近日公開"
+      "subtitle": "いいねしたルーティン",
+      "empty": "まだいいねしたルーティンがありません",
+      "emptyHint": "共有リンクを開いて ❤️ を押してルーティンを保存しましょう"
     },
     "profile": {
       "member": "MoveSpaceメンバー",
@@ -846,7 +999,30 @@
       "notifications": "通知",
       "soon": "近日公開",
       "privacy": "プライバシー",
-      "signOut": "ログアウト"
+      "signOut": "ログアウト",
+      "quickSave": "クイック保存",
+      "quickSaveHint": "クイック保存ルーティンを名前変更",
+      "save": "保存"
+    },
+    "session": {
+      "start": "トレーニング開始",
+      "finish": "終了",
+      "inProgress": "進行中"
+    },
+    "history": {
+      "title": "進捗",
+      "subtitle": "あなたの活動",
+      "streak": "連続日数",
+      "thisWeek": "今週",
+      "total": "合計",
+      "thisWeekDays": "今週",
+      "topRoutines": "よく行うルーティン",
+      "recent": "最近のセッション",
+      "noSessions": "まだセッションがありません",
+      "noSessionsHint": "任意のルーティンからトレーニングを開始して、ここで進捗を追跡しましょう",
+      "goToRoutines": "ルーティンへ",
+      "today": "今日",
+      "yesterday": "昨日"
     },
     "share": {
       "title": "ルーティンに追加",
@@ -864,7 +1040,8 @@
       "optional": "（任意）",
       "noSection": "セクションなし",
       "addToRoutine": "ルーティンに追加",
-      "adding": "追加中…"
+      "adding": "追加中…",
+      "quickSave": "クイック"
     }
   },
   "zh": {
@@ -892,7 +1069,9 @@
       "create": "创建",
       "cancel": "取消",
       "empty": "还没有计划",
-      "emptyHint": "点击 + 创建您的第一个计划"
+      "emptyHint": "点击 + 创建您的第一个计划",
+      "inboxDefault": "稍后整理",
+      "inboxBadge": "收件箱"
     },
     "detail": {
       "back": "返回",
@@ -952,10 +1131,9 @@
     },
     "saved": {
       "title": "已保存",
-      "subtitle": "您的收藏计划",
-      "empty": "还没有保存内容",
-      "emptyHint": "您收藏的计划和课程将显示在这里",
-      "comingSoon": "✨ 即将上线"
+      "subtitle": "您点赞的计划",
+      "empty": "还没有点赞的计划",
+      "emptyHint": "打开分享链接并点击 ❤️ 将计划保存到这里"
     },
     "profile": {
       "member": "MoveSpace会员",
@@ -970,7 +1148,30 @@
       "notifications": "通知",
       "soon": "即将推出",
       "privacy": "隐私",
-      "signOut": "退出登录"
+      "signOut": "退出登录",
+      "quickSave": "快速保存",
+      "quickSaveHint": "重命名您的快速保存计划",
+      "save": "保存"
+    },
+    "session": {
+      "start": "开始训练",
+      "finish": "结束",
+      "inProgress": "进行中"
+    },
+    "history": {
+      "title": "进度",
+      "subtitle": "你的活动",
+      "streak": "连续天数",
+      "thisWeek": "本周",
+      "total": "总计",
+      "thisWeekDays": "本周",
+      "topRoutines": "最常练习",
+      "recent": "最近训练",
+      "noSessions": "还没有训练记录",
+      "noSessionsHint": "从任意计划开始训练，在这里跟踪你的进度",
+      "goToRoutines": "去我的计划",
+      "today": "今天",
+      "yesterday": "昨天"
     },
     "share": {
       "title": "添加到计划",
@@ -988,7 +1189,8 @@
       "optional": "（可选）",
       "noSection": "无分组",
       "addToRoutine": "添加到计划",
-      "adding": "添加中…"
+      "adding": "添加中…",
+      "quickSave": "快速"
     }
   }
 }

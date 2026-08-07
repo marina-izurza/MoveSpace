@@ -4,7 +4,7 @@
 }
 
 .nav-item.nav-active {
-  color: #7B6CF6;
+  color: var(--color-brand);
 }
 
 .nav-item.nav-active::before {
@@ -15,6 +15,6 @@
   transform: translateX(-50%);
   width: 24px;
   height: 2px;
-  background: #7B6CF6;
+  background: var(--color-brand);
   border-radius: 0 0 3px 3px;
 }

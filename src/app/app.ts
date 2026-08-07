@@ -30,6 +30,6 @@ export class App {
 
   showNav = computed(() => {
     const url = this.url();
-    return !!this.auth.user() && !url.startsWith('/login') && !url.startsWith('/share');
+    return !!this.auth.user() && !url.startsWith('/login') && !url.startsWith('/share') && !url.startsWith('/r/');
   });
 }

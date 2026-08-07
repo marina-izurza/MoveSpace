@@ -3,18 +3,19 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth.service';
 import { ThemeService } from '../../../core/theme.service';
 import { LanguageService } from '../../../core/language.service';
+import { AccentService } from '../../../core/accent.service';
 import { RoutinesStore } from '../../routines/stores/routines.store';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 import {
   LucideSun, LucideMoon, LucideLogOut, LucideBell, LucideShield,
-  LucideChevronRight, LucideChevronDown, LucideLanguages
+  LucideChevronRight, LucideChevronDown, LucideLanguages, LucidePencil
 } from '@lucide/angular';
 
 @Component({
   selector: 'app-profile',
   imports: [
     LucideSun, LucideMoon, LucideLogOut, LucideBell, LucideShield,
-    LucideChevronRight, LucideChevronDown, LucideLanguages, TranslatePipe
+    LucideChevronRight, LucideChevronDown, LucideLanguages, LucidePencil, TranslatePipe
   ],
   template: `
     <div class="flex flex-col min-h-full">
@@ -79,6 +80,24 @@ import {
               ></span>
             </button>
           </div>
+
+          <div class="border-t border-edge mx-4"></div>
+
+          <div class="px-4 py-3.5 flex items-center gap-4">
+            <div class="flex-1">
+              <p class="text-sm font-medium text-ink">{{ 'profile.accentColor' | t }}</p>
+            </div>
+            <div class="flex gap-2.5">
+              @for (a of accentSvc.palette; track a.id) {
+                <button
+                  class="w-7 h-7 rounded-full transition-all duration-150 shrink-0"
+                  [style.background]="a.color"
+                  [style.box-shadow]="accentSvc.accent() === a.id ? '0 0 0 2px var(--color-surface), 0 0 0 4px ' + a.color : 'none'"
+                  (click)="accentSvc.set(a.id)"
+                ></button>
+              }
+            </div>
+          </div>
         </div>
 
         <!-- Language -->
@@ -112,7 +131,7 @@ import {
                   [class.bg-brand-light]="ls.locale() === lang.code"
                   (click)="setLang(lang.code)"
                 >
-                  <span class="text-xl w-7 text-center leading-none">{{ lang.flag }}</span>
+                  <span class="w-7 h-5 rounded flex items-center justify-center bg-surface border border-edge text-[10px] font-bold text-ink-muted shrink-0">{{ lang.code.toUpperCase() }}</span>
                   <span class="flex-1 text-sm font-medium text-ink">{{ lang.label }}</span>
                   @if (ls.locale() === lang.code) {
                     <span class="w-2 h-2 rounded-full bg-brand shrink-0"></span>
@@ -122,6 +141,41 @@ import {
             </div>
           }
         </div>
+
+        <!-- Quick save inbox -->
+        @if (store.inboxRoutine(); as inbox) {
+          <div class="bg-surface rounded-2xl border border-edge shadow-sm overflow-hidden">
+            <p class="px-4 pt-4 pb-1 text-[10px] font-bold text-ink-muted uppercase tracking-widest">{{ 'profile.quickSave' | t }}</p>
+            @if (editingInbox()) {
+              <div class="px-4 py-3">
+                <input
+                  class="w-full bg-canvas border border-brand rounded-xl px-3 py-2.5 text-sm text-ink outline-none"
+                  [value]="inboxDraft()"
+                  (input)="inboxDraft.set($any($event.target).value)"
+                  (keyup.enter)="saveInboxName()"
+                  (keyup.escape)="editingInbox.set(false)"
+                />
+                <div class="flex gap-2 mt-2">
+                  <button class="flex-1 bg-brand text-white text-xs py-2 rounded-xl font-semibold" (click)="saveInboxName()">{{ 'profile.save' | t }}</button>
+                  <button class="px-3 py-2 text-xs text-ink-muted rounded-xl bg-canvas" (click)="editingInbox.set(false)">{{ 'routines.cancel' | t }}</button>
+                </div>
+              </div>
+            } @else {
+              <button class="w-full px-4 py-3.5 flex items-center justify-between" (click)="startEditInbox(inbox.name)">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-xl bg-brand-light flex items-center justify-center">
+                    <span class="text-lg leading-none">⚡</span>
+                  </div>
+                  <div class="text-left">
+                    <p class="text-sm font-medium text-ink">{{ inbox.name }}</p>
+                    <p class="text-xs text-ink-muted">{{ 'profile.quickSaveHint' | t }}</p>
+                  </div>
+                </div>
+                <svg lucidePencil [size]="15" class="text-ink-muted" [strokeWidth]="2"></svg>
+              </button>
+            }
+          </div>
+        }
 
         <!-- Preferences -->
         <div class="bg-surface rounded-2xl border border-edge shadow-sm overflow-hidden">
@@ -167,15 +221,31 @@ export class ProfileComponent {
   readonly theme = inject(ThemeService);
   readonly ls = inject(LanguageService);
   readonly store = inject(RoutinesStore);
+  readonly accentSvc = inject(AccentService);
   private auth = inject(AuthService);
   private router = inject(Router);
 
   showLangPicker = signal(false);
+  editingInbox = signal(false);
+  inboxDraft = signal('');
 
   email = computed(() => this.auth.user()?.email ?? '');
   initial = computed(() => this.email().charAt(0).toUpperCase() || '?');
   totalExercises = computed(() => this.store.routines().reduce((s, r) => s + r.exerciseCount, 0));
   currentLang = computed(() => this.ls.available.find(l => l.code === this.ls.locale())!);
+
+  startEditInbox(name: string) {
+    this.inboxDraft.set(name);
+    this.editingInbox.set(true);
+  }
+
+  async saveInboxName() {
+    const inbox = this.store.inboxRoutine();
+    const name = this.inboxDraft().trim();
+    if (!inbox || !name) return;
+    await this.store.renameRoutine(inbox.id, name);
+    this.editingInbox.set(false);
+  }
 
   setLang(code: typeof this.ls.locale extends () => infer T ? T : never) {
     this.ls.set(code as any);

@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { SupabaseService } from '../../../core/supabase.service';
 import { AuthService } from '../../../core/auth.service';
 import { Routine } from '../models/Routine';
-import { RoutineSummary } from '../models/RoutineSummary';
+import { RoutineSummary, PublicRoutine } from '../models/RoutineSummary';
 import { RoutineItem } from '../models/RoutineItem';
 import { Section } from '../models/Section';
 import { Exercise } from '../models/Exercise';
@@ -28,7 +28,7 @@ export class RoutinesApiService {
 
   async getRoutines(): Promise<RoutineSummary[]> {
     const [{ data: routines, error: rErr }, { data: exercises, error: eErr }] = await Promise.all([
-      this.db.from('routines').select('id, name').order('created_at'),
+      this.db.from('routines').select('id, name, is_inbox, emoji, is_public, share_token').order('created_at'),
       this.db.from('exercises').select('routine_id')
     ]);
     if (rErr) throw rErr;
@@ -39,20 +39,41 @@ export class RoutinesApiService {
       countMap.set(e.routine_id, (countMap.get(e.routine_id) ?? 0) + 1);
     }
 
-    return routines!.map(r => ({ id: r.id, name: r.name, exerciseCount: countMap.get(r.id) ?? 0 }));
+    return routines!.map(r => ({
+      id: r.id, name: r.name,
+      isInbox: r.is_inbox ?? false,
+      emoji: r.emoji ?? undefined,
+      isPublic: r.is_public ?? false,
+      shareToken: r.share_token ?? undefined,
+      exerciseCount: countMap.get(r.id) ?? 0
+    }));
   }
 
-  async createRoutine(name: string): Promise<RoutineSummary> {
+  async createRoutine(name: string, isInbox = false, emoji?: string): Promise<RoutineSummary> {
     const { data, error } = await this.db
       .from('routines')
-      .insert({ id: crypto.randomUUID(), name, user_id: this.userId })
-      .select('id, name').single();
+      .insert({ id: crypto.randomUUID(), name, user_id: this.userId, is_inbox: isInbox, emoji: emoji ?? null })
+      .select('id, name, is_inbox, emoji').single();
     if (error) throw error;
-    return { ...data, exerciseCount: 0 };
+    return { id: data.id, name: data.name, isInbox: data.is_inbox ?? false, emoji: data.emoji ?? undefined, exerciseCount: 0 };
+  }
+
+  async ensureInboxRoutine(defaultName: string): Promise<RoutineSummary> {
+    const { data, error } = await this.db
+      .from('routines').select('id, name, is_inbox, emoji')
+      .eq('is_inbox', true).maybeSingle();
+    if (error) throw error;
+    if (data) return { id: data.id, name: data.name, isInbox: true, emoji: data.emoji ?? undefined, exerciseCount: 0 };
+    return this.createRoutine(defaultName, true);
   }
 
   async renameRoutine(id: string, name: string): Promise<void> {
     const { error } = await this.db.from('routines').update({ name }).eq('id', id);
+    if (error) throw error;
+  }
+
+  async updateRoutineEmoji(id: string, emoji: string | null): Promise<void> {
+    const { error } = await this.db.from('routines').update({ emoji }).eq('id', id);
     if (error) throw error;
   }
 
@@ -66,7 +87,7 @@ export class RoutinesApiService {
   async getRoutine(id: string): Promise<Routine> {
     const [{ data: r, error: rErr }, { data: sections, error: sErr }, { data: exercises, error: eErr }] =
       await Promise.all([
-        this.db.from('routines').select('id, name').eq('id', id).single(),
+        this.db.from('routines').select('id, name, is_public, share_token, emoji').eq('id', id).single(),
         this.db.from('sections').select('*').eq('routine_id', id).order('order'),
         this.db.from('exercises').select('*').eq('routine_id', id).order('order')
       ]);
@@ -76,8 +97,81 @@ export class RoutinesApiService {
     return this.buildRoutine(r!, sections as DbSection[], exercises as DbExercise[]);
   }
 
+  async getPublicRoutineByToken(token: string): Promise<PublicRoutine | null> {
+    const { data: r, error: rErr } = await this.db
+      .from('routines').select('id, name, emoji, share_token')
+      .eq('share_token', token).eq('is_public', true).maybeSingle();
+    if (rErr || !r) return null;
+
+    const [{ data: sections }, { data: exercises }, { data: likes }] = await Promise.all([
+      this.db.from('sections').select('*').eq('routine_id', r.id).order('order'),
+      this.db.from('exercises').select('*').eq('routine_id', r.id).order('order'),
+      this.db.from('routine_likes').select('routine_id').eq('routine_id', r.id)
+    ]);
+
+    const base = this.buildRoutine(r, (sections ?? []) as DbSection[], (exercises ?? []) as DbExercise[]);
+    return {
+      id: r.id, name: r.name,
+      emoji: r.emoji ?? undefined,
+      shareToken: r.share_token,
+      isPublic: true,
+      likeCount: (likes ?? []).length,
+      items: base.items,
+    };
+  }
+
+  async setPublic(id: string, isPublic: boolean): Promise<string | null> {
+    const { data, error } = await this.db
+      .from('routines').update({ is_public: isPublic }).eq('id', id)
+      .select('share_token').single();
+    if (error) throw error;
+    return data?.share_token ?? null;
+  }
+
+  async getLikedRoutines(): Promise<PublicRoutine[]> {
+    const { data: likes, error: lErr } = await this.db
+      .from('routine_likes').select('routine_id');
+    if (lErr) throw lErr;
+    if (!likes?.length) return [];
+
+    const ids = likes.map((l: any) => l.routine_id);
+    const { data: routines, error: rErr } = await this.db
+      .from('routines').select('id, name, emoji, is_public, share_token').in('id', ids).eq('is_public', true);
+    if (rErr) throw rErr;
+
+    const { data: allLikes } = await this.db.from('routine_likes').select('routine_id').in('routine_id', ids);
+    const countMap = new Map<string, number>();
+    for (const l of (allLikes ?? [])) countMap.set(l.routine_id, (countMap.get(l.routine_id) ?? 0) + 1);
+
+    return (routines ?? []).map((r: any) => ({
+      id: r.id, name: r.name,
+      emoji: r.emoji ?? undefined,
+      shareToken: r.share_token,
+      isPublic: true,
+      likeCount: countMap.get(r.id) ?? 0,
+    }));
+  }
+
+  async getMyLikedIds(): Promise<Set<string>> {
+    const { data, error } = await this.db.from('routine_likes').select('routine_id');
+    if (error) return new Set();
+    return new Set((data ?? []).map((l: any) => l.routine_id));
+  }
+
+  async likeRoutine(routineId: string): Promise<void> {
+    const { data: { user } } = await this.db.auth.getUser();
+    const { error } = await this.db.from('routine_likes').insert({ routine_id: routineId, user_id: user!.id });
+    if (error && error.code !== '23505') throw error; // 23505 = unique violation (already liked)
+  }
+
+  async unlikeRoutine(routineId: string): Promise<void> {
+    const { error } = await this.db.from('routine_likes').delete()
+      .eq('routine_id', routineId);
+    if (error) throw error;
+  }
+
   private buildRoutine(
-    r: { id: string; name: string },
+    r: { id: string; name: string; is_public?: boolean; share_token?: string; emoji?: string | null },
     sections: DbSection[],
     exercises: DbExercise[]
   ): Routine {
@@ -103,7 +197,13 @@ export class RoutinesApiService {
     }
 
     rootItems.sort((a, b) => a.order - b.order);
-    return { id: r.id, name: r.name, items: rootItems.map(x => x.item) };
+    return {
+      id: r.id, name: r.name,
+      isPublic: r.is_public ?? false,
+      shareToken: r.share_token ?? undefined,
+      emoji: r.emoji ?? undefined,
+      items: rootItems.map(x => x.item)
+    };
   }
 
   // ── Sections ──────────────────────────────────────────────────────────────

@@ -41,6 +41,48 @@
   --color-shell:        #0A0914;
 }
 
+/* ── Accent palettes ─────────────────────────────────────────────────────── */
+
+[data-accent="rose"] {
+  --color-brand:       #F43F5E;
+  --color-brand-dark:  #E11D48;
+  --color-brand-light: #FFF1F2;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])[data-accent="rose"] { --color-brand-light: #2D1118; }
+}
+[data-theme="dark"][data-accent="rose"] { --color-brand-light: #2D1118; }
+
+[data-accent="emerald"] {
+  --color-brand:       #10B981;
+  --color-brand-dark:  #059669;
+  --color-brand-light: #ECFDF5;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])[data-accent="emerald"] { --color-brand-light: #0A2D1F; }
+}
+[data-theme="dark"][data-accent="emerald"] { --color-brand-light: #0A2D1F; }
+
+[data-accent="sky"] {
+  --color-brand:       #0EA5E9;
+  --color-brand-dark:  #0284C7;
+  --color-brand-light: #F0F9FF;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])[data-accent="sky"] { --color-brand-light: #082030; }
+}
+[data-theme="dark"][data-accent="sky"] { --color-brand-light: #082030; }
+
+[data-accent="amber"] {
+  --color-brand:       #F59E0B;
+  --color-brand-dark:  #D97706;
+  --color-brand-light: #FFFBEB;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])[data-accent="amber"] { --color-brand-light: #2D2000; }
+}
+[data-theme="dark"][data-accent="amber"] { --color-brand-light: #2D2000; }
+
 /* ── Base ────────────────────────────────────────────────────────────────── */
 
 body {
