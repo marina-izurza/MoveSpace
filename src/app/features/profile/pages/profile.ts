@@ -60,10 +60,45 @@ import {
         </div>
       </div>
 
-      <!-- Body placeholder (future: activity feed, shared routines…) -->
-      <div class="flex-1 flex flex-col items-center justify-center text-center px-8 pb-24">
-        <span class="text-4xl mb-3">🏋️</span>
-        <p class="text-sm text-ink-muted">{{ 'profile.tapSettings' | t }}</p>
+      <!-- Rutinas compartidas -->
+      <div class="px-5 mt-5 pb-28">
+        <p class="text-[10px] font-bold text-ink-muted uppercase tracking-widest mb-3">{{ 'profile.sharedRoutines' | t }}</p>
+
+        @if (publicRoutines().length === 0) {
+          <div class="bg-surface rounded-2xl border border-edge p-6 flex flex-col items-center text-center gap-2">
+            <span class="text-3xl">🔒</span>
+            <p class="text-sm font-medium text-ink">{{ 'profile.noShared' | t }}</p>
+            <p class="text-xs text-ink-muted">{{ 'profile.noSharedHint' | t }}</p>
+          </div>
+        } @else {
+          <div class="space-y-3">
+            @for (r of publicRoutines(); track r.id) {
+              <div class="bg-surface rounded-2xl border border-edge shadow-sm px-4 py-3.5 flex items-center gap-3">
+                @if (r.emoji) {
+                  <div class="w-10 h-10 rounded-xl bg-brand-light flex items-center justify-center text-xl shrink-0">{{ r.emoji }}</div>
+                } @else {
+                  <div class="w-10 h-10 rounded-xl bg-brand-light flex items-center justify-center shrink-0">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" class="text-brand w-5 h-5">
+                      <path d="M6.5 6.5h11M6.5 12h11M6.5 17.5h11"/><circle cx="3.5" cy="6.5" r="1"/><circle cx="3.5" cy="12" r="1"/><circle cx="3.5" cy="17.5" r="1"/>
+                    </svg>
+                  </div>
+                }
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-semibold text-ink truncate">{{ r.name }}</p>
+                  <p class="text-xs text-ink-muted">{{ r.exerciseCount }} {{ 'detail.exercises' | t }}</p>
+                </div>
+                <button
+                  class="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center transition-colors"
+                  [class.bg-brand]="copiedId() === r.id"
+                  [class.bg-brand-light]="copiedId() !== r.id"
+                  (click)="copyShareLink(r)"
+                >
+                  <span class="text-base leading-none">{{ copiedId() === r.id ? '✅' : '🔗' }}</span>
+                </button>
+              </div>
+            }
+          </div>
+        }
       </div>
 
     </div>
@@ -367,6 +402,8 @@ export class ProfileComponent {
   initial = computed(() => this.email().charAt(0).toUpperCase() || '?');
   totalExercises = computed(() => this.store.routines().reduce((s, r) => s + r.exerciseCount, 0));
   currentLang = computed(() => this.ls.available.find(l => l.code === this.ls.locale())!);
+  publicRoutines = computed(() => this.store.routines().filter(r => r.isPublic && !r.isInbox));
+  copiedId = signal<string | null>(null);
 
   closeSettings() {
     this.showSettings.set(false);
@@ -436,6 +473,13 @@ export class ProfileComponent {
   setLang(code: typeof this.ls.locale extends () => infer T ? T : never) {
     this.ls.set(code as any);
     this.showLangPicker.set(false);
+  }
+
+  async copyShareLink(r: { id: string; shareToken?: string }) {
+    if (!r.shareToken) return;
+    await navigator.clipboard.writeText(`${window.location.origin}/r/${r.shareToken}`);
+    this.copiedId.set(r.id);
+    setTimeout(() => this.copiedId.set(null), 2000);
   }
 
   async signOut() {

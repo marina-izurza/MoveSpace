@@ -129,7 +129,10 @@
       "language": "Language",
       "other": "Other",
       "settings": "Settings",
-      "tapSettings": "Tap the ⚙️ icon to access your settings"
+      "tapSettings": "Tap the ⚙️ icon to access your settings",
+      "sharedRoutines": "Shared routines",
+      "noShared": "No shared routines yet",
+      "noSharedHint": "Open a routine and toggle it public to share it here"
     },
     "session": {
       "start": "Start workout",
@@ -301,7 +304,10 @@
       "language": "Idioma",
       "other": "Otras opciones",
       "settings": "Ajustes",
-      "tapSettings": "Pulsa el ⚙️ para acceder a los ajustes"
+      "tapSettings": "Pulsa el ⚙️ para acceder a los ajustes",
+      "sharedRoutines": "Rutinas compartidas",
+      "noShared": "Aún no has compartido ninguna rutina",
+      "noSharedHint": "Abre una rutina y activa el modo público para compartirla aquí"
     },
     "session": {
       "start": "Empezar entrenamiento",
@@ -472,7 +478,10 @@
       "language": "Langue",
       "other": "Autres",
       "settings": "Paramètres",
-      "tapSettings": "Appuyez sur ⚙️ pour accéder aux paramètres"
+      "tapSettings": "Appuyez sur ⚙️ pour accéder aux paramètres",
+      "sharedRoutines": "Routines partagées",
+      "noShared": "Aucune routine partagée pour l'instant",
+      "noSharedHint": "Ouvrez une routine et activez le mode public pour la partager ici"
     },
     "session": {
       "start": "Commencer l'entraînement",
@@ -643,7 +652,10 @@
       "language": "Sprache",
       "other": "Sonstiges",
       "settings": "Einstellungen",
-      "tapSettings": "Tippe auf ⚙️ um auf die Einstellungen zuzugreifen"
+      "tapSettings": "Tippe auf ⚙️ um auf die Einstellungen zuzugreifen",
+      "sharedRoutines": "Geteilte Routinen",
+      "noShared": "Noch keine geteilten Routinen",
+      "noSharedHint": "Öffne eine Routine und aktiviere den öffentlichen Modus, um sie hier zu teilen"
     },
     "session": {
       "start": "Training starten",
@@ -814,7 +826,10 @@
       "language": "Idioma",
       "other": "Outros",
       "settings": "Configurações",
-      "tapSettings": "Toque em ⚙️ para acessar as configurações"
+      "tapSettings": "Toque em ⚙️ para acessar as configurações",
+      "sharedRoutines": "Rotinas compartilhadas",
+      "noShared": "Nenhuma rotina compartilhada ainda",
+      "noSharedHint": "Abra uma rotina e ative o modo público para compartilhá-la aqui"
     },
     "session": {
       "start": "Iniciar treino",
@@ -985,7 +1000,10 @@
       "language": "Lingua",
       "other": "Altro",
       "settings": "Impostazioni",
-      "tapSettings": "Tocca ⚙️ per accedere alle impostazioni"
+      "tapSettings": "Tocca ⚙️ per accedere alle impostazioni",
+      "sharedRoutines": "Routine condivise",
+      "noShared": "Nessuna routine condivisa ancora",
+      "noSharedHint": "Apri una routine e attiva la modalità pubblica per condividerla qui"
     },
     "session": {
       "start": "Inizia allenamento",
@@ -1156,7 +1174,10 @@
       "language": "言語",
       "other": "その他",
       "settings": "設定",
-      "tapSettings": "⚙️ をタップして設定を開く"
+      "tapSettings": "⚙️ をタップして設定を開く",
+      "sharedRoutines": "共有中のルーティン",
+      "noShared": "まだ共有しているルーティンがありません",
+      "noSharedHint": "ルーティンを開いて公開モードをオンにするとここに表示されます"
     },
     "session": {
       "start": "トレーニング開始",
@@ -1327,7 +1348,10 @@
       "language": "语言",
       "other": "其他",
       "settings": "设置",
-      "tapSettings": "点击 ⚙️ 进入设置"
+      "tapSettings": "点击 ⚙️ 进入设置",
+      "sharedRoutines": "已分享的计划",
+      "noShared": "还没有分享的计划",
+      "noSharedHint": "打开一个计划并开启公开模式，即可在此处显示"
     },
     "session": {
       "start": "开始训练",
