@@ -54,56 +54,102 @@ import { LucideSun, LucideMoon } from '@lucide/angular';
       <!-- Card -->
       <div class="w-full bg-surface rounded-3xl p-6 shadow-sm border border-edge">
 
-        <!-- Mode toggle -->
-        <div class="flex bg-canvas rounded-xl p-1 mb-5">
-          <button
-            class="flex-1 py-2 text-sm font-semibold rounded-lg transition-all"
-            [class.bg-surface]="mode() === 'login'"
-            [class.text-ink]="mode() === 'login'"
-            [class.shadow-sm]="mode() === 'login'"
-            [class.text-ink-muted]="mode() !== 'login'"
-            (click)="mode.set('login')"
-          >{{ 'auth.signIn' | t }}</button>
-          <button
-            class="flex-1 py-2 text-sm font-semibold rounded-lg transition-all"
-            [class.bg-surface]="mode() === 'register'"
-            [class.text-ink]="mode() === 'register'"
-            [class.shadow-sm]="mode() === 'register'"
-            [class.text-ink-muted]="mode() !== 'register'"
-            (click)="mode.set('register')"
-          >{{ 'auth.createAccount' | t }}</button>
-        </div>
-
-        @if (error()) {
-          <p class="text-sm text-danger bg-danger-muted rounded-xl px-3 py-2.5 mb-4">{{ error() }}</p>
+        <!-- Mode toggle (hidden in forgot mode) -->
+        @if (mode() !== 'forgot') {
+          <div class="flex bg-canvas rounded-xl p-1 mb-5">
+            <button
+              class="flex-1 py-2 text-sm font-semibold rounded-lg transition-all"
+              [class.bg-surface]="mode() === 'login'"
+              [class.text-ink]="mode() === 'login'"
+              [class.shadow-sm]="mode() === 'login'"
+              [class.text-ink-muted]="mode() !== 'login'"
+              (click)="mode.set('login')"
+            >{{ 'auth.signIn' | t }}</button>
+            <button
+              class="flex-1 py-2 text-sm font-semibold rounded-lg transition-all"
+              [class.bg-surface]="mode() === 'register'"
+              [class.text-ink]="mode() === 'register'"
+              [class.shadow-sm]="mode() === 'register'"
+              [class.text-ink-muted]="mode() !== 'register'"
+              (click)="mode.set('register')"
+            >{{ 'auth.createAccount' | t }}</button>
+          </div>
         }
 
-        <div class="space-y-3">
-          <div>
-            <label class="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-1.5 block">{{ 'auth.email' | t }}</label>
-            <input
-              class="w-full bg-canvas border border-edge rounded-xl px-4 py-3 text-base text-ink outline-none focus:border-brand transition"
-              type="email" placeholder="tu@email.com" #email
-            />
-          </div>
-          <div>
-            <label class="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-1.5 block">{{ 'auth.password' | t }}</label>
-            <input
-              class="w-full bg-canvas border border-edge rounded-xl px-4 py-3 text-base text-ink outline-none focus:border-brand transition"
-              type="password" placeholder="••••••••" #password
-              (keyup.enter)="submit(email.value, password.value)"
-            />
-          </div>
+        <!-- Forgot password view -->
+        @if (mode() === 'forgot') {
+          @if (sent()) {
+            <div class="text-center py-4 space-y-3">
+              <div class="text-4xl">📬</div>
+              <p class="font-semibold text-ink">{{ 'auth.checkEmail' | t }}</p>
+              <p class="text-sm text-ink-muted">{{ 'auth.checkEmailHint' | t }}</p>
+            </div>
+          } @else {
+            <div class="mb-4">
+              <p class="text-base font-semibold text-ink mb-1">{{ 'auth.forgotTitle' | t }}</p>
+              <p class="text-sm text-ink-muted">{{ 'auth.forgotHint' | t }}</p>
+            </div>
+            @if (error()) {
+              <p class="text-sm text-danger bg-danger-muted rounded-xl px-3 py-2.5 mb-4">{{ error() }}</p>
+            }
+            <div class="space-y-3">
+              <div>
+                <label class="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-1.5 block">{{ 'auth.email' | t }}</label>
+                <input
+                  class="w-full bg-canvas border border-edge rounded-xl px-4 py-3 text-base text-ink outline-none focus:border-brand transition"
+                  type="email" placeholder="tu@email.com" #forgotEmail
+                  (keyup.enter)="sendReset(forgotEmail.value)"
+                />
+              </div>
+              <button
+                class="w-full bg-brand text-white py-3.5 rounded-xl font-semibold cursor-pointer transition-all disabled:opacity-50 shadow-lg shadow-brand/25"
+                [disabled]="loading()"
+                (click)="sendReset(forgotEmail.value)"
+              >{{ loading() ? ('auth.loading' | t) : ('auth.sendLink' | t) }}</button>
+              <button class="w-full text-sm text-ink-muted py-1" (click)="mode.set('login'); error.set(null)">
+                ← {{ 'auth.backToLogin' | t }}
+              </button>
+            </div>
+          }
+        } @else {
+          @if (error()) {
+            <p class="text-sm text-danger bg-danger-muted rounded-xl px-3 py-2.5 mb-4">{{ error() }}</p>
+          }
 
-          <button
-            class="w-full bg-brand text-white py-3.5 rounded-xl font-semibold cursor-pointer transition-all disabled:opacity-50 shadow-lg shadow-brand/25 mt-2"
-            style="margin-top: 8px"
-            [disabled]="loading()"
-            (click)="submit(email.value, password.value)"
-          >
-            {{ loading() ? ('auth.loading' | t) : (mode() === 'login' ? ('auth.signIn' | t) : ('auth.createAccount' | t)) }}
-          </button>
-        </div>
+          <div class="space-y-3">
+            <div>
+              <label class="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-1.5 block">{{ 'auth.email' | t }}</label>
+              <input
+                class="w-full bg-canvas border border-edge rounded-xl px-4 py-3 text-base text-ink outline-none focus:border-brand transition"
+                type="email" placeholder="tu@email.com" #email
+              />
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="text-xs font-semibold text-ink-muted uppercase tracking-wider">{{ 'auth.password' | t }}</label>
+                @if (mode() === 'login') {
+                  <button class="text-xs text-brand font-medium" (click)="mode.set('forgot'); error.set(null)">
+                    {{ 'auth.forgotPassword' | t }}
+                  </button>
+                }
+              </div>
+              <input
+                class="w-full bg-canvas border border-edge rounded-xl px-4 py-3 text-base text-ink outline-none focus:border-brand transition"
+                type="password" placeholder="••••••••" #password
+                (keyup.enter)="submit(email.value, password.value)"
+              />
+            </div>
+
+            <button
+              class="w-full bg-brand text-white py-3.5 rounded-xl font-semibold cursor-pointer transition-all disabled:opacity-50 shadow-lg shadow-brand/25 mt-2"
+              style="margin-top: 8px"
+              [disabled]="loading()"
+              (click)="submit(email.value, password.value)"
+            >
+              {{ loading() ? ('auth.loading' | t) : (mode() === 'login' ? ('auth.signIn' | t) : ('auth.createAccount' | t)) }}
+            </button>
+          </div>
+        }
 
       </div>
     </div>
@@ -114,9 +160,10 @@ export class LoginComponent {
   private router = inject(Router);
   readonly theme = inject(ThemeService);
 
-  mode = signal<'login' | 'register'>('login');
+  mode = signal<'login' | 'register' | 'forgot'>('login');
   loading = signal(false);
   error = signal<string | null>(null);
+  sent = signal(false);
 
   async submit(email: string, password: string) {
     if (!email.trim() || !password.trim()) return;
@@ -133,6 +180,20 @@ export class LoginComponent {
       this.router.navigateByUrl(redirect);
     } catch (e: any) {
       this.error.set(e.message ?? 'Error desconocido');
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  async sendReset(email: string) {
+    if (!email.trim()) return;
+    this.loading.set(true);
+    this.error.set(null);
+    try {
+      await this.auth.resetPassword(email.trim());
+      this.sent.set(true);
+    } catch (e: any) {
+      this.error.set(e.message ?? 'Error');
     } finally {
       this.loading.set(false);
     }

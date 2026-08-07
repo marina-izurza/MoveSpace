@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { RoutinesListComponent } from './features/routines/pages/routines-list';
 import { RoutinesDetailComponent } from './features/routines/pages/routines-detail';
 import { LoginComponent } from './features/auth/pages/login';
+import { ResetPasswordComponent } from './features/auth/pages/reset-password';
 import { ExploreComponent } from './features/explore/pages/explore';
 import { SavedComponent } from './features/saved/pages/saved';
 import { ProfileComponent } from './features/profile/pages/profile';
@@ -11,7 +12,8 @@ import { authGuard } from './core/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'routines', pathMatch: 'full' },
-  { path: 'login',        component: LoginComponent },
+  { path: 'login',          component: LoginComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'r/:token',     component: RoutinePublicComponent },
   { path: 'routines',     component: RoutinesListComponent,   canActivate: [authGuard] },
   { path: 'routines/:id', component: RoutinesDetailComponent, canActivate: [authGuard] },
