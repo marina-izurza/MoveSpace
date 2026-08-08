@@ -157,16 +157,20 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
                 <input class="w-full bg-canvas border border-edge rounded-xl px-3 py-2.5 text-base text-ink outline-none focus:border-brand transition" #editName [value]="item.name" />
                 <input class="w-full bg-canvas border border-edge rounded-xl px-3 py-2.5 text-base text-ink outline-none focus:border-brand transition" #editUrl [value]="item.videoUrl" />
                 <input class="w-full bg-canvas border border-edge rounded-xl px-3 py-2.5 text-base text-ink outline-none focus:border-brand transition" [placeholder]="'detail.notesPlaceholder' | t" #editNotes [value]="item.notes ?? ''" />
-                <div class="flex gap-2">
+                <div class="flex gap-2 items-center">
                   <button class="bg-brand text-white px-4 py-2 rounded-xl cursor-pointer text-sm font-semibold"
                     (click)="saveExercise(item.id, editName.value, editUrl.value, editNotes.value)">{{ 'detail.save' | t }}</button>
                   <button class="text-ink-muted px-4 py-2 rounded-xl cursor-pointer text-sm bg-canvas"
                     (click)="editingItemId.set(null)">{{ 'detail.cancel' | t }}</button>
+                  <button class="ml-auto flex items-center justify-center w-9 h-9 rounded-xl text-danger hover:bg-danger-muted transition cursor-pointer"
+                    (click)="deleteExercise(item.id); editingItemId.set(null)">
+                    <svg lucideTrash [size]="15" [strokeWidth]="2"></svg>
+                  </button>
                 </div>
               </div>
             } @else {
               <div class="bg-surface border border-edge rounded-2xl px-4 py-3 shadow-sm" cdkDrag [cdkDragData]="item">
-                <ng-container *ngTemplateOutlet="exerciseRow; context: { $implicit: item }"></ng-container>
+                <ng-container *ngTemplateOutlet="exerciseRow; context: { $implicit: item, cache: mediaCache() }"></ng-container>
               </div>
             }
           }
@@ -214,16 +218,20 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
                       <input class="w-full bg-canvas border border-edge rounded-xl px-3 py-2 text-base text-ink outline-none focus:border-brand transition" #sEditName [value]="exercise.name" />
                       <input class="w-full bg-canvas border border-edge rounded-xl px-3 py-2 text-base text-ink outline-none focus:border-brand transition" #sEditUrl [value]="exercise.videoUrl" />
                       <input class="w-full bg-canvas border border-edge rounded-xl px-3 py-2 text-base text-ink outline-none focus:border-brand transition" [placeholder]="'detail.notesPlaceholder' | t" #sEditNotes [value]="exercise.notes ?? ''" />
-                      <div class="flex gap-2">
+                      <div class="flex gap-2 items-center">
                         <button class="bg-brand text-white px-3 py-1.5 rounded-lg cursor-pointer text-sm font-semibold"
                           (click)="saveExercise(exercise.id, sEditName.value, sEditUrl.value, sEditNotes.value)">{{ 'detail.save' | t }}</button>
                         <button class="text-ink-muted px-3 py-1.5 rounded-lg cursor-pointer text-sm bg-canvas"
                           (click)="editingItemId.set(null)">{{ 'detail.cancel' | t }}</button>
+                        <button class="ml-auto flex items-center justify-center w-9 h-9 rounded-xl text-danger hover:bg-danger-muted transition cursor-pointer"
+                          (click)="deleteExercise(exercise.id); editingItemId.set(null)">
+                          <svg lucideTrash [size]="15" [strokeWidth]="2"></svg>
+                        </button>
                       </div>
                     </div>
                   } @else {
                     <div class="bg-canvas border border-edge rounded-xl px-3 py-2.5" cdkDrag [cdkDragData]="exercise">
-                      <ng-container *ngTemplateOutlet="exerciseRow; context: { $implicit: exercise }"></ng-container>
+                      <ng-container *ngTemplateOutlet="exerciseRow; context: { $implicit: exercise, cache: mediaCache() }"></ng-container>
                     </div>
                   }
                 } @empty {
@@ -356,14 +364,14 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
     }
 
     <!-- Shared exercise row template -->
-    <ng-template #exerciseRow let-exercise>
+    <ng-template #exerciseRow let-exercise let-cache="cache">
       <div>
         <div class="flex items-center justify-between gap-2">
           <div class="flex items-center gap-3 min-w-0 flex-1 cursor-pointer" (click)="toggleExpanded(exercise.id)">
             <button cdkDragHandle class="text-edge hover:text-ink-muted cursor-grab active:cursor-grabbing touch-none shrink-0 transition" (click)="$event.stopPropagation()">
               <svg lucideGripVertical [size]="16" [strokeWidth]="2"></svg>
             </button>
-            @if (thumbnail(exercise.videoUrl); as thumb) {
+            @if (thumbFor(exercise.videoUrl, cache); as thumb) {
               <img [src]="thumb" class="w-16 h-9 rounded-lg object-cover shrink-0 bg-edge" loading="lazy" />
             } @else {
               <app-platform-icon [url]="exercise.videoUrl" mode="thumbnail" />
@@ -381,32 +389,26 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
               }
             </div>
           </div>
-          <div class="flex items-center gap-0.5 shrink-0">
-            <button class="flex items-center justify-center w-8 h-8 rounded-xl text-ink-muted hover:text-brand hover:bg-brand-light transition cursor-pointer"
-              (click)="editingItemId.set(exercise.id)" title="Edit">
-              <svg lucidePencil [size]="14" [strokeWidth]="2"></svg>
-            </button>
-            <button class="flex items-center justify-center w-8 h-8 rounded-xl text-ink-muted hover:text-danger hover:bg-danger-muted transition cursor-pointer"
-              (click)="deleteExercise(exercise.id)" title="Delete">
-              <svg lucideTrash [size]="14" [strokeWidth]="2"></svg>
-            </button>
-          </div>
+          <button class="flex items-center justify-center w-8 h-8 rounded-xl text-ink-muted hover:text-brand hover:bg-brand-light transition cursor-pointer shrink-0"
+            (click)="editingItemId.set(exercise.id); $event.stopPropagation()" title="Edit">
+            <svg lucidePencil [size]="14" [strokeWidth]="2"></svg>
+          </button>
         </div>
         @if (expandedExerciseId() === exercise.id) {
           <div class="mt-2 pt-2 border-t border-edge/50 space-y-2">
-            @if (videoTitle(exercise.videoUrl); as vt) {
+            @if (titleFor(exercise.videoUrl, cache); as vt) {
               <div>
                 <p class="text-[10px] font-bold text-ink-muted uppercase tracking-widest mb-0.5">Título</p>
                 <p class="text-xs text-ink-muted">{{ vt }}</p>
               </div>
             }
-            @if (videoDesc(exercise.videoUrl); as vd) {
+            @if (descFor(exercise.videoUrl, cache); as vd) {
               <div>
                 <p class="text-[10px] font-bold text-ink-muted uppercase tracking-widest mb-0.5">Descripción</p>
                 <p class="text-xs text-ink-muted whitespace-pre-line leading-relaxed">{{ vd }}</p>
               </div>
             }
-            @if (!videoTitle(exercise.videoUrl) && !videoDesc(exercise.videoUrl)) {
+            @if (!titleFor(exercise.videoUrl, cache) && !descFor(exercise.videoUrl, cache)) {
               <p class="text-xs text-ink-muted/50 italic">Sin información disponible</p>
             }
           </div>
@@ -455,6 +457,15 @@ export class RoutinesDetailComponent implements OnDestroy {
         this.elapsedSeconds.set(0);
       }
     });
+
+    effect(() => {
+      const routine = this.routine();
+      if (!routine) return;
+      for (const item of routine.items) {
+        if (item.type === 'exercise') this._triggerFetch(item.videoUrl);
+        else for (const ex of (item as Section).exercises) this._triggerFetch(ex.videoUrl);
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -471,7 +482,7 @@ export class RoutinesDetailComponent implements OnDestroy {
     await this.sessions.completeSession();
   }
 
-  private readonly mediaCache = signal<Record<string, VideoInfo>>({});
+  readonly mediaCache = signal<Record<string, VideoInfo>>({});
   private readonly fetchingUrls = new Set<string>();
 
   editingRoutineName = signal(false);
@@ -580,27 +591,24 @@ export class RoutinesDetailComponent implements OnDestroy {
     return getPlatformName(detectPlatform(url));
   }
 
-  thumbnail(url: string): string | null {
-    if (!url) return null;
-    const cached = this.mediaCache()[url];
-    if (cached) return cached.thumb || null;
-
-    const ytThumb = getThumbnailUrl(url);
-    if (!this.fetchingUrls.has(url)) {
-      this.fetchingUrls.add(url);
-      fetchVideoInfo(url).then(info => {
-        this.mediaCache.update(c => ({ ...c, [url]: info }));
-      });
-    }
-    return ytThumb;
+  private _triggerFetch(url: string) {
+    if (!url || this.fetchingUrls.has(url)) return;
+    this.fetchingUrls.add(url);
+    fetchVideoInfo(url).then(info => {
+      this.mediaCache.update(c => ({ ...c, [url]: info }));
+    });
   }
 
-  videoTitle(url: string): string | null {
-    return this.mediaCache()[url]?.title ?? null;
+  thumbFor(url: string, cache: Record<string, VideoInfo>): string | null {
+    return cache[url]?.thumb ?? getThumbnailUrl(url) ?? null;
   }
 
-  videoDesc(url: string): string | null {
-    return this.mediaCache()[url]?.desc ?? null;
+  titleFor(url: string, cache: Record<string, VideoInfo>): string | null {
+    return cache[url]?.title ?? null;
+  }
+
+  descFor(url: string, cache: Record<string, VideoInfo>): string | null {
+    return cache[url]?.desc ?? null;
   }
 
   toggleExpanded(id: string) {

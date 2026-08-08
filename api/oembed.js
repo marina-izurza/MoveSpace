@@ -18,6 +18,25 @@ async function resolveUrl(url) {
   return url;
 }
 
+async function scrapeOgImage(url) {
+  try {
+    const res = await fetch(url, {
+      headers: {
+        'User-Agent': 'facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)',
+        'Accept': 'text/html,application/xhtml+xml',
+      },
+      redirect: 'follow',
+    });
+    if (!res.ok) return null;
+    const html = await res.text();
+    const m = html.match(/property=["']og:image["'][^>]+content=["']([^"']+)["']/) ||
+              html.match(/content=["']([^"']+)["'][^>]+property=["']og:image["']/);
+    return m ? m[1].replace(/&amp;/g, '&') : null;
+  } catch {
+    return null;
+  }
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
 
@@ -30,7 +49,13 @@ module.exports = async (req, res) => {
 
   try {
     const upstream = await fetch(ENDPOINTS[provider](encodeURIComponent(url)));
-    if (!upstream.ok) return res.status(upstream.status).end();
+    if (!upstream.ok) {
+      if (provider === 'instagram') {
+        const thumb = await scrapeOgImage(url);
+        if (thumb) return res.status(200).json({ thumbnail_url: thumb });
+      }
+      return res.status(upstream.status).end();
+    }
     const data = await upstream.json();
     res.status(200).json(data);
   } catch {
