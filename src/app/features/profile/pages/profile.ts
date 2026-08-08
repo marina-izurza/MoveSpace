@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth.service';
 import { ThemeService } from '../../../core/theme.service';
 import { LanguageService } from '../../../core/language.service';
-import { AccentService } from '../../../core/accent.service';
+import { AccentService, Accent } from '../../../core/accent.service';
 import { RoutinesStore } from '../../routines/stores/routines.store';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 import {
@@ -252,7 +252,7 @@ import {
               <button
                 class="w-12 h-6 rounded-full relative transition-colors duration-300 focus:outline-none shrink-0"
                 [class.bg-brand]="theme.dark()" [class.bg-edge]="!theme.dark()"
-                (click)="theme.toggle()"
+                (click)="toggleTheme()"
               >
                 <span class="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-all duration-300"
                   [style.left]="theme.dark() ? '26px' : '2px'"></span>
@@ -269,7 +269,7 @@ import {
                     class="w-7 h-7 rounded-full transition-all duration-150 shrink-0"
                     [style.background]="a.color"
                     [style.box-shadow]="accentSvc.accent() === a.id ? '0 0 0 2px var(--color-surface), 0 0 0 4px ' + a.color : 'none'"
-                    (click)="accentSvc.set(a.id)"
+                    (click)="setAccent(a.id)"
                   ></button>
                 }
               </div>
@@ -480,6 +480,16 @@ export class ProfileComponent {
     await navigator.clipboard.writeText(`${window.location.origin}/r/${r.shareToken}`);
     this.copiedId.set(r.id);
     setTimeout(() => this.copiedId.set(null), 2000);
+  }
+
+  toggleTheme() {
+    this.theme.toggle();
+    this.auth.savePreferences({ theme: this.theme.dark() ? 'dark' : 'light' });
+  }
+
+  setAccent(id: Accent) {
+    this.accentSvc.set(id);
+    this.auth.savePreferences({ accent: id });
   }
 
   async signOut() {
