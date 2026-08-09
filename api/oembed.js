@@ -1,8 +1,12 @@
+const INSTAGRAM_TOKEN = process.env.INSTAGRAM_TOKEN;
+
 const ENDPOINTS = {
   youtube:   (url) => `https://www.youtube.com/oembed?url=${url}&format=json`,
   pinterest: (url) => `https://www.pinterest.com/oembed.json?url=${url}`,
   tiktok:    (url) => `https://www.tiktok.com/oembed?url=${url}`,
-  instagram: (url) => `https://www.instagram.com/oembed/?url=${url}`,
+  instagram: (url) => INSTAGRAM_TOKEN
+    ? `https://graph.facebook.com/v18.0/instagram_oembed?url=${url}&access_token=${INSTAGRAM_TOKEN}&fields=thumbnail_url,title,author_name`
+    : `https://www.instagram.com/oembed/?url=${url}`,
 };
 
 async function resolveUrl(url) {
