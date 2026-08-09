@@ -22,7 +22,13 @@ async function resolveUrl(url) {
   return url;
 }
 
-async function scrapeOgImage(url) {
+function extractOg(html, prop) {
+  const m = html.match(new RegExp(`property=["']${prop}["'][^>]+content=["']([^"']+)["']`)) ||
+            html.match(new RegExp(`content=["']([^"']+)["'][^>]+property=["']${prop}["']`));
+  return m ? m[1].replace(/&amp;/g, '&') : null;
+}
+
+async function scrapeOgData(url) {
   try {
     const res = await fetch(url, {
       headers: {
@@ -33,9 +39,11 @@ async function scrapeOgImage(url) {
     });
     if (!res.ok) return null;
     const html = await res.text();
-    const m = html.match(/property=["']og:image["'][^>]+content=["']([^"']+)["']/) ||
-              html.match(/content=["']([^"']+)["'][^>]+property=["']og:image["']/);
-    return m ? m[1].replace(/&amp;/g, '&') : null;
+    return {
+      thumbnail_url: extractOg(html, 'og:image'),
+      title: extractOg(html, 'og:title'),
+      description: extractOg(html, 'og:description'),
+    };
   } catch {
     return null;
   }
@@ -51,16 +59,22 @@ module.exports = async (req, res) => {
 
   url = await resolveUrl(url);
 
+  const needsOg = provider === 'instagram' || provider === 'pinterest' || provider === 'tiktok';
+
   try {
-    const upstream = await fetch(ENDPOINTS[provider](encodeURIComponent(url)));
+    const [upstream, og] = await Promise.all([
+      fetch(ENDPOINTS[provider](encodeURIComponent(url))),
+      needsOg ? scrapeOgData(url) : Promise.resolve(null),
+    ]);
+
     if (!upstream.ok) {
-      if (provider === 'instagram' || provider === 'pinterest' || provider === 'tiktok') {
-        const thumb = await scrapeOgImage(url);
-        if (thumb) return res.status(200).json({ thumbnail_url: thumb });
-      }
+      if (needsOg && og?.thumbnail_url) return res.status(200).json(og);
       return res.status(upstream.status).end();
     }
+
     const data = await upstream.json();
+    if (og?.description && !data.description) data.description = og.description;
+    if (og?.thumbnail_url && !data.thumbnail_url) data.thumbnail_url = og.thumbnail_url;
     res.status(200).json(data);
   } catch {
     res.status(500).end();

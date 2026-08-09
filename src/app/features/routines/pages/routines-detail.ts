@@ -396,19 +396,16 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
         </div>
         @if (expandedExerciseId() === exercise.id) {
           <div class="mt-2 pt-2 border-t border-edge/50 space-y-2">
+            @if (authorFor(exercise.videoUrl, cache); as va) {
+              <p class="text-xs text-ink-muted font-medium">@{{ va }}</p>
+            }
             @if (titleFor(exercise.videoUrl, cache); as vt) {
-              <div>
-                <p class="text-[10px] font-bold text-ink-muted uppercase tracking-widest mb-0.5">Título</p>
-                <p class="text-xs text-ink-muted">{{ vt }}</p>
-              </div>
+              <p class="text-xs text-ink-muted whitespace-pre-line leading-relaxed">{{ vt }}</p>
             }
             @if (descFor(exercise.videoUrl, cache); as vd) {
-              <div>
-                <p class="text-[10px] font-bold text-ink-muted uppercase tracking-widest mb-0.5">Descripción</p>
-                <p class="text-xs text-ink-muted whitespace-pre-line leading-relaxed">{{ vd }}</p>
-              </div>
+              <p class="text-xs text-ink-muted whitespace-pre-line leading-relaxed">{{ vd }}</p>
             }
-            @if (!titleFor(exercise.videoUrl, cache) && !descFor(exercise.videoUrl, cache)) {
+            @if (!authorFor(exercise.videoUrl, cache) && !titleFor(exercise.videoUrl, cache) && !descFor(exercise.videoUrl, cache)) {
               <p class="text-xs text-ink-muted/50 italic">Sin información disponible</p>
             }
           </div>
@@ -609,6 +606,10 @@ export class RoutinesDetailComponent implements OnDestroy {
 
   descFor(url: string, cache: Record<string, VideoInfo>): string | null {
     return cache[url]?.desc ?? null;
+  }
+
+  authorFor(url: string, cache: Record<string, VideoInfo>): string | null {
+    return cache[url]?.author ?? null;
   }
 
   toggleExpanded(id: string) {

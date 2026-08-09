@@ -3,6 +3,7 @@ export type Platform = 'youtube' | 'tiktok' | 'instagram' | 'pinterest' | 'x' | 
 export interface VideoInfo {
   thumb: string | null;
   title: string | null;
+  author: string | null;
   desc: string | null;
 }
 
@@ -54,14 +55,15 @@ async function proxyOEmbed(provider: string, url: string): Promise<Record<string
 
 export async function fetchVideoInfo(url: string): Promise<VideoInfo> {
   const platform = detectPlatform(url);
-  if (platform === 'unknown' || platform === 'x') return { thumb: null, title: null, desc: null };
+  if (platform === 'unknown' || platform === 'x') return { thumb: null, title: null, author: null, desc: null };
 
   const data = await proxyOEmbed(platform, url);
-  if (!data) return { thumb: getThumbnailUrl(url), title: null, desc: null };
+  if (!data) return { thumb: getThumbnailUrl(url), title: null, author: null, desc: null };
 
   return {
     thumb: data['thumbnail_url'] ?? getThumbnailUrl(url) ?? null,
     title: data['title'] ?? null,
+    author: data['author_name'] ?? null,
     desc: data['description'] ?? null,
   };
 }
