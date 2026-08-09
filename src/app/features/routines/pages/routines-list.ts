@@ -120,7 +120,8 @@ import { LanguageService } from '../../../core/language.service';
 
       <!-- FAB -->
       @if (!adding()) {
-        <div class="fixed bottom-24 left-1/2 -translate-x-1/2 w-full max-w-107.5 flex justify-end px-5 pointer-events-none z-40">
+        <div class="fixed left-1/2 -translate-x-1/2 w-full max-w-107.5 flex justify-end px-5 pointer-events-none z-40"
+             style="bottom: calc(6rem + env(safe-area-inset-bottom))">
           <button
             class="pointer-events-auto w-14 h-14 bg-brand rounded-2xl shadow-xl shadow-brand/35 flex items-center justify-center text-white"
             (click)="adding.set(true)"

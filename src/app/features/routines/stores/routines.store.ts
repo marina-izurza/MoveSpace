@@ -207,4 +207,14 @@ export class RoutinesStore {
     ));
     await this.api.deleteExercise(exerciseId);
   }
+
+  // ── Visibilidad / compartir ───────────────────────────────────────────────
+
+  async setPublic(routineId: string, isPublic: boolean): Promise<void> {
+    const token = await this.api.setPublic(routineId, isPublic);
+    this.patch(r => ({ ...r, isPublic, shareToken: token ?? undefined }));
+    this._listResource.set(this.routines().map(r =>
+      r.id === routineId ? { ...r, isPublic } : r
+    ));
+  }
 }

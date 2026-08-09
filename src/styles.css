@@ -99,6 +99,15 @@ body {
 
 /* ── CDK drag-and-drop ───────────────────────────────────────────────────── */
 
+/* Section drop zones: highlight and expand when receiving a dragged item */
+.cdk-drop-list-receiving {
+  min-height: 56px;
+  border-radius: 8px;
+  outline: 2px dashed var(--color-brand);
+  outline-offset: -2px;
+  background: color-mix(in srgb, var(--color-brand) 6%, transparent);
+}
+
 .cdk-drag-preview {
   border-radius: 16px;
   box-shadow: 0 12px 32px rgba(123, 108, 246, 0.25);

@@ -1,10 +1,9 @@
-import { Component, computed, inject, signal, effect, OnDestroy } from '@angular/core';
+import { Component, computed, inject, signal, effect, OnDestroy, AfterViewInit, ViewChildren, QueryList } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RoutinesStore } from '../stores/routines.store';
-import { RoutinesApiService } from '../services/routines-api.service';
 import { SessionsStore } from '../../sessions/stores/sessions.store';
 import { formatDuration } from '../../sessions/models/WorkoutSession';
-import { LucidePencil, LucideTrash, LucideCheck, LucideX, LucideGripVertical, LucideChevronDown, LucidePlay, LucideSquare } from '@lucide/angular';
+import { LucidePencil, LucideTrash, LucideCheck, LucideX, LucideGripVertical, LucideChevronDown, LucidePlay, LucideSquare, LucideRotateCcw } from '@lucide/angular';
 import { PlatformIconComponent } from '../components/platform-icon/platform-icon';
 import { EmojiPickerComponent } from '../../../shared/components/emoji-picker/emoji-picker';
 import { detectPlatform, fetchVideoInfo, fetchVideoTitle, getPlatformName, getThumbnailUrl, VideoInfo } from '../utils/platform';
@@ -16,7 +15,7 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 @Component({
   selector: 'app-routines-detail',
   imports: [LucidePencil, LucideTrash, LucideCheck, LucideX, LucideGripVertical, LucideChevronDown,
-            LucidePlay, LucideSquare,
+            LucidePlay, LucideSquare, LucideRotateCcw,
             PlatformIconComponent, EmojiPickerComponent, CdkDropListGroup, CdkDropList, CdkDrag, CdkDragHandle,
             NgTemplateOutlet, TranslatePipe],
   template: `
@@ -154,7 +153,13 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
           @if (item.type === 'exercise') {
             @if (editingItemId() === item.id) {
               <div class="bg-surface border border-brand/30 rounded-2xl p-4 space-y-2 shadow-sm" cdkDrag [cdkDragData]="item">
-                <input class="w-full bg-canvas border border-edge rounded-xl px-3 py-2.5 text-base text-ink outline-none focus:border-brand transition" #editName [value]="item.name" />
+                <div class="flex gap-2">
+                  <input class="flex-1 bg-canvas border border-edge rounded-xl px-3 py-2.5 text-base text-ink outline-none focus:border-brand transition" #editName [value]="item.name" />
+                  <button class="w-9 h-10 flex items-center justify-center rounded-xl bg-canvas border border-edge text-ink-muted hover:text-brand hover:border-brand transition shrink-0" title="Recuperar título original"
+                    (click)="refetchInfo(editUrl.value, editName)">
+                    <svg lucideRotateCcw [size]="14" [strokeWidth]="2"></svg>
+                  </button>
+                </div>
                 <input class="w-full bg-canvas border border-edge rounded-xl px-3 py-2.5 text-base text-ink outline-none focus:border-brand transition" #editUrl [value]="item.videoUrl" />
                 <input class="w-full bg-canvas border border-edge rounded-xl px-3 py-2.5 text-base text-ink outline-none focus:border-brand transition" [placeholder]="'detail.notesPlaceholder' | t" #editNotes [value]="item.notes ?? ''" />
                 <div class="flex gap-2 items-center">
@@ -215,7 +220,13 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
                 @for (exercise of item.exercises; track exercise.id) {
                   @if (editingItemId() === exercise.id) {
                     <div class="border border-brand/30 rounded-xl p-3 space-y-2 bg-surface" cdkDrag [cdkDragData]="exercise">
-                      <input class="w-full bg-canvas border border-edge rounded-xl px-3 py-2 text-base text-ink outline-none focus:border-brand transition" #sEditName [value]="exercise.name" />
+                      <div class="flex gap-2">
+                        <input class="flex-1 bg-canvas border border-edge rounded-xl px-3 py-2 text-base text-ink outline-none focus:border-brand transition" #sEditName [value]="exercise.name" />
+                        <button class="w-9 h-10 flex items-center justify-center rounded-xl bg-canvas border border-edge text-ink-muted hover:text-brand hover:border-brand transition shrink-0" title="Recuperar título original"
+                          (click)="refetchInfo(sEditUrl.value, sEditName)">
+                          <svg lucideRotateCcw [size]="14" [strokeWidth]="2"></svg>
+                        </button>
+                      </div>
                       <input class="w-full bg-canvas border border-edge rounded-xl px-3 py-2 text-base text-ink outline-none focus:border-brand transition" #sEditUrl [value]="exercise.videoUrl" />
                       <input class="w-full bg-canvas border border-edge rounded-xl px-3 py-2 text-base text-ink outline-none focus:border-brand transition" [placeholder]="'detail.notesPlaceholder' | t" #sEditNotes [value]="exercise.notes ?? ''" />
                       <div class="flex gap-2 items-center">
@@ -273,7 +284,8 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
       </div>
 
       <!-- Session FAB -->
-      <div class="fixed bottom-24 left-0 right-0 flex justify-center px-5 z-40 pointer-events-none">
+      <div class="fixed left-0 right-0 flex justify-center px-5 z-40 pointer-events-none"
+           style="bottom: calc(6rem + env(safe-area-inset-bottom))">
         @if (isActiveSession()) {
           <div class="pointer-events-auto flex items-center gap-3 bg-surface border border-brand/20 rounded-2xl px-4 py-3 shadow-xl shadow-brand/15">
             <div class="flex flex-col min-w-0">
@@ -414,9 +426,8 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
     </ng-template>
   `
 })
-export class RoutinesDetailComponent implements OnDestroy {
+export class RoutinesDetailComponent implements OnDestroy, AfterViewInit {
   private store = inject(RoutinesStore);
-  private api = inject(RoutinesApiService);
   readonly sessions = inject(SessionsStore);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -465,6 +476,18 @@ export class RoutinesDetailComponent implements OnDestroy {
     });
   }
 
+  @ViewChildren(CdkDropList) private _dropLists!: QueryList<CdkDropList>;
+
+  ngAfterViewInit() {
+    this._connectLists();
+    this._dropLists.changes.subscribe(() => this._connectLists());
+  }
+
+  private _connectLists() {
+    const all = this._dropLists.toArray();
+    all.forEach(list => { list.connectedTo = all.filter(l => l !== list); });
+  }
+
   ngOnDestroy() {
     if (this._timerRef) clearInterval(this._timerRef);
   }
@@ -492,17 +515,16 @@ export class RoutinesDetailComponent implements OnDestroy {
   showShareSheet = signal(false);
   shareLoading = signal(false);
   shareCopied = signal(false);
-  private _isPublicOverride = signal<boolean | null>(null);
-  private _shareTokenOverride = signal<string | null | undefined>(undefined);
 
-  readonly isPublic = computed(() => this._isPublicOverride() ?? this.store.routine()?.isPublic ?? false);
-  readonly shareToken = computed(() => {
-    const ov = this._shareTokenOverride();
-    return ov !== undefined ? ov : (this.store.routine()?.shareToken ?? null);
-  });
+  readonly isPublic = computed(() => this.store.routine()?.isPublic ?? false);
+  readonly shareToken = computed(() => this.store.routine()?.shareToken ?? null);
   readonly shareUrl = computed(() => {
     const t = this.shareToken();
-    return t ? `${window.location.origin}/r/${t}` : null;
+    if (!t) return null;
+    const origin = typeof window !== 'undefined' && window.location.protocol.startsWith('http')
+      ? window.location.origin
+      : 'https://movespace-app.vercel.app';
+    return `${origin}/r/${t}`;
   });
   readonly canNativeShare = typeof navigator !== 'undefined' && !!navigator.share;
 
@@ -516,8 +538,9 @@ export class RoutinesDetailComponent implements OnDestroy {
   }
 
   addRootExercise(name: string, videoUrl: string, notes: string) {
-    if (!name.trim() || !videoUrl.trim()) return;
-    this.store.addExercise(this.id(), { name, videoUrl, notes: notes.trim() || undefined });
+    if (!videoUrl.trim()) return;
+    const finalName = name.trim() || getPlatformName(detectPlatform(videoUrl));
+    this.store.addExercise(this.id(), { name: finalName, videoUrl, notes: notes.trim() || undefined });
   }
 
   deleteExercise(exerciseId: string) {
@@ -525,8 +548,9 @@ export class RoutinesDetailComponent implements OnDestroy {
   }
 
   saveExercise(id: string, name: string, videoUrl: string, notes: string) {
-    if (!name.trim() || !videoUrl.trim()) return;
-    this.store.updateExercise(this.id(), id, { name, videoUrl, notes: notes.trim() || undefined });
+    if (!videoUrl.trim()) return;
+    const finalName = name.trim() || getPlatformName(detectPlatform(videoUrl));
+    this.store.updateExercise(this.id(), id, { name: finalName, videoUrl, notes: notes.trim() || undefined });
     this.editingItemId.set(null);
   }
 
@@ -573,8 +597,9 @@ export class RoutinesDetailComponent implements OnDestroy {
   }
 
   addSectionExercise(sectionId: string, name: string, videoUrl: string, notes: string) {
-    if (!name.trim() || !videoUrl.trim()) return;
-    this.store.addExercise(this.id(), { name, videoUrl, notes: notes.trim() || undefined }, sectionId);
+    if (!videoUrl.trim()) return;
+    const finalName = name.trim() || getPlatformName(detectPlatform(videoUrl));
+    this.store.addExercise(this.id(), { name: finalName, videoUrl, notes: notes.trim() || undefined }, sectionId);
     this.addingToSection.set(null);
   }
 
@@ -623,12 +648,9 @@ export class RoutinesDetailComponent implements OnDestroy {
   }
 
   async togglePublic() {
-    const newValue = !this.isPublic();
     this.shareLoading.set(true);
     try {
-      const token = await this.api.setPublic(this.id(), newValue);
-      this._isPublicOverride.set(newValue);
-      if (token) this._shareTokenOverride.set(token);
+      await this.store.setPublic(this.id(), !this.isPublic());
     } finally {
       this.shareLoading.set(false);
     }
@@ -646,6 +668,12 @@ export class RoutinesDetailComponent implements OnDestroy {
     const url = this.shareUrl();
     if (!url) return;
     try { await navigator.share({ title: this.store.routine()?.name, url }); } catch {}
+  }
+
+  async refetchInfo(url: string, nameInput: HTMLInputElement) {
+    if (!url.trim()) return;
+    const info = await fetchVideoInfo(url);
+    if (info.title) nameInput.value = info.title;
   }
 
   back() {

@@ -123,7 +123,7 @@ import {
         <div class="h-px bg-edge mx-5 shrink-0"></div>
 
         <!-- Scrollable content -->
-        <div class="overflow-y-auto px-5 pt-4 pb-10 space-y-3">
+        <div class="overflow-y-auto px-5 pt-4 space-y-3" style="padding-bottom: calc(2.5rem + env(safe-area-inset-bottom))">
 
           <!-- ── CUENTA ── -->
           <div class="bg-surface rounded-2xl border border-edge shadow-sm overflow-hidden">
