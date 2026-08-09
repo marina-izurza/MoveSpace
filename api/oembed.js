@@ -54,7 +54,7 @@ module.exports = async (req, res) => {
   try {
     const upstream = await fetch(ENDPOINTS[provider](encodeURIComponent(url)));
     if (!upstream.ok) {
-      if (provider === 'instagram') {
+      if (provider === 'instagram' || provider === 'pinterest' || provider === 'tiktok') {
         const thumb = await scrapeOgImage(url);
         if (thumb) return res.status(200).json({ thumbnail_url: thumb });
       }
