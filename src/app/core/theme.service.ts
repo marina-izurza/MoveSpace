@@ -22,8 +22,10 @@ export class ThemeService {
 
   private _syncStatusBar(isDark: boolean) {
     if (!Capacitor.isNativePlatform()) return;
+    const bgColor = isDark ? '#13121F' : '#F5F4FF';
     import('@capacitor/status-bar').then(({ StatusBar, Style }) => {
       StatusBar.setStyle({ style: isDark ? Style.Light : Style.Dark });
+      StatusBar.setBackgroundColor({ color: bgColor });
     });
   }
 }
