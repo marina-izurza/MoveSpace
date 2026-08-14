@@ -32,10 +32,9 @@ export class RoutinesApiService {
       this.db.from('exercises').select('routine_id')
     ]);
     if (rErr) throw rErr;
-    if (eErr) throw eErr;
 
     const countMap = new Map<string, number>();
-    for (const e of exercises!) {
+    for (const e of (eErr ? [] : exercises!)) {
       countMap.set(e.routine_id, (countMap.get(e.routine_id) ?? 0) + 1);
     }
 

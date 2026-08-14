@@ -39,7 +39,9 @@
       "empty": "No routines yet",
       "emptyHint": "Tap + to create your first routine",
       "inboxDefault": "Sort later",
-      "inboxBadge": "Inbox"
+      "inboxBadge": "Inbox",
+      "loadError": "Couldn't load your routines",
+      "retry": "Try again"
     },
     "detail": {
       "back": "Back",
@@ -214,7 +216,9 @@
       "empty": "Sin rutinas todavía",
       "emptyHint": "Pulsa + para crear tu primera rutina",
       "inboxDefault": "Sin clasificar",
-      "inboxBadge": "Inbox"
+      "inboxBadge": "Inbox",
+      "loadError": "No se pudieron cargar tus rutinas",
+      "retry": "Reintentar"
     },
     "detail": {
       "back": "Volver",
@@ -389,7 +393,9 @@
       "empty": "Aucune routine pour l'instant",
       "emptyHint": "Appuyez sur + pour créer votre première routine",
       "inboxDefault": "À classer plus tard",
-      "inboxBadge": "Inbox"
+      "inboxBadge": "Inbox",
+      "loadError": "Impossible de charger vos routines",
+      "retry": "Réessayer"
     },
     "detail": {
       "back": "Retour",
@@ -563,7 +569,9 @@
       "empty": "Noch keine Routinen",
       "emptyHint": "Tippe auf + um deine erste Routine zu erstellen",
       "inboxDefault": "Später sortieren",
-      "inboxBadge": "Inbox"
+      "inboxBadge": "Inbox",
+      "loadError": "Routinen konnten nicht geladen werden",
+      "retry": "Erneut versuchen"
     },
     "detail": {
       "back": "Zurück",
@@ -737,7 +745,9 @@
       "empty": "Nenhuma rotina ainda",
       "emptyHint": "Toque em + para criar sua primeira rotina",
       "inboxDefault": "Classificar depois",
-      "inboxBadge": "Inbox"
+      "inboxBadge": "Inbox",
+      "loadError": "Não foi possível carregar suas rotinas",
+      "retry": "Tentar novamente"
     },
     "detail": {
       "back": "Voltar",
@@ -911,7 +921,9 @@
       "empty": "Nessuna routine ancora",
       "emptyHint": "Tocca + per creare la tua prima routine",
       "inboxDefault": "Da classificare dopo",
-      "inboxBadge": "Inbox"
+      "inboxBadge": "Inbox",
+      "loadError": "Impossibile caricare le routine",
+      "retry": "Riprova"
     },
     "detail": {
       "back": "Indietro",
@@ -1085,7 +1097,9 @@
       "empty": "まだルーティンがありません",
       "emptyHint": "+ を押して最初のルーティンを作成しましょう",
       "inboxDefault": "あとで整理",
-      "inboxBadge": "受信トレイ"
+      "inboxBadge": "受信トレイ",
+      "loadError": "ルーティンを読み込めませんでした",
+      "retry": "再試行"
     },
     "detail": {
       "back": "戻る",
@@ -1259,7 +1273,9 @@
       "empty": "还没有计划",
       "emptyHint": "点击 + 创建您的第一个计划",
       "inboxDefault": "稍后整理",
-      "inboxBadge": "收件箱"
+      "inboxBadge": "收件箱",
+      "loadError": "无法加载计划",
+      "retry": "重试"
     },
     "detail": {
       "back": "返回",

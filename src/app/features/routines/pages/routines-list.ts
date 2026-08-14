@@ -76,6 +76,14 @@ import { LanguageService } from '../../../core/language.service';
           <div class="flex justify-center py-16">
             <div class="w-8 h-8 rounded-full border-2 border-brand border-t-transparent animate-spin"></div>
           </div>
+        } @else if (store.listError()) {
+          <div class="flex flex-col items-center justify-center py-16 text-center">
+            <p class="text-sm text-ink-muted mb-4">{{ 'routines.loadError' | t }}</p>
+            <button
+              class="bg-brand text-white px-6 py-3 rounded-2xl font-semibold text-sm shadow-sm shadow-brand/20"
+              (click)="store.reloadList()"
+            >{{ 'routines.retry' | t }}</button>
+          </div>
         } @else if (store.routines().length === 0) {
           <div class="flex flex-col items-center justify-center py-16 text-center">
             <div class="w-16 h-16 bg-brand-light rounded-2xl flex items-center justify-center mb-4">
@@ -147,7 +155,7 @@ export class RoutinesListComponent {
 
   constructor() {
     effect(() => {
-      if (!this.store.listLoading()) {
+      if (!this.store.listLoading() && !this.store.listError()) {
         this.store.ensureInboxRoutine(this.ls.t('routines.inboxDefault'));
       }
     }, { allowSignalWrites: true });

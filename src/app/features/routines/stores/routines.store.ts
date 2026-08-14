@@ -24,7 +24,10 @@ export class RoutinesStore {
 
   readonly routines = computed(() => this._listResource.value() ?? []);
   readonly listLoading = this._listResource.isLoading;
+  readonly listError = this._listResource.error;
   readonly inboxRoutine = computed(() => this.routines().find(r => r.isInbox) ?? null);
+
+  reloadList(): void { this._listResource.reload(); }
 
   async addRoutine(name: string, emoji?: string): Promise<void> {
     const created = await this.api.createRoutine(name, false, emoji);
