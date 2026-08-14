@@ -69,7 +69,9 @@ export class CardRoutinePreviewComponent {
 
   onDelete(event: Event) {
     event.stopPropagation();
-    this.delete.emit();
+    if (confirm(`¿Eliminar "${this.title()}"? Esta acción no se puede deshacer.`)) {
+      this.delete.emit();
+    }
   }
 
   onPickEmoji(emoji: string) {

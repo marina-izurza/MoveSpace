@@ -168,7 +168,7 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
                   <button class="text-ink-muted px-4 py-2 rounded-xl cursor-pointer text-sm bg-canvas"
                     (click)="editingItemId.set(null)">{{ 'detail.cancel' | t }}</button>
                   <button class="ml-auto flex items-center justify-center w-9 h-9 rounded-xl text-danger hover:bg-danger-muted transition cursor-pointer"
-                    (click)="deleteExercise(item.id); editingItemId.set(null)">
+                    (click)="deleteExercise(item.id)">
                     <svg lucideTrash [size]="15" [strokeWidth]="2"></svg>
                   </button>
                 </div>
@@ -235,7 +235,7 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
                         <button class="text-ink-muted px-3 py-1.5 rounded-lg cursor-pointer text-sm bg-canvas"
                           (click)="editingItemId.set(null)">{{ 'detail.cancel' | t }}</button>
                         <button class="ml-auto flex items-center justify-center w-9 h-9 rounded-xl text-danger hover:bg-danger-muted transition cursor-pointer"
-                          (click)="deleteExercise(exercise.id); editingItemId.set(null)">
+                          (click)="deleteExercise(exercise.id)">
                           <svg lucideTrash [size]="15" [strokeWidth]="2"></svg>
                         </button>
                       </div>
@@ -544,7 +544,10 @@ export class RoutinesDetailComponent implements OnDestroy, AfterViewInit {
   }
 
   deleteExercise(exerciseId: string) {
-    this.store.deleteExercise(this.id(), exerciseId);
+    if (confirm('¿Eliminar este ejercicio? Esta acción no se puede deshacer.')) {
+      this.store.deleteExercise(this.id(), exerciseId);
+      this.editingItemId.set(null);
+    }
   }
 
   saveExercise(id: string, name: string, videoUrl: string, notes: string) {
@@ -593,7 +596,9 @@ export class RoutinesDetailComponent implements OnDestroy, AfterViewInit {
   }
 
   deleteSection(sectionId: string) {
-    this.store.deleteSection(this.id(), sectionId);
+    if (confirm('¿Eliminar esta sección y todos sus ejercicios? Esta acción no se puede deshacer.')) {
+      this.store.deleteSection(this.id(), sectionId);
+    }
   }
 
   addSectionExercise(sectionId: string, name: string, videoUrl: string, notes: string) {
