@@ -12,6 +12,8 @@ export class AuthService {
 
   session = signal<Session | null>(null);
   user = signal<User | null>(null);
+  private _initialized = signal(false);
+  readonly initialized = this._initialized.asReadonly();
 
   constructor() {
     this.supabase.auth.getSession().then(({ data }) => {
@@ -20,6 +22,7 @@ export class AuthService {
       if (data.session?.user?.user_metadata) {
         this.applyUserPreferences(data.session.user.user_metadata);
       }
+      this._initialized.set(true);
     });
 
     this.supabase.auth.onAuthStateChange((event, session) => {
