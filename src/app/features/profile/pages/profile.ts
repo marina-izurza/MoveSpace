@@ -106,10 +106,10 @@ import {
     <!-- ───── Settings bottom sheet ───── -->
     @if (showSettings()) {
       <!-- Backdrop -->
-      <div class="fixed inset-0 z-40 bg-black/50 backdrop-blur-[2px]" (click)="closeSettings()"></div>
+      <div class="fixed inset-0 z-60 bg-black/50 backdrop-blur-[2px]" (click)="closeSettings()"></div>
 
       <!-- Sheet -->
-      <div class="fixed bottom-0 left-0 right-0 z-50 bg-canvas rounded-t-3xl shadow-2xl max-h-[88vh] flex flex-col">
+      <div class="fixed bottom-0 left-0 right-0 z-70 bg-canvas rounded-t-3xl shadow-2xl max-h-[88vh] flex flex-col">
 
         <!-- Handle + header -->
         <div class="flex items-center px-5 pt-4 pb-3 shrink-0">

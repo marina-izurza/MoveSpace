@@ -18,12 +18,14 @@ export class AuthService {
 
   constructor() {
     this.supabase.auth.getSession().then(({ data }) => {
-      this.session.set(data.session);
-      this.user.set(data.session?.user ?? null);
-      if (data.session?.user?.user_metadata) {
-        this.applyUserPreferences(data.session.user.user_metadata);
-      }
-      this._initialized.set(true);
+      this.zone.run(() => {
+        this.session.set(data.session);
+        this.user.set(data.session?.user ?? null);
+        if (data.session?.user?.user_metadata) {
+          this.applyUserPreferences(data.session.user.user_metadata);
+        }
+        this._initialized.set(true);
+      });
     });
 
     this.supabase.auth.onAuthStateChange((event, session) => {
