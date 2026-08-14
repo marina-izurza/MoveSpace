@@ -9,7 +9,9 @@ export class ThemeService {
   );
 
   constructor() {
-    document.documentElement.setAttribute('data-theme', this.dark() ? 'dark' : 'light');
+    const isDarkInit = this.dark();
+    document.documentElement.setAttribute('data-theme', isDarkInit ? 'dark' : 'light');
+    this._syncStatusBar(isDarkInit);
     effect(() => {
       const isDark = this.dark();
       document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
@@ -24,7 +26,7 @@ export class ThemeService {
     if (!Capacitor.isNativePlatform()) return;
     const bgColor = isDark ? '#13121F' : '#F5F4FF';
     import('@capacitor/status-bar').then(({ StatusBar, Style }) => {
-      StatusBar.setStyle({ style: isDark ? Style.Light : Style.Dark });
+      StatusBar.setStyle({ style: isDark ? Style.Dark : Style.Light });
       StatusBar.setBackgroundColor({ color: bgColor });
     });
   }
