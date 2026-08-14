@@ -1,4 +1,4 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, signal, inject, NgZone } from '@angular/core';
 import { Session, User } from '@supabase/supabase-js';
 import { SupabaseService } from './supabase.service';
 import { ThemeService } from './theme.service';
@@ -9,6 +9,7 @@ export class AuthService {
   private supabase = inject(SupabaseService).client;
   private themeService = inject(ThemeService);
   private accentService = inject(AccentService);
+  private zone = inject(NgZone);
 
   session = signal<Session | null>(null);
   user = signal<User | null>(null);
@@ -26,11 +27,13 @@ export class AuthService {
     });
 
     this.supabase.auth.onAuthStateChange((event, session) => {
-      this.session.set(session);
-      this.user.set(session?.user ?? null);
-      if (event === 'SIGNED_IN' && session?.user?.user_metadata) {
-        this.applyUserPreferences(session.user.user_metadata);
-      }
+      this.zone.run(() => {
+        this.session.set(session);
+        this.user.set(session?.user ?? null);
+        if (event === 'SIGNED_IN' && session?.user?.user_metadata) {
+          this.applyUserPreferences(session.user.user_metadata);
+        }
+      });
     });
   }
 
