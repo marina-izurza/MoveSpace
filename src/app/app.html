@@ -39,6 +39,26 @@
   </div>
 </div>
 
+<!-- Confirm dialog -->
+@if (confirm.pending(); as dialog) {
+  <div class="fixed inset-0 z-300 flex items-end justify-center bg-black/50 backdrop-blur-[2px]"
+       (click)="confirm.dismiss()">
+    <div class="bg-canvas rounded-t-3xl px-5 pt-6 max-w-[430px] w-full mx-auto"
+         style="padding-bottom: calc(2rem + env(safe-area-inset-bottom))"
+         (click)="$event.stopPropagation()">
+      <p class="text-base text-ink font-medium mb-6 leading-snug">{{ dialog.message }}</p>
+      <div class="flex gap-3">
+        <button
+          class="flex-1 py-3.5 rounded-2xl bg-surface border border-edge text-ink font-semibold text-sm"
+          (click)="confirm.dismiss()">Cancelar</button>
+        <button
+          class="flex-1 py-3.5 rounded-2xl bg-danger text-white font-bold text-sm"
+          (click)="confirm.accept()">{{ dialog.confirmLabel }}</button>
+      </div>
+    </div>
+  </div>
+}
+
 <!-- Share receiver bottom sheet -->
 @if (shareReceiver.pendingUrl(); as sharedUrl) {
   <div class="fixed inset-0 z-200 flex flex-col justify-end bg-black/50 backdrop-blur-[2px]"

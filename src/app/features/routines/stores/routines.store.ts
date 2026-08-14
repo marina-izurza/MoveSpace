@@ -1,5 +1,6 @@
 import { Injectable, inject, signal, computed, resource } from '@angular/core';
 import { RoutinesApiService } from '../services/routines-api.service';
+import { AuthService } from '../../../core/auth.service';
 import { RoutineSummary } from '../models/RoutineSummary';
 import { Routine } from '../models/Routine';
 import { RoutineItem } from '../models/RoutineItem';
@@ -9,11 +10,16 @@ import { Section } from '../models/Section';
 @Injectable({ providedIn: 'root' })
 export class RoutinesStore {
   private api = inject(RoutinesApiService);
+  private auth = inject(AuthService);
 
   // ── Lista de rutinas ──────────────────────────────────────────────────────
 
+  // Reading auth.user() inside the loader makes the resource reload when the user logs in/out
   private _listResource = resource({
-    loader: () => this.api.getRoutines()
+    loader: () => {
+      const userId = this.auth.user()?.id;
+      return userId ? this.api.getRoutines() : Promise.resolve([] as RoutineSummary[]);
+    }
   });
 
   readonly routines = computed(() => this._listResource.value() ?? []);

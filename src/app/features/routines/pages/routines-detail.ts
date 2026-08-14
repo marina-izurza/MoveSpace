@@ -10,6 +10,7 @@ import { detectPlatform, fetchVideoInfo, fetchVideoTitle, getPlatformName, getTh
 import { CdkDragDrop, CdkDropList, CdkDropListGroup, CdkDrag, CdkDragHandle, moveItemInArray } from '@angular/cdk/drag-drop';
 import { NgTemplateOutlet } from '@angular/common';
 import { Section } from '../models/Section';
+import { ConfirmService } from '../../../core/confirm.service';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 
 @Component({
@@ -428,6 +429,7 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 })
 export class RoutinesDetailComponent implements OnDestroy, AfterViewInit {
   private store = inject(RoutinesStore);
+  private confirmService = inject(ConfirmService);
   readonly sessions = inject(SessionsStore);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -543,8 +545,9 @@ export class RoutinesDetailComponent implements OnDestroy, AfterViewInit {
     this.store.addExercise(this.id(), { name: finalName, videoUrl, notes: notes.trim() || undefined });
   }
 
-  deleteExercise(exerciseId: string) {
-    if (confirm('¿Eliminar este ejercicio? Esta acción no se puede deshacer.')) {
+  async deleteExercise(exerciseId: string) {
+    const ok = await this.confirmService.confirm('¿Eliminar este ejercicio?');
+    if (ok) {
       this.store.deleteExercise(this.id(), exerciseId);
       this.editingItemId.set(null);
     }
@@ -595,10 +598,9 @@ export class RoutinesDetailComponent implements OnDestroy, AfterViewInit {
     this.editingItemId.set(null);
   }
 
-  deleteSection(sectionId: string) {
-    if (confirm('¿Eliminar esta sección y todos sus ejercicios? Esta acción no se puede deshacer.')) {
-      this.store.deleteSection(this.id(), sectionId);
-    }
+  async deleteSection(sectionId: string) {
+    const ok = await this.confirmService.confirm('¿Eliminar esta sección y todos sus ejercicios?');
+    if (ok) this.store.deleteSection(this.id(), sectionId);
   }
 
   addSectionExercise(sectionId: string, name: string, videoUrl: string, notes: string) {

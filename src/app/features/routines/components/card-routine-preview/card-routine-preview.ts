@@ -1,6 +1,7 @@
-import { Component, input, output, signal } from '@angular/core';
+import { Component, inject, input, output, signal } from '@angular/core';
 import { LucideTrash, LucideChevronRight, LucideDumbbell } from '@lucide/angular';
 import { EmojiPickerComponent } from '../../../../shared/components/emoji-picker/emoji-picker';
+import { ConfirmService } from '../../../../core/confirm.service';
 
 @Component({
   selector: 'app-card-routine-preview',
@@ -60,6 +61,7 @@ export class CardRoutinePreviewComponent {
   delete = output<void>();
   emojiChange = output<string>();
 
+  private confirmService = inject(ConfirmService);
   showPicker = signal(false);
 
   togglePicker(event: Event) {
@@ -67,11 +69,10 @@ export class CardRoutinePreviewComponent {
     this.showPicker.update(v => !v);
   }
 
-  onDelete(event: Event) {
+  async onDelete(event: Event) {
     event.stopPropagation();
-    if (confirm(`¿Eliminar "${this.title()}"? Esta acción no se puede deshacer.`)) {
-      this.delete.emit();
-    }
+    const ok = await this.confirmService.confirm(`¿Eliminar "${this.title()}"?`);
+    if (ok) this.delete.emit();
   }
 
   onPickEmoji(emoji: string) {

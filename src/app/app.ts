@@ -7,6 +7,7 @@ import { AuthService } from './core/auth.service';
 import { ThemeService } from './core/theme.service';
 import { TranslatePipe } from './shared/pipes/translate.pipe';
 import { ShareReceiverService } from './core/share-receiver.service';
+import { ConfirmService } from './core/confirm.service';
 
 @Component({
   selector: 'app-root',
@@ -18,6 +19,7 @@ import { ShareReceiverService } from './core/share-receiver.service';
 export class App {
   auth = inject(AuthService);
   readonly shareReceiver = inject(ShareReceiverService);
+  readonly confirm = inject(ConfirmService);
   private router = inject(Router);
   private _theme = inject(ThemeService);
 
