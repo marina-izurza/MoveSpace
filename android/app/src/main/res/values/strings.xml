@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">MoveSpace</string>
+    <string name="title_activity_main">MoveSpace</string>
+    <string name="package_name">com.movespace.app</string>
+    <string name="custom_url_scheme">com.movespace.app</string>
+</resources>
