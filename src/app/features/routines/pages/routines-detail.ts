@@ -635,7 +635,14 @@ export class RoutinesDetailComponent implements OnDestroy, AfterViewInit {
   }
 
   descFor(url: string, cache: Record<string, VideoInfo>): string | null {
-    return cache[url]?.desc ?? null;
+    const info = cache[url];
+    const desc = info?.desc?.trim();
+    if (!desc) return null;
+
+    // Instagram hands back the caption as the title as well — printing both just repeats it.
+    const title = info?.title?.trim();
+    if (title && (title.includes(desc) || desc.includes(title))) return null;
+    return desc;
   }
 
   authorFor(url: string, cache: Record<string, VideoInfo>): string | null {

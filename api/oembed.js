@@ -28,6 +28,24 @@ function extractOg(html, prop) {
   return m ? m[1].replace(/&amp;/g, '&') : null;
 }
 
+// Instagram's og:description is a stats blurb rather than the caption:
+//   `12K likes, 340 comments - user on January 5, 2024: "the actual caption"`
+//   `686M Followers, 274 Following, 8,557 Posts - See Instagram photos and videos from X`
+// Graph's instagram_oembed exposes no description field at all, so this is the only source —
+// keep the quoted caption when there is one and drop the blurb when there is not.
+function captionFromInstagramOg(desc) {
+  if (!desc) return null;
+
+  const quoted = desc.match(/:\s*["“](.+)["”]\.?\s*$/s);
+  if (quoted) return quoted[1].trim() || null;
+
+  const stats = /^[\d.,\s]+[KMB]?\s*(likes?|me gusta|curtidas|mi piace|j'aime|followers|seguidores|seguidores?)/i;
+  if (stats.test(desc.trim())) return null;
+  if (/See Instagram photos and videos/i.test(desc)) return null;
+
+  return desc.trim() || null;
+}
+
 async function scrapeOgData(url) {
   try {
     const res = await fetch(url, {
@@ -67,6 +85,8 @@ module.exports = async (req, res) => {
       needsOg ? scrapeOgData(url) : Promise.resolve(null),
     ]);
 
+    if (og && provider === 'instagram') og.description = captionFromInstagramOg(og.description);
+
     if (!upstream.ok) {
       if (needsOg && og?.thumbnail_url) return res.status(200).json(og);
       return res.status(upstream.status).end();
@@ -80,3 +100,5 @@ module.exports = async (req, res) => {
     res.status(500).end();
   }
 };
+
+module.exports.captionFromInstagramOg = captionFromInstagramOg;
