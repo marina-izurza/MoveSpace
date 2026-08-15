@@ -1,4 +1,4 @@
-import { Component, inject, computed, effect } from '@angular/core';
+import { Component, inject, computed, effect, signal, untracked } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs';
@@ -36,28 +36,48 @@ export class App {
     return !!this.auth.user() && !url.startsWith('/login') && !url.startsWith('/share') && !url.startsWith('/r/');
   });
 
-  shareExerciseName = '';
-  shareRoutineId = '';
+  shareExerciseName = signal('');
+  shareRoutineId = signal('');
+
+  // auth.user() emits a fresh User object on every token refresh; collapsing it to a boolean
+  // keeps the share check on the actual login edge instead of re-running it every hour.
+  private loggedIn = computed(() => !!this.auth.user());
 
   constructor() {
     effect(() => {
-      if (this.auth.user()) {
+      if (this.loggedIn()) {
         this.shareReceiver.checkIncomingShare();
       }
     });
+
+    // Prefill only while the field is untouched: the video title arrives asynchronously and
+    // must not overwrite what the user is typing. Same for the routine, whose list may still
+    // be loading when the sheet opens.
     effect(() => {
-      const url = this.shareReceiver.pendingUrl();
-      if (url) {
-        this.shareExerciseName = this.shareReceiver.pendingPlatformName();
-        this.shareRoutineId = this.shareReceiver.defaultRoutineId();
-      }
+      const suggested = this.shareReceiver.pendingName();
+      if (suggested && !untracked(this.shareExerciseName)) this.shareExerciseName.set(suggested);
+    });
+
+    effect(() => {
+      const defaultId = this.shareReceiver.pendingUrl() ? this.shareReceiver.defaultRoutineId() : '';
+      if (defaultId && !untracked(this.shareRoutineId)) this.shareRoutineId.set(defaultId);
     });
   }
 
-  dismissShare() { this.shareReceiver.clear(); }
+  dismissShare() {
+    this.shareReceiver.clear();
+    this.resetShareForm();
+  }
 
-  async confirmShare(name: string) {
-    const routineId = this.shareRoutineId || this.shareReceiver.defaultRoutineId();
-    await this.shareReceiver.confirmShare(name, routineId);
+  async confirmShare() {
+    const routineId = this.shareRoutineId() || this.shareReceiver.defaultRoutineId();
+    if (!routineId) return;
+    const saved = await this.shareReceiver.confirmShare(this.shareExerciseName(), routineId);
+    if (saved) this.resetShareForm();
+  }
+
+  private resetShareForm() {
+    this.shareExerciseName.set('');
+    this.shareRoutineId.set('');
   }
 }

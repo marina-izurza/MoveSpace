@@ -70,15 +70,26 @@ export class RoutinesStore {
     }
   }
 
-  private patch(updater: (r: Routine) => Routine): void {
+  /** The routine currently held by the detail resource, but only if it is the one asked for. */
+  private loaded(routineId: string): Routine | null {
     const current = this._detailResource.value();
+    return current?.id === routineId ? current : null;
+  }
+
+  /**
+   * Optimistic update of the detail view. Scoped to routineId on purpose: saving from the share
+   * sheet targets a routine that is usually not the one on screen, and an unscoped patch would
+   * push the change into whichever routine happened to be loaded.
+   */
+  private patch(routineId: string, updater: (r: Routine) => Routine): void {
+    const current = this.loaded(routineId);
     if (current) this._detailResource.set(updater(current));
   }
 
   // ── Renombrar / emoji rutina ──────────────────────────────────────────────
 
   async renameRoutine(routineId: string, name: string): Promise<void> {
-    this.patch(r => ({ ...r, name }));
+    this.patch(routineId, r => ({ ...r, name }));
     this._listResource.set(this.routines().map(r => r.id === routineId ? { ...r, name } : r));
     await this.api.renameRoutine(routineId, name);
   }
@@ -92,23 +103,25 @@ export class RoutinesStore {
   // ── Reordenar ─────────────────────────────────────────────────────────────
 
   async reorderItems(routineId: string, items: RoutineItem[]): Promise<void> {
-    const next = { ...this._detailResource.value()!, items };
+    const current = this.loaded(routineId);
+    if (!current) return;
+    const next = { ...current, items };
     this._detailResource.set(next);
     await this.api.syncOrders(next);
   }
 
   async reorderSectionExercises(routineId: string, sectionId: string, exercises: Exercise[]): Promise<void> {
-    this.patch(r => ({
+    this.patch(routineId, r => ({
       ...r,
       items: r.items.map(i => i.id === sectionId && i.type === 'section' ? { ...i, exercises } : i)
     }));
-    const current = this._detailResource.value();
+    const current = this.loaded(routineId);
     if (current) await this.api.syncOrders(current);
   }
 
   async moveExercise(routineId: string, exerciseId: string, fromSectionId: string | null, toSectionId: string | null, toIndex: number): Promise<void> {
-    this.patch(r => this._applyMove(r, exerciseId, fromSectionId, toSectionId, toIndex));
-    const current = this._detailResource.value();
+    this.patch(routineId, r => this._applyMove(r, exerciseId, fromSectionId, toSectionId, toIndex));
+    const current = this.loaded(routineId);
     if (current) await this.api.syncOrders(current);
   }
 
@@ -143,14 +156,14 @@ export class RoutinesStore {
 
   async addSection(routineId: string, name: string): Promise<void> {
     const id = crypto.randomUUID();
-    const order = this._detailResource.value()?.items.length ?? 0;
+    const order = this.loaded(routineId)?.items.length ?? await this.api.getNextOrder(routineId, null);
     const section: Section = { id, type: 'section', name, exercises: [] };
-    this.patch(r => ({ ...r, items: [...r.items, section] }));
+    this.patch(routineId, r => ({ ...r, items: [...r.items, section] }));
     await this.api.addSection(routineId, id, name, order);
   }
 
   async updateSection(routineId: string, sectionId: string, name: string): Promise<void> {
-    this.patch(r => ({
+    this.patch(routineId, r => ({
       ...r,
       items: r.items.map(i => i.id === sectionId && i.type === 'section' ? { ...i, name } : i)
     }));
@@ -158,9 +171,9 @@ export class RoutinesStore {
   }
 
   async deleteSection(routineId: string, sectionId: string): Promise<void> {
-    const section = this._detailResource.value()?.items.find(i => i.id === sectionId) as Section | undefined;
+    const section = this.loaded(routineId)?.items.find(i => i.id === sectionId) as Section | undefined;
     const deletedCount = section?.exercises.length ?? 0;
-    this.patch(r => ({ ...r, items: r.items.filter(i => i.id !== sectionId) }));
+    this.patch(routineId, r => ({ ...r, items: r.items.filter(i => i.id !== sectionId) }));
     this._listResource.set(this.routines().map(r =>
       r.id === routineId ? { ...r, exerciseCount: Math.max(0, r.exerciseCount - deletedCount) } : r
     ));
@@ -172,19 +185,23 @@ export class RoutinesStore {
   async addExercise(routineId: string, data: { name: string; videoUrl: string; notes?: string }, sectionId?: string): Promise<void> {
     const id = crypto.randomUUID();
     const exercise: Exercise = { id, type: 'exercise', ...data };
-    const current = this._detailResource.value();
+
+    // Saving from the share sheet targets a routine that is usually not the one on screen, so
+    // the in-memory item count is only a valid source for `order` when they actually match.
+    const current = this.loaded(routineId);
 
     if (sectionId) {
-      const order = (current?.items.find(i => i.id === sectionId) as Section | undefined)?.exercises.length ?? 0;
-      this.patch(r => ({
+      const section = current?.items.find(i => i.id === sectionId) as Section | undefined;
+      const order = section?.exercises.length ?? await this.api.getNextOrder(routineId, sectionId);
+      this.patch(routineId, r => ({
         ...r,
         items: r.items.map(i => i.id === sectionId && i.type === 'section'
           ? { ...i, exercises: [...i.exercises, exercise] } : i)
       }));
       await this.api.addExercise(id, routineId, sectionId, data, order);
     } else {
-      const order = current?.items.length ?? 0;
-      this.patch(r => ({ ...r, items: [...r.items, exercise] }));
+      const order = current?.items.length ?? await this.api.getNextOrder(routineId, null);
+      this.patch(routineId, r => ({ ...r, items: [...r.items, exercise] }));
       await this.api.addExercise(id, routineId, null, data, order);
     }
 
@@ -194,7 +211,7 @@ export class RoutinesStore {
   }
 
   async updateExercise(routineId: string, exerciseId: string, data: { name: string; videoUrl: string; notes?: string }): Promise<void> {
-    this.patch(r => ({
+    this.patch(routineId, r => ({
       ...r,
       items: r.items.map(i => {
         if (i.type === 'exercise' && i.id === exerciseId) return { ...i, ...data };
@@ -206,7 +223,7 @@ export class RoutinesStore {
   }
 
   async deleteExercise(routineId: string, exerciseId: string): Promise<void> {
-    this.patch(r => ({
+    this.patch(routineId, r => ({
       ...r,
       items: r.items
         .filter(i => !(i.type === 'exercise' && i.id === exerciseId))
@@ -222,7 +239,7 @@ export class RoutinesStore {
 
   async setPublic(routineId: string, isPublic: boolean): Promise<void> {
     const token = await this.api.setPublic(routineId, isPublic);
-    this.patch(r => ({ ...r, isPublic, shareToken: token ?? undefined }));
+    this.patch(routineId, r => ({ ...r, isPublic, shareToken: token ?? undefined }));
     this._listResource.set(this.routines().map(r =>
       r.id === routineId ? { ...r, isPublic } : r
     ));

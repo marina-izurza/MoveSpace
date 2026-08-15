@@ -29,6 +29,22 @@ export function getPlatformName(platform: Platform): string {
   return names[platform];
 }
 
+/**
+ * Shared text is rarely just a URL — TikTok and friends wrap it in a caption
+ * ("Mira este vídeo … https://vm.tiktok.com/xxx"), so pull the first link out.
+ */
+export function extractUrl(text: string): string {
+  const match = text.match(/https?:\/\/[^\s]+/);
+  return match ? match[0] : '';
+}
+
+/** The leftover text once URLs and hashtags are stripped, usable as an exercise name. */
+export function extractCaption(text: string): string {
+  if (!text.trim()) return '';
+  const clean = text.replace(/https?:\/\/[^\s]+/g, '').replace(/#\w+/g, '').replace(/\s+/g, ' ').trim();
+  return clean.length > 60 ? clean.slice(0, 57) + '...' : clean;
+}
+
 export function getYouTubeVideoId(url: string): string | null {
   const patterns = [/[?&]v=([^&]+)/, /youtu\.be\/([^?]+)/, /shorts\/([^?/]+)/, /embed\/([^?/]+)/];
   for (const p of patterns) {

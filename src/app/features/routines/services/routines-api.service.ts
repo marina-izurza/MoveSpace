@@ -224,6 +224,27 @@ export class RoutinesApiService {
 
   // ── Exercises ─────────────────────────────────────────────────────────────
 
+  /**
+   * Next free `order` for a routine we do not have loaded in memory. Root items share one
+   * sequence between section-less exercises and sections, so both have to be counted.
+   */
+  async getNextOrder(routineId: string, sectionId: string | null): Promise<number> {
+    if (sectionId) {
+      const { count } = await this.db.from('exercises')
+        .select('id', { count: 'exact', head: true })
+        .eq('routine_id', routineId).eq('section_id', sectionId);
+      return count ?? 0;
+    }
+
+    const [{ count: exercises }, { count: sections }] = await Promise.all([
+      this.db.from('exercises').select('id', { count: 'exact', head: true })
+        .eq('routine_id', routineId).is('section_id', null),
+      this.db.from('sections').select('id', { count: 'exact', head: true })
+        .eq('routine_id', routineId)
+    ]);
+    return (exercises ?? 0) + (sections ?? 0);
+  }
+
   async addExercise(
     id: string, routineId: string, sectionId: string | null,
     data: { name: string; videoUrl: string; notes?: string }, order: number

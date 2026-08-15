@@ -68,7 +68,7 @@
          (click)="$event.stopPropagation()">
 
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-base font-bold text-ink">Guardar ejercicio</h2>
+        <h2 class="text-base font-bold text-ink">{{ 'share.title' | t }}</h2>
         <button class="w-8 h-8 flex items-center justify-center rounded-xl bg-surface border border-edge text-ink-muted"
                 (click)="dismissShare()">
           <svg lucideX [size]="15" [strokeWidth]="2.5"></svg>
@@ -84,40 +84,51 @@
       <!-- Name input -->
       <input
         class="w-full bg-surface border border-edge rounded-xl px-4 py-3 text-base text-ink outline-none focus:border-brand transition mb-3"
-        placeholder="Nombre (opcional)"
-        #shareName
-        [value]="shareExerciseName"
-        (keyup.enter)="confirmShare(shareName.value)"
+        [placeholder]="'share.exercisePlaceholder' | t"
+        [value]="shareExerciseName()"
+        (input)="shareExerciseName.set($any($event.target).value)"
+        (keyup.enter)="confirmShare()"
       />
 
       <!-- Routine selector -->
       <div class="mb-4">
-        <p class="text-xs text-ink-muted mb-1.5">Guardar en</p>
-        <div class="flex flex-col gap-1">
-          @for (r of shareReceiver.availableRoutines(); track r.id) {
-            <button
-              class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl border transition text-left"
-              [class.border-brand]="shareRoutineId === r.id"
-              [class.bg-brand-light]="shareRoutineId === r.id"
-              [class.border-edge]="shareRoutineId !== r.id"
-              [class.bg-surface]="shareRoutineId !== r.id"
-              (click)="shareRoutineId = r.id"
-            >
-              <span class="text-lg leading-none">{{ r.emoji || '📋' }}</span>
-              <span class="text-sm font-medium text-ink truncate">{{ r.name }}</span>
-              @if (r.isInbox) {
-                <span class="ml-auto text-[10px] font-bold text-brand bg-brand/10 px-2 py-0.5 rounded-full uppercase">Inbox</span>
-              }
-            </button>
-          }
-        </div>
+        <p class="text-xs text-ink-muted mb-1.5">{{ 'share.routine' | t }}</p>
+        @if (!shareReceiver.routinesLoaded()) {
+          <div class="flex justify-center py-4">
+            <div class="w-5 h-5 rounded-full border-2 border-brand border-t-transparent animate-spin"></div>
+          </div>
+        } @else {
+          <div class="flex flex-col gap-1">
+            @for (r of shareReceiver.availableRoutines(); track r.id) {
+              <button
+                class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl border transition text-left"
+                [class.border-brand]="shareRoutineId() === r.id"
+                [class.bg-brand-light]="shareRoutineId() === r.id"
+                [class.border-edge]="shareRoutineId() !== r.id"
+                [class.bg-surface]="shareRoutineId() !== r.id"
+                (click)="shareRoutineId.set(r.id)"
+              >
+                <span class="text-lg leading-none">{{ r.emoji || '📋' }}</span>
+                <span class="text-sm font-medium text-ink truncate">{{ r.name }}</span>
+                @if (r.isInbox) {
+                  <span class="ml-auto text-[10px] font-bold text-brand bg-brand/10 px-2 py-0.5 rounded-full uppercase">Inbox</span>
+                }
+              </button>
+            }
+          </div>
+        }
       </div>
 
+      @if (shareReceiver.saveError()) {
+        <p class="text-xs text-danger mb-2 text-center">{{ 'share.saveError' | t }}</p>
+      }
+
       <button
-        class="w-full bg-brand text-white py-3.5 rounded-2xl font-bold text-sm shadow-sm shadow-brand/20"
-        (click)="confirmShare(shareName.value)"
+        class="w-full bg-brand text-white py-3.5 rounded-2xl font-bold text-sm shadow-sm shadow-brand/20 disabled:opacity-50"
+        [disabled]="shareReceiver.saving() || !shareRoutineId()"
+        (click)="confirmShare()"
       >
-        Guardar
+        {{ shareReceiver.saving() ? ('share.adding' | t) : ('share.addToRoutine' | t) }}
       </button>
     </div>
   </div>

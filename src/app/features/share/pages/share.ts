@@ -2,7 +2,9 @@ import { Component, computed, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RoutinesStore } from '../../routines/stores/routines.store';
 import { PlatformIconComponent } from '../../routines/components/platform-icon/platform-icon';
-import { detectPlatform, fetchVideoTitle, getPlatformName } from '../../routines/utils/platform';
+import {
+  detectPlatform, extractCaption, extractUrl, fetchVideoTitle, getPlatformName
+} from '../../routines/utils/platform';
 import { Section } from '../../routines/models/Section';
 import { LucideArrowLeft, LucideCheck } from '@lucide/angular';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
@@ -78,7 +80,7 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
           <!-- Routine selector -->
           <div class="px-5 mb-5">
             <label class="text-[10px] font-bold text-ink-muted uppercase tracking-widest mb-2 block">{{ 'share.routine' | t }}</label>
-            @if (store.listLoading()) {
+            @if (!store.listLoaded()) {
               <div class="flex justify-center py-6">
                 <div class="w-6 h-6 rounded-full border-2 border-brand border-t-transparent animate-spin"></div>
               </div>
@@ -192,6 +194,9 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 
         <!-- Add button (fixed bottom) -->
         <div class="px-5 py-4 border-t border-edge bg-canvas">
+          @if (error()) {
+            <p class="text-xs text-danger mb-2 text-center">{{ 'share.saveError' | t }}</p>
+          }
           <button
             class="w-full py-4 rounded-2xl font-bold text-sm transition shadow-lg"
             [class.bg-brand]="canAdd()"
@@ -223,6 +228,7 @@ export class ShareComponent {
   selectedSectionId = signal<string | null>(null);
   loading = signal(false);
   added = signal(false);
+  error = signal(false);
 
   platformName = computed(() => getPlatformName(detectPlatform(this.videoUrl())));
   canAdd = computed(() => !!this.selectedRoutineId() && !!this.videoUrl());
@@ -244,10 +250,10 @@ export class ShareComponent {
     const textParam  = params.get('text')  ?? '';
     const titleParam = params.get('title') ?? '';
 
-    const extracted = urlParam || this.extractUrl(textParam);
+    const extracted = extractUrl(urlParam) || extractUrl(textParam);
     this.videoUrl.set(extracted);
 
-    const nameHint = titleParam || this.extractCaption(textParam);
+    const nameHint = titleParam || extractCaption(textParam);
     if (nameHint) {
       this.exerciseName.set(nameHint);
     } else if (extracted) {
@@ -267,18 +273,6 @@ export class ShareComponent {
     });
   }
 
-  private extractUrl(text: string): string {
-    const match = text.match(/https?:\/\/[^\s]+/);
-    return match ? match[0] : '';
-  }
-
-  private extractCaption(text: string): string {
-    if (!text.trim()) return '';
-    // Strip URLs and hashtags, take first ~60 chars
-    const clean = text.replace(/https?:\/\/[^\s]+/g, '').replace(/#\w+/g, '').replace(/\s+/g, ' ').trim();
-    return clean.length > 60 ? clean.slice(0, 57) + '...' : clean;
-  }
-
   selectRoutine(id: string) {
     this.selectedRoutineId.set(id);
     this.selectedSectionId.set(null);
@@ -291,8 +285,15 @@ export class ShareComponent {
     if (!routineId || !url) return;
 
     this.loading.set(true);
-    await this.store.addExercise(routineId, { name, videoUrl: url }, this.selectedSectionId() ?? undefined);
-    this.loading.set(false);
+    this.error.set(false);
+    try {
+      await this.store.addExercise(routineId, { name, videoUrl: url }, this.selectedSectionId() ?? undefined);
+    } catch {
+      this.error.set(true);
+      return;
+    } finally {
+      this.loading.set(false);
+    }
     this.added.set(true);
 
     setTimeout(() => this.router.navigate(['/routines', routineId]), 1200);

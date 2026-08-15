@@ -173,7 +173,8 @@
       "noSection": "No section",
       "addToRoutine": "Add to routine",
       "adding": "Adding…",
-      "quickSave": "Quick save"
+      "quickSave": "Quick save",
+      "saveError": "Could not save. Please try again."
     }
   },
   "es": {
@@ -350,7 +351,8 @@
       "noSection": "Sin sección",
       "addToRoutine": "Añadir a la rutina",
       "adding": "Añadiendo…",
-      "quickSave": "Guardar rápido"
+      "quickSave": "Guardar rápido",
+      "saveError": "No se pudo guardar. Inténtalo de nuevo."
     }
   },
   "fr": {
@@ -526,7 +528,8 @@
       "noSection": "Sans section",
       "addToRoutine": "Ajouter à la routine",
       "adding": "Ajout en cours…",
-      "quickSave": "Rapide"
+      "quickSave": "Rapide",
+      "saveError": "Échec de l'enregistrement. Réessayez."
     }
   },
   "de": {
@@ -702,7 +705,8 @@
       "noSection": "Kein Abschnitt",
       "addToRoutine": "Zur Routine hinzufügen",
       "adding": "Wird hinzugefügt…",
-      "quickSave": "Schnell"
+      "quickSave": "Schnell",
+      "saveError": "Speichern fehlgeschlagen. Bitte erneut versuchen."
     }
   },
   "pt": {
@@ -878,7 +882,8 @@
       "noSection": "Sem seção",
       "addToRoutine": "Adicionar à rotina",
       "adding": "Adicionando…",
-      "quickSave": "Rápido"
+      "quickSave": "Rápido",
+      "saveError": "Não foi possível guardar. Tenta novamente."
     }
   },
   "it": {
@@ -1054,7 +1059,8 @@
       "noSection": "Nessuna sezione",
       "addToRoutine": "Aggiungi alla routine",
       "adding": "Aggiunta in corso…",
-      "quickSave": "Rapido"
+      "quickSave": "Rapido",
+      "saveError": "Salvataggio non riuscito. Riprova."
     }
   },
   "ja": {
@@ -1230,7 +1236,8 @@
       "noSection": "セクションなし",
       "addToRoutine": "ルーティンに追加",
       "adding": "追加中…",
-      "quickSave": "クイック"
+      "quickSave": "クイック",
+      "saveError": "保存できませんでした。もう一度お試しください。"
     }
   },
   "zh": {
@@ -1406,7 +1413,8 @@
       "noSection": "无分组",
       "addToRoutine": "添加到计划",
       "adding": "添加中…",
-      "quickSave": "快速"
+      "quickSave": "快速",
+      "saveError": "保存失败，请重试。"
     }
   }
 }
