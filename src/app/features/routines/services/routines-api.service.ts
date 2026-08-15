@@ -100,12 +100,15 @@ export class RoutinesApiService {
     const { data: r, error: rErr } = await this.db
       .from('routines').select('id, name, emoji, share_token')
       .eq('share_token', token).eq('is_public', true).maybeSingle();
-    if (rErr || !r) return null;
+    // Only a genuine miss returns null; a failed request must not be reported as a dead link.
+    if (rErr) throw rErr;
+    if (!r) return null;
 
-    const [{ data: sections }, { data: exercises }, { data: likes }] = await Promise.all([
+    const [{ data: sections }, { data: exercises }, { count: likeCount }] = await Promise.all([
       this.db.from('sections').select('*').eq('routine_id', r.id).order('order'),
       this.db.from('exercises').select('*').eq('routine_id', r.id).order('order'),
-      this.db.from('routine_likes').select('routine_id').eq('routine_id', r.id)
+      // head+count: a popular routine should not ship one row per like just to render a number
+      this.db.from('routine_likes').select('id', { count: 'exact', head: true }).eq('routine_id', r.id)
     ]);
 
     const base = this.buildRoutine(r, (sections ?? []) as DbSection[], (exercises ?? []) as DbExercise[]);
@@ -114,14 +117,17 @@ export class RoutinesApiService {
       emoji: r.emoji ?? undefined,
       shareToken: r.share_token,
       isPublic: true,
-      likeCount: (likes ?? []).length,
+      likeCount: likeCount ?? 0,
       items: base.items,
     };
   }
 
   async setPublic(id: string, isPublic: boolean): Promise<string | null> {
+    const patch: Record<string, unknown> = { is_public: isPublic };
+    if (!isPublic) patch['share_token'] = crypto.randomUUID();
+
     const { data, error } = await this.db
-      .from('routines').update({ is_public: isPublic }).eq('id', id)
+      .from('routines').update(patch).eq('id', id)
       .select('share_token').single();
     if (error) throw error;
     return data?.share_token ?? null;
@@ -129,7 +135,7 @@ export class RoutinesApiService {
 
   async getLikedRoutines(): Promise<PublicRoutine[]> {
     const { data: likes, error: lErr } = await this.db
-      .from('routine_likes').select('routine_id');
+      .from('routine_likes').select('routine_id').eq('user_id', this.userId);
     if (lErr) throw lErr;
     if (!likes?.length) return [];
 
@@ -138,34 +144,42 @@ export class RoutinesApiService {
       .from('routines').select('id, name, emoji, is_public, share_token').in('id', ids).eq('is_public', true);
     if (rErr) throw rErr;
 
-    const { data: allLikes } = await this.db.from('routine_likes').select('routine_id').in('routine_id', ids);
-    const countMap = new Map<string, number>();
-    for (const l of (allLikes ?? [])) countMap.set(l.routine_id, (countMap.get(l.routine_id) ?? 0) + 1);
+    const counts = await this.getLikeCounts(ids);
 
     return (routines ?? []).map((r: any) => ({
       id: r.id, name: r.name,
       emoji: r.emoji ?? undefined,
       shareToken: r.share_token,
       isPublic: true,
-      likeCount: countMap.get(r.id) ?? 0,
+      likeCount: counts.get(r.id) ?? 0,
     }));
   }
 
+  private async getLikeCounts(routineIds: string[]): Promise<Map<string, number>> {
+    const counts = new Map<string, number>();
+    const results = await Promise.all(routineIds.map(id =>
+      this.db.from('routine_likes').select('id', { count: 'exact', head: true }).eq('routine_id', id)
+    ));
+    routineIds.forEach((id, i) => counts.set(id, results[i].count ?? 0));
+    return counts;
+  }
+
   async getMyLikedIds(): Promise<Set<string>> {
-    const { data, error } = await this.db.from('routine_likes').select('routine_id');
+    const { data, error } = await this.db
+      .from('routine_likes').select('routine_id').eq('user_id', this.userId);
     if (error) return new Set();
     return new Set((data ?? []).map((l: any) => l.routine_id));
   }
 
   async likeRoutine(routineId: string): Promise<void> {
-    const { data: { user } } = await this.db.auth.getUser();
-    const { error } = await this.db.from('routine_likes').insert({ routine_id: routineId, user_id: user!.id });
+    const { error } = await this.db.from('routine_likes')
+      .insert({ routine_id: routineId, user_id: this.userId });
     if (error && error.code !== '23505') throw error; // 23505 = unique violation (already liked)
   }
 
   async unlikeRoutine(routineId: string): Promise<void> {
     const { error } = await this.db.from('routine_likes').delete()
-      .eq('routine_id', routineId);
+      .eq('routine_id', routineId).eq('user_id', this.userId);
     if (error) throw error;
   }
 
@@ -224,10 +238,6 @@ export class RoutinesApiService {
 
   // ── Exercises ─────────────────────────────────────────────────────────────
 
-  /**
-   * Next free `order` for a routine we do not have loaded in memory. Root items share one
-   * sequence between section-less exercises and sections, so both have to be counted.
-   */
   async getNextOrder(routineId: string, sectionId: string | null): Promise<number> {
     if (sectionId) {
       const { count } = await this.db.from('exercises')

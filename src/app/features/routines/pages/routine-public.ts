@@ -18,6 +18,17 @@ import { getThumbnailUrl, fetchVideoInfo, VideoInfo } from '../utils/platform';
           <div class="w-8 h-8 rounded-full border-2 border-brand border-t-transparent animate-spin"></div>
         </div>
 
+      } @else if (loadFailed()) {
+        <div class="flex-1 flex flex-col items-center justify-center px-8 text-center gap-4">
+          <span class="text-5xl">📡</span>
+          <h1 class="text-xl font-bold text-ink">No se pudo cargar</h1>
+          <p class="text-sm text-ink-muted">Comprueba tu conexión e inténtalo de nuevo.</p>
+          <button
+            class="mt-2 bg-brand text-white px-6 py-3 rounded-2xl font-semibold text-sm shadow-sm shadow-brand/20"
+            (click)="retry()"
+          >Reintentar</button>
+        </div>
+
       } @else if (!routine()) {
         <div class="flex-1 flex flex-col items-center justify-center px-8 text-center gap-4">
           <span class="text-5xl">🔍</span>
@@ -149,7 +160,8 @@ export class RoutinePublicComponent {
   private router = inject(Router);
 
   routine = signal<PublicRoutine | null | undefined>(undefined);
-  loading = computed(() => this.routine() === undefined);
+  loadFailed = signal(false);
+  loading = computed(() => this.routine() === undefined && !this.loadFailed());
   liked = signal(false);
   likeLoading = signal(false);
   copied = signal(false);
@@ -171,13 +183,28 @@ export class RoutinePublicComponent {
 
   private async load(token: string) {
     this.routine.set(undefined);
-    const r = await this.api.getPublicRoutineByToken(token);
-    this.routine.set(r);
+    this.loadFailed.set(false);
 
-    if (r && this.auth.user()) {
+    let r: PublicRoutine | null;
+    try {
+      r = await this.api.getPublicRoutineByToken(token);
+    } catch {
+      this.loadFailed.set(true);
+      return;
+    }
+    this.routine.set(r);
+    if (!r) return;
+
+    this.prefetchThumbnails(r);
+
+    if (this.auth.user()) {
       const liked = await this.api.getMyLikedIds();
       this.liked.set(liked.has(r.id));
     }
+  }
+
+  retry() {
+    this.load(this.token());
   }
 
   async toggleLike() {
@@ -195,21 +222,29 @@ export class RoutinePublicComponent {
       if (this.liked()) {
         await this.api.unlikeRoutine(r.id);
         this.liked.set(false);
-        this.routine.set({ ...r, likeCount: r.likeCount - 1 });
+        this.routine.set({ ...r, likeCount: Math.max(0, r.likeCount - 1) });
       } else {
         await this.api.likeRoutine(r.id);
         this.liked.set(true);
         this.routine.set({ ...r, likeCount: r.likeCount + 1 });
       }
+    } catch {
+      // Leave the button as it was; the counter only moves once the write lands.
     } finally {
       this.likeLoading.set(false);
     }
   }
 
   async copyLink() {
-    await navigator.clipboard.writeText(window.location.href);
-    this.copied.set(true);
-    setTimeout(() => this.copied.set(false), 2000);
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      this.copied.set(true);
+      setTimeout(() => this.copied.set(false), 2000);
+    } catch {
+      if (navigator.share) {
+        try { await navigator.share({ url: window.location.href }); } catch {}
+      }
+    }
   }
 
   openInApp() {
@@ -217,20 +252,28 @@ export class RoutinePublicComponent {
   }
 
   private readonly mediaCache = signal<Record<string, VideoInfo>>({});
-  private readonly fetchingUrls = new Set<string>();
 
+  /** Pure lookup: the template calls this on every change detection pass. */
   thumbnail(url: string): string | null {
     if (!url) return null;
-    const cached = this.mediaCache()[url];
-    if (cached) return cached.thumb || null;
-    const ytThumb = getThumbnailUrl(url);
-    if (!this.fetchingUrls.has(url)) {
-      this.fetchingUrls.add(url);
-      fetchVideoInfo(url).then(info => {
-        this.mediaCache.update(c => ({ ...c, [url]: info }));
-      });
+    return this.mediaCache()[url]?.thumb || getThumbnailUrl(url);
+  }
+
+  /** Resolve every thumbnail once, when the routine lands, instead of from the template. */
+  private prefetchThumbnails(routine: PublicRoutine) {
+    const urls = new Set<string>();
+    for (const item of routine.items ?? []) {
+      if (item.type === 'section') {
+        for (const ex of this.asSection(item).exercises) urls.add(ex.videoUrl);
+      } else {
+        urls.add(this.asExercise(item).videoUrl);
+      }
     }
-    return ytThumb;
+
+    for (const url of urls) {
+      if (!url) continue;
+      fetchVideoInfo(url).then(info => this.mediaCache.update(c => ({ ...c, [url]: info })));
+    }
   }
 
   asSection(item: any) { return item as Section & { exercises: Exercise[] }; }

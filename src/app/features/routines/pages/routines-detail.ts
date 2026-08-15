@@ -666,9 +666,14 @@ export class RoutinesDetailComponent implements OnDestroy, AfterViewInit {
   async copyShareUrl() {
     const url = this.shareUrl();
     if (!url) return;
-    await navigator.clipboard.writeText(url);
-    this.shareCopied.set(true);
-    setTimeout(() => this.shareCopied.set(false), 2000);
+    // Rejects outside a secure context or when denied; fall back to the share sheet.
+    try {
+      await navigator.clipboard.writeText(url);
+      this.shareCopied.set(true);
+      setTimeout(() => this.shareCopied.set(false), 2000);
+    } catch {
+      await this.nativeShare();
+    }
   }
 
   async nativeShare() {
