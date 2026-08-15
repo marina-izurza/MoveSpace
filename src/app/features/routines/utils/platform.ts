@@ -86,6 +86,16 @@ export async function fetchVideoInfo(url: string): Promise<VideoInfo> {
   };
 }
 
+/**
+ * A name for the exercise, not the whole caption. Instagram titles are the full post text —
+ * several paragraphs — and only the first line reads like a heading.
+ */
 export async function fetchVideoTitle(url: string): Promise<string | null> {
-  return (await fetchVideoInfo(url)).title;
+  return toExerciseName((await fetchVideoInfo(url)).title);
+}
+
+export function toExerciseName(title: string | null): string | null {
+  const firstLine = (title ?? '').split('\n').map(l => l.trim()).find(Boolean);
+  if (!firstLine) return null;
+  return firstLine.length > 80 ? firstLine.slice(0, 79).trimEnd() + '…' : firstLine;
 }

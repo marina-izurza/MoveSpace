@@ -6,7 +6,7 @@ import { formatDuration } from '../../sessions/models/WorkoutSession';
 import { LucidePencil, LucideTrash, LucideCheck, LucideX, LucideGripVertical, LucideChevronDown, LucidePlay, LucideSquare, LucideRotateCcw } from '@lucide/angular';
 import { PlatformIconComponent } from '../components/platform-icon/platform-icon';
 import { EmojiPickerComponent } from '../../../shared/components/emoji-picker/emoji-picker';
-import { detectPlatform, fetchVideoInfo, fetchVideoTitle, getPlatformName, getThumbnailUrl, VideoInfo } from '../utils/platform';
+import { detectPlatform, fetchVideoInfo, fetchVideoTitle, getPlatformName, getThumbnailUrl, toExerciseName, VideoInfo } from '../utils/platform';
 import { CdkDragDrop, CdkDropList, CdkDropListGroup, CdkDrag, CdkDragHandle, moveItemInArray } from '@angular/cdk/drag-drop';
 import { NgTemplateOutlet } from '@angular/common';
 import { Section } from '../models/Section';
@@ -690,7 +690,9 @@ export class RoutinesDetailComponent implements OnDestroy, AfterViewInit {
   async refetchInfo(url: string, nameInput: HTMLInputElement) {
     if (!url.trim()) return;
     const info = await fetchVideoInfo(url);
-    if (info.title) nameInput.value = info.title;
+    this.mediaCache.update(c => ({ ...c, [url]: info }));
+    const name = toExerciseName(info.title);
+    if (name) nameInput.value = name;
   }
 
   back() {
