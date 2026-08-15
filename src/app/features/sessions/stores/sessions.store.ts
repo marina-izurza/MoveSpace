@@ -1,14 +1,17 @@
 import { Injectable, inject, signal, computed, resource } from '@angular/core';
 import { SessionsApiService } from '../services/sessions-api.service';
+import { AuthService } from '../../../core/auth.service';
 import { WorkoutSession } from '../models/WorkoutSession';
 
 @Injectable({ providedIn: 'root' })
 export class SessionsStore {
   private api = inject(SessionsApiService);
+  private auth = inject(AuthService);
 
   activeSession = signal<WorkoutSession | null>(null);
 
   private _sessionsResource = resource({
+    params: () => this.auth.user()?.id,
     loader: () => this.api.getRecentSessions()
   });
 

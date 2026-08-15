@@ -72,7 +72,7 @@ import { LanguageService } from '../../../core/language.service';
 
       <!-- Content -->
       <div class="flex-1 px-5">
-        @if (store.listLoading()) {
+        @if (!store.listLoaded() && !store.listError()) {
           <div class="flex justify-center py-16">
             <div class="w-8 h-8 rounded-full border-2 border-brand border-t-transparent animate-spin"></div>
           </div>
@@ -155,10 +155,10 @@ export class RoutinesListComponent {
 
   constructor() {
     effect(() => {
-      if (!this.store.listLoading() && !this.store.listError()) {
+      if (this.store.listLoaded()) {
         this.store.ensureInboxRoutine(this.ls.t('routines.inboxDefault'));
       }
-    }, { allowSignalWrites: true });
+    });
   }
 
   onPickNewEmoji(emoji: string) {

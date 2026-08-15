@@ -1,7 +1,6 @@
 import { Injectable, inject, signal, computed, resource } from '@angular/core';
 import { RoutinesApiService } from '../services/routines-api.service';
 import { AuthService } from '../../../core/auth.service';
-import { RoutineSummary } from '../models/RoutineSummary';
 import { Routine } from '../models/Routine';
 import { RoutineItem } from '../models/RoutineItem';
 import { Exercise } from '../models/Exercise';
@@ -14,17 +13,21 @@ export class RoutinesStore {
 
   // ── Lista de rutinas ──────────────────────────────────────────────────────
 
-  // Reading auth.user() inside the loader makes the resource reload when the user logs in/out
+  // The loader runs untracked: only `params` is reactive, so auth.user() must be read
+  // there for the resource to reload when the user logs in/out. While params is
+  // undefined the resource stays idle and never hits the API.
   private _listResource = resource({
-    loader: () => {
-      const userId = this.auth.user()?.id;
-      return userId ? this.api.getRoutines() : Promise.resolve([] as RoutineSummary[]);
-    }
+    params: () => this.auth.user()?.id,
+    loader: () => this.api.getRoutines()
   });
 
   readonly routines = computed(() => this._listResource.value() ?? []);
   readonly listLoading = this._listResource.isLoading;
   readonly listError = this._listResource.error;
+  readonly listLoaded = computed(() => {
+    const status = this._listResource.status();
+    return status === 'resolved' || status === 'local';
+  });
   readonly inboxRoutine = computed(() => this.routines().find(r => r.isInbox) ?? null);
 
   reloadList(): void { this._listResource.reload(); }
@@ -52,10 +55,8 @@ export class RoutinesStore {
   private _detailId = signal<string | null>(null);
 
   private _detailResource = resource({
-    loader: () => {
-      const id = this._detailId();
-      return id ? this.api.getRoutine(id) : Promise.resolve(null);
-    }
+    params: () => this._detailId() ?? undefined,
+    loader: ({ params }) => this.api.getRoutine(params)
   });
 
   readonly routine = computed(() => this._detailResource.value() ?? null);
