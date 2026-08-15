@@ -6,6 +6,7 @@ import { PublicRoutine } from '../models/RoutineSummary';
 import { Section } from '../models/Section';
 import { Exercise } from '../models/Exercise';
 import { getThumbnailUrl, fetchVideoInfo, VideoInfo } from '../utils/platform';
+import { appOrigin } from '../../../core/app-origin';
 
 @Component({
   selector: 'app-routine-public',
@@ -236,13 +237,14 @@ export class RoutinePublicComponent {
   }
 
   async copyLink() {
+    const url = `${appOrigin()}/r/${this.token()}`;
     try {
-      await navigator.clipboard.writeText(window.location.href);
+      await navigator.clipboard.writeText(url);
       this.copied.set(true);
       setTimeout(() => this.copied.set(false), 2000);
     } catch {
       if (navigator.share) {
-        try { await navigator.share({ url: window.location.href }); } catch {}
+        try { await navigator.share({ url }); } catch {}
       }
     }
   }

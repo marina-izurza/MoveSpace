@@ -3,6 +3,7 @@ import { Session, User } from '@supabase/supabase-js';
 import { SupabaseService } from './supabase.service';
 import { ThemeService } from './theme.service';
 import { AccentService, Accent } from './accent.service';
+import { appOrigin } from './app-origin';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -69,7 +70,8 @@ export class AuthService {
 
   async resetPassword(email: string) {
     const { error } = await this.supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
+      // Goes into an email opened on any device — it can never point at the WebView's origin.
+      redirectTo: `${appOrigin()}/reset-password`,
     });
     if (error) throw error;
   }

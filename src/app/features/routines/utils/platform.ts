@@ -1,3 +1,5 @@
+import { appOrigin } from '../../../core/app-origin';
+
 export type Platform = 'youtube' | 'tiktok' | 'instagram' | 'pinterest' | 'x' | 'unknown';
 
 export interface VideoInfo {
@@ -61,9 +63,7 @@ export function getThumbnailUrl(url: string): string | null {
 
 async function proxyOEmbed(provider: string, url: string): Promise<Record<string, string> | null> {
   try {
-    const { Capacitor } = await import('@capacitor/core');
-    const base = Capacitor.isNativePlatform() ? 'https://movespace-app.vercel.app' : '';
-    const res = await fetch(`${base}/api/oembed?provider=${provider}&url=${encodeURIComponent(url)}`);
+    const res = await fetch(`${appOrigin()}/api/oembed?provider=${provider}&url=${encodeURIComponent(url)}`);
     if (!res.ok) return null;
     return await res.json();
   } catch {

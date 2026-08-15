@@ -11,6 +11,7 @@ import { CdkDragDrop, CdkDropList, CdkDropListGroup, CdkDrag, CdkDragHandle, mov
 import { NgTemplateOutlet } from '@angular/common';
 import { Section } from '../models/Section';
 import { ConfirmService } from '../../../core/confirm.service';
+import { appOrigin } from '../../../core/app-origin';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 
 @Component({
@@ -523,10 +524,7 @@ export class RoutinesDetailComponent implements OnDestroy, AfterViewInit {
   readonly shareUrl = computed(() => {
     const t = this.shareToken();
     if (!t) return null;
-    const origin = typeof window !== 'undefined' && window.location.protocol.startsWith('http')
-      ? window.location.origin
-      : 'https://movespace-app.vercel.app';
-    return `${origin}/r/${t}`;
+    return `${appOrigin()}/r/${t}`;
   });
   readonly canNativeShare = typeof navigator !== 'undefined' && !!navigator.share;
 

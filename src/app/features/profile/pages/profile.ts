@@ -6,6 +6,7 @@ import { LanguageService } from '../../../core/language.service';
 import { AccentService, Accent } from '../../../core/accent.service';
 import { RoutinesStore } from '../../routines/stores/routines.store';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
+import { appOrigin } from '../../../core/app-origin';
 import {
   LucideSun, LucideMoon, LucideLogOut, LucideBell, LucideShield,
   LucideChevronRight, LucideChevronDown, LucideLanguages, LucidePencil,
@@ -477,9 +478,16 @@ export class ProfileComponent {
 
   async copyShareLink(r: { id: string; shareToken?: string }) {
     if (!r.shareToken) return;
-    await navigator.clipboard.writeText(`${window.location.origin}/r/${r.shareToken}`);
-    this.copiedId.set(r.id);
-    setTimeout(() => this.copiedId.set(null), 2000);
+    const url = `${appOrigin()}/r/${r.shareToken}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      this.copiedId.set(r.id);
+      setTimeout(() => this.copiedId.set(null), 2000);
+    } catch {
+      if (navigator.share) {
+        try { await navigator.share({ url }); } catch {}
+      }
+    }
   }
 
   toggleTheme() {
