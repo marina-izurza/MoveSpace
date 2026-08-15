@@ -3,6 +3,7 @@ import { Session, User } from '@supabase/supabase-js';
 import { SupabaseService } from './supabase.service';
 import { ThemeService } from './theme.service';
 import { AccentService, Accent } from './accent.service';
+import { LanguageService } from './language.service';
 import { appOrigin } from './app-origin';
 
 @Injectable({ providedIn: 'root' })
@@ -10,6 +11,7 @@ export class AuthService {
   private supabase = inject(SupabaseService).client;
   private themeService = inject(ThemeService);
   private accentService = inject(AccentService);
+  private languageService = inject(LanguageService);
   private zone = inject(NgZone);
 
   session = signal<Session | null>(null);
@@ -48,9 +50,10 @@ export class AuthService {
     if (meta['accent']) {
       this.accentService.set(meta['accent'] as Accent);
     }
+    this.languageService.setIfSupported(meta['language']);
   }
 
-  async savePreferences(prefs: { theme?: string; accent?: string }) {
+  async savePreferences(prefs: { theme?: string; accent?: string; language?: string }) {
     await this.supabase.auth.updateUser({ data: prefs });
   }
 

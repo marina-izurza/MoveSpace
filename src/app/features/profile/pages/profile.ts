@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth.service';
 import { ThemeService } from '../../../core/theme.service';
-import { LanguageService } from '../../../core/language.service';
+import { LanguageService, Locale } from '../../../core/language.service';
 import { AccentService, Accent } from '../../../core/accent.service';
 import { RoutinesStore } from '../../routines/stores/routines.store';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
@@ -471,9 +471,10 @@ export class ProfileComponent {
     this.editingInbox.set(false);
   }
 
-  setLang(code: typeof this.ls.locale extends () => infer T ? T : never) {
-    this.ls.set(code as any);
+  setLang(code: Locale) {
+    this.ls.set(code);
     this.showLangPicker.set(false);
+    this.auth.savePreferences({ language: code });
   }
 
   async copyShareLink(r: { id: string; shareToken?: string }) {
