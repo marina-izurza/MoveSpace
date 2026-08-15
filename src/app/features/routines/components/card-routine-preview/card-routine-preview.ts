@@ -6,6 +6,7 @@ import { ConfirmService } from '../../../../core/confirm.service';
 @Component({
   selector: 'app-card-routine-preview',
   imports: [LucideTrash, LucideChevronRight, LucideDumbbell, EmojiPickerComponent],
+  host: { class: 'block' },
   template: `
     <div class="bg-surface rounded-2xl border border-edge shadow-sm overflow-hidden">
       <div
