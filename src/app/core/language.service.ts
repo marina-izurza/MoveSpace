@@ -21,12 +21,26 @@ function isLocale(code: unknown): code is Locale {
   return typeof code === 'string' && LOCALES.some(l => l.code === code);
 }
 
+/**
+ * First launch only: follow the device. Tags carry a region (`es-ES`, `pt-BR`, `zh-Hans-CN`)
+ * while the catalogue is keyed by language, so compare on the primary subtag. English when
+ * the device speaks something the app does not.
+ */
+function deviceLocale(): Locale {
+  const tags = [navigator.language, ...(navigator.languages ?? [])];
+  for (const tag of tags) {
+    const base = typeof tag === 'string' ? tag.split('-')[0].toLowerCase() : null;
+    if (isLocale(base)) return base;
+  }
+  return DEFAULT_LOCALE;
+}
+
 @Injectable({ providedIn: 'root' })
 export class LanguageService {
-  // English until the device or the account says otherwise. The stored value is validated
-  // because it also arrives from user metadata, which is editable.
+  // Own choice first, then the device on a fresh install, English as the floor. The stored
+  // value is validated because it also arrives from user metadata, which is editable.
   readonly locale = signal<Locale>(
-    isLocale(localStorage.getItem(LOCALE_KEY)) ? localStorage.getItem(LOCALE_KEY) as Locale : DEFAULT_LOCALE
+    isLocale(localStorage.getItem(LOCALE_KEY)) ? localStorage.getItem(LOCALE_KEY) as Locale : deviceLocale()
   );
 
   readonly available = LOCALES;

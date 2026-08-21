@@ -57,9 +57,14 @@ export class AuthService {
     await this.supabase.auth.updateUser({ data: prefs });
   }
 
-  async signUp(email: string, password: string) {
-    const { error } = await this.supabase.auth.signUp({ email, password });
+  /**
+   * With email confirmation enabled Supabase creates the user but no session, so navigating
+   * straight into the app would bounce off the auth guard and look like the sign-up failed.
+   */
+  async signUp(email: string, password: string): Promise<{ needsConfirmation: boolean }> {
+    const { data, error } = await this.supabase.auth.signUp({ email, password });
     if (error) throw error;
+    return { needsConfirmation: !data.session };
   }
 
   async signIn(email: string, password: string) {

@@ -27,7 +27,21 @@
       "savePassword": "Save password",
       "passwordUpdated": "Password updated. You can now sign in.",
       "passwordMismatch": "Passwords don't match",
-      "passwordShort": "Password must be at least 6 characters"
+      "passwordShort": "Password must be at least 6 characters",
+      "emailRequired": "Enter your email",
+      "invalidEmail": "That email doesn't look right",
+      "passwordRequired": "Enter your password",
+      "passwordHint": "At least 6 characters",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
+      "confirmTitle": "Confirm your account",
+      "confirmHint": "We sent you a link to activate your account. Check your inbox (and spam folder).",
+      "emailInUse": "That email already has an account. Try signing in.",
+      "wrongCredentials": "Wrong email or password.",
+      "emailNotConfirmed": "Confirm your account using the link we emailed you.",
+      "tooManyAttempts": "Too many attempts. Wait a moment and try again.",
+      "networkError": "No connection. Check your internet and try again.",
+      "genericError": "Something went wrong. Please try again."
     },
     "routines": {
       "welcome": "Welcome back 👋",
@@ -59,7 +73,13 @@
       "noExercisesHint": "Add your first exercise above",
       "noExercisesSection": "No exercises — add one below",
       "addExerciseSection": "+ Add exercise",
-      "viewOn": "View on"
+      "viewOn": "View on",
+      "moveTitle": "Move video",
+      "moveAction": "Move",
+      "copyAction": "Duplicate",
+      "moveTarget": "Choose a routine",
+      "moveNoTargets": "You have no other routines yet. Create one first.",
+      "moveError": "Could not do it. Please try again."
     },
     "explore": {
       "title": "Explore",
@@ -205,7 +225,21 @@
       "savePassword": "Guardar contraseña",
       "passwordUpdated": "Contraseña actualizada. Ya puedes iniciar sesión.",
       "passwordMismatch": "Las contraseñas no coinciden",
-      "passwordShort": "La contraseña debe tener al menos 6 caracteres"
+      "passwordShort": "La contraseña debe tener al menos 6 caracteres",
+      "emailRequired": "Escribe tu correo",
+      "invalidEmail": "Ese correo no parece válido",
+      "passwordRequired": "Escribe tu contraseña",
+      "passwordHint": "Al menos 6 caracteres",
+      "showPassword": "Mostrar contraseña",
+      "hidePassword": "Ocultar contraseña",
+      "confirmTitle": "Confirma tu cuenta",
+      "confirmHint": "Te hemos enviado un enlace para activar tu cuenta. Revisa tu bandeja de entrada (y el spam).",
+      "emailInUse": "Ese correo ya tiene cuenta. Prueba a iniciar sesión.",
+      "wrongCredentials": "Correo o contraseña incorrectos.",
+      "emailNotConfirmed": "Confirma tu cuenta con el enlace que te enviamos por correo.",
+      "tooManyAttempts": "Demasiados intentos. Espera un momento e inténtalo de nuevo.",
+      "networkError": "Sin conexión. Comprueba tu internet e inténtalo de nuevo.",
+      "genericError": "Algo ha fallado. Inténtalo de nuevo."
     },
     "routines": {
       "welcome": "Bienvenida 👋",
@@ -237,7 +271,13 @@
       "noExercisesHint": "Añade tu primer ejercicio arriba",
       "noExercisesSection": "Sin ejercicios — añade uno abajo",
       "addExerciseSection": "+ Añadir ejercicio",
-      "viewOn": "Ver en"
+      "viewOn": "Ver en",
+      "moveTitle": "Mover vídeo",
+      "moveAction": "Mover",
+      "copyAction": "Duplicar",
+      "moveTarget": "Elige una rutina",
+      "moveNoTargets": "Aún no tienes otras rutinas. Crea una primero.",
+      "moveError": "No se pudo hacer. Inténtalo de nuevo."
     },
     "explore": {
       "title": "Explorar",
@@ -383,7 +423,21 @@
       "savePassword": "Enregistrer le mot de passe",
       "passwordUpdated": "Mot de passe mis à jour. Vous pouvez maintenant vous connecter.",
       "passwordMismatch": "Les mots de passe ne correspondent pas",
-      "passwordShort": "Le mot de passe doit comporter au moins 6 caractères"
+      "passwordShort": "Le mot de passe doit comporter au moins 6 caractères",
+      "emailRequired": "Saisissez votre e-mail",
+      "invalidEmail": "Cet e-mail ne semble pas valide",
+      "passwordRequired": "Saisissez votre mot de passe",
+      "passwordHint": "Au moins 6 caractères",
+      "showPassword": "Afficher le mot de passe",
+      "hidePassword": "Masquer le mot de passe",
+      "confirmTitle": "Confirmez votre compte",
+      "confirmHint": "Nous vous avons envoyé un lien pour activer votre compte. Vérifiez votre boîte de réception (et les spams).",
+      "emailInUse": "Cet e-mail a déjà un compte. Essayez de vous connecter.",
+      "wrongCredentials": "E-mail ou mot de passe incorrect.",
+      "emailNotConfirmed": "Confirmez votre compte avec le lien envoyé par e-mail.",
+      "tooManyAttempts": "Trop de tentatives. Patientez un instant et réessayez.",
+      "networkError": "Pas de connexion. Vérifiez votre internet et réessayez.",
+      "genericError": "Une erreur est survenue. Réessayez."
     },
     "routines": {
       "welcome": "Bon retour 👋",
@@ -415,7 +469,13 @@
       "noExercisesHint": "Ajoutez votre premier exercice ci-dessus",
       "noExercisesSection": "Aucun exercice — ajoutez-en un ci-dessous",
       "addExerciseSection": "+ Ajouter un exercice",
-      "viewOn": "Voir sur"
+      "viewOn": "Voir sur",
+      "moveTitle": "Déplacer la vidéo",
+      "moveAction": "Déplacer",
+      "copyAction": "Dupliquer",
+      "moveTarget": "Choisissez une routine",
+      "moveNoTargets": "Vous n'avez pas encore d'autres routines. Créez-en une d'abord.",
+      "moveError": "Échec de l'opération. Réessayez."
     },
     "explore": {
       "title": "Explorer",
@@ -560,7 +620,21 @@
       "savePassword": "Passwort speichern",
       "passwordUpdated": "Passwort aktualisiert. Du kannst dich jetzt anmelden.",
       "passwordMismatch": "Passwörter stimmen nicht überein",
-      "passwordShort": "Das Passwort muss mindestens 6 Zeichen lang sein"
+      "passwordShort": "Das Passwort muss mindestens 6 Zeichen lang sein",
+      "emailRequired": "Gib deine E-Mail ein",
+      "invalidEmail": "Diese E-Mail sieht nicht richtig aus",
+      "passwordRequired": "Gib dein Passwort ein",
+      "passwordHint": "Mindestens 6 Zeichen",
+      "showPassword": "Passwort anzeigen",
+      "hidePassword": "Passwort verbergen",
+      "confirmTitle": "Bestätige dein Konto",
+      "confirmHint": "Wir haben dir einen Link zur Aktivierung geschickt. Sieh in deinem Posteingang (und im Spam) nach.",
+      "emailInUse": "Für diese E-Mail gibt es bereits ein Konto. Versuche dich anzumelden.",
+      "wrongCredentials": "E-Mail oder Passwort falsch.",
+      "emailNotConfirmed": "Bestätige dein Konto über den Link in unserer E-Mail.",
+      "tooManyAttempts": "Zu viele Versuche. Warte kurz und versuche es erneut.",
+      "networkError": "Keine Verbindung. Prüfe dein Internet und versuche es erneut.",
+      "genericError": "Etwas ist schiefgelaufen. Bitte erneut versuchen."
     },
     "routines": {
       "welcome": "Willkommen zurück 👋",
@@ -592,7 +666,13 @@
       "noExercisesHint": "Füge oben deine erste Übung hinzu",
       "noExercisesSection": "Keine Übungen — füge eine unten hinzu",
       "addExerciseSection": "+ Übung hinzufügen",
-      "viewOn": "Ansehen auf"
+      "viewOn": "Ansehen auf",
+      "moveTitle": "Video verschieben",
+      "moveAction": "Verschieben",
+      "copyAction": "Duplizieren",
+      "moveTarget": "Routine auswählen",
+      "moveNoTargets": "Du hast noch keine anderen Routinen. Erstelle zuerst eine.",
+      "moveError": "Hat nicht geklappt. Bitte erneut versuchen."
     },
     "explore": {
       "title": "Entdecken",
@@ -737,7 +817,21 @@
       "savePassword": "Salvar senha",
       "passwordUpdated": "Senha atualizada. Agora você pode entrar.",
       "passwordMismatch": "As senhas não coincidem",
-      "passwordShort": "A senha deve ter pelo menos 6 caracteres"
+      "passwordShort": "A senha deve ter pelo menos 6 caracteres",
+      "emailRequired": "Escreve o teu email",
+      "invalidEmail": "Esse email não parece válido",
+      "passwordRequired": "Escreve a tua palavra-passe",
+      "passwordHint": "Pelo menos 6 caracteres",
+      "showPassword": "Mostrar palavra-passe",
+      "hidePassword": "Ocultar palavra-passe",
+      "confirmTitle": "Confirma a tua conta",
+      "confirmHint": "Enviámos-te um link para ativar a conta. Vê a tua caixa de entrada (e o spam).",
+      "emailInUse": "Esse email já tem conta. Tenta iniciar sessão.",
+      "wrongCredentials": "Email ou palavra-passe incorretos.",
+      "emailNotConfirmed": "Confirma a tua conta com o link que te enviámos por email.",
+      "tooManyAttempts": "Demasiadas tentativas. Espera um momento e tenta de novo.",
+      "networkError": "Sem ligação. Verifica a tua internet e tenta de novo.",
+      "genericError": "Algo correu mal. Tenta de novo."
     },
     "routines": {
       "welcome": "Bem-vindo de volta 👋",
@@ -769,7 +863,13 @@
       "noExercisesHint": "Adicione seu primeiro exercício acima",
       "noExercisesSection": "Sem exercícios — adicione um abaixo",
       "addExerciseSection": "+ Adicionar exercício",
-      "viewOn": "Ver em"
+      "viewOn": "Ver em",
+      "moveTitle": "Mover vídeo",
+      "moveAction": "Mover",
+      "copyAction": "Duplicar",
+      "moveTarget": "Escolhe uma rotina",
+      "moveNoTargets": "Ainda não tens outras rotinas. Cria uma primeiro.",
+      "moveError": "Não foi possível. Tenta novamente."
     },
     "explore": {
       "title": "Explorar",
@@ -914,7 +1014,21 @@
       "savePassword": "Salva password",
       "passwordUpdated": "Password aggiornata. Ora puoi accedere.",
       "passwordMismatch": "Le password non corrispondono",
-      "passwordShort": "La password deve essere di almeno 6 caratteri"
+      "passwordShort": "La password deve essere di almeno 6 caratteri",
+      "emailRequired": "Inserisci la tua email",
+      "invalidEmail": "Questa email non sembra valida",
+      "passwordRequired": "Inserisci la tua password",
+      "passwordHint": "Almeno 6 caratteri",
+      "showPassword": "Mostra password",
+      "hidePassword": "Nascondi password",
+      "confirmTitle": "Conferma il tuo account",
+      "confirmHint": "Ti abbiamo inviato un link per attivare l'account. Controlla la posta in arrivo (e lo spam).",
+      "emailInUse": "Questa email ha già un account. Prova ad accedere.",
+      "wrongCredentials": "Email o password errati.",
+      "emailNotConfirmed": "Conferma l'account con il link che ti abbiamo inviato per email.",
+      "tooManyAttempts": "Troppi tentativi. Aspetta un momento e riprova.",
+      "networkError": "Nessuna connessione. Controlla la rete e riprova.",
+      "genericError": "Qualcosa è andato storto. Riprova."
     },
     "routines": {
       "welcome": "Bentornata 👋",
@@ -946,7 +1060,13 @@
       "noExercisesHint": "Aggiungi il tuo primo esercizio sopra",
       "noExercisesSection": "Nessun esercizio — aggiungine uno sotto",
       "addExerciseSection": "+ Aggiungi esercizio",
-      "viewOn": "Guarda su"
+      "viewOn": "Guarda su",
+      "moveTitle": "Sposta video",
+      "moveAction": "Sposta",
+      "copyAction": "Duplica",
+      "moveTarget": "Scegli una routine",
+      "moveNoTargets": "Non hai ancora altre routine. Creane una prima.",
+      "moveError": "Operazione non riuscita. Riprova."
     },
     "explore": {
       "title": "Esplora",
@@ -1091,7 +1211,21 @@
       "savePassword": "パスワードを保存",
       "passwordUpdated": "パスワードが更新されました。ログインできます。",
       "passwordMismatch": "パスワードが一致しません",
-      "passwordShort": "パスワードは6文字以上必要です"
+      "passwordShort": "パスワードは6文字以上必要です",
+      "emailRequired": "メールアドレスを入力してください",
+      "invalidEmail": "メールアドレスの形式が正しくないようです",
+      "passwordRequired": "パスワードを入力してください",
+      "passwordHint": "6文字以上",
+      "showPassword": "パスワードを表示",
+      "hidePassword": "パスワードを非表示",
+      "confirmTitle": "アカウントを確認してください",
+      "confirmHint": "アカウントを有効化するリンクを送信しました。受信トレイ（迷惑メールも）をご確認ください。",
+      "emailInUse": "このメールアドレスは登録済みです。ログインをお試しください。",
+      "wrongCredentials": "メールアドレスまたはパスワードが違います。",
+      "emailNotConfirmed": "送信したメールのリンクからアカウントを確認してください。",
+      "tooManyAttempts": "試行回数が多すぎます。しばらく待ってからお試しください。",
+      "networkError": "接続がありません。ネットワークを確認してください。",
+      "genericError": "問題が発生しました。もう一度お試しください。"
     },
     "routines": {
       "welcome": "おかえりなさい 👋",
@@ -1123,7 +1257,13 @@
       "noExercisesHint": "上に最初のエクササイズを追加してください",
       "noExercisesSection": "エクササイズなし — 下に追加してください",
       "addExerciseSection": "+ エクササイズを追加",
-      "viewOn": "で見る"
+      "viewOn": "で見る",
+      "moveTitle": "動画を移動",
+      "moveAction": "移動",
+      "copyAction": "複製",
+      "moveTarget": "ルーティンを選択",
+      "moveNoTargets": "他のルーティンがまだありません。先に作成してください。",
+      "moveError": "実行できませんでした。もう一度お試しください。"
     },
     "explore": {
       "title": "探索",
@@ -1268,7 +1408,21 @@
       "savePassword": "保存密码",
       "passwordUpdated": "密码已更新，您现在可以登录了。",
       "passwordMismatch": "两次输入的密码不一致",
-      "passwordShort": "密码至少需要6个字符"
+      "passwordShort": "密码至少需要6个字符",
+      "emailRequired": "请输入邮箱",
+      "invalidEmail": "邮箱格式似乎不正确",
+      "passwordRequired": "请输入密码",
+      "passwordHint": "至少 6 个字符",
+      "showPassword": "显示密码",
+      "hidePassword": "隐藏密码",
+      "confirmTitle": "请确认您的账户",
+      "confirmHint": "我们已发送激活链接，请查看收件箱（以及垃圾邮件）。",
+      "emailInUse": "该邮箱已注册，请尝试登录。",
+      "wrongCredentials": "邮箱或密码错误。",
+      "emailNotConfirmed": "请通过我们发送的邮件链接确认账户。",
+      "tooManyAttempts": "尝试次数过多，请稍后再试。",
+      "networkError": "无网络连接，请检查后重试。",
+      "genericError": "出了点问题，请重试。"
     },
     "routines": {
       "welcome": "欢迎回来 👋",
@@ -1300,7 +1454,13 @@
       "noExercisesHint": "在上方添加您的第一个动作",
       "noExercisesSection": "暂无动作 — 在下方添加",
       "addExerciseSection": "+ 添加动作",
-      "viewOn": "在以下平台查看"
+      "viewOn": "在以下平台查看",
+      "moveTitle": "移动视频",
+      "moveAction": "移动",
+      "copyAction": "复制",
+      "moveTarget": "选择计划",
+      "moveNoTargets": "您还没有其他计划，请先创建一个。",
+      "moveError": "操作失败，请重试。"
     },
     "explore": {
       "title": "探索",

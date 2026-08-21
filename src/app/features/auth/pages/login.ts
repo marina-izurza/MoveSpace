@@ -1,13 +1,16 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth.service';
 import { ThemeService } from '../../../core/theme.service';
+import { LanguageService } from '../../../core/language.service';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
-import { LucideSun, LucideMoon } from '@lucide/angular';
+import { LucideSun, LucideMoon, LucideEye, LucideEyeOff } from '@lucide/angular';
+
+const MIN_PASSWORD = 6;
 
 @Component({
   selector: 'app-login',
-  imports: [LucideSun, LucideMoon, TranslatePipe],
+  imports: [LucideSun, LucideMoon, LucideEye, LucideEyeOff, TranslatePipe],
   template: `
     <div class="min-h-screen bg-canvas flex flex-col items-center justify-center px-6 relative">
 
@@ -63,7 +66,7 @@ import { LucideSun, LucideMoon } from '@lucide/angular';
               [class.text-ink]="mode() === 'login'"
               [class.shadow-sm]="mode() === 'login'"
               [class.text-ink-muted]="mode() !== 'login'"
-              (click)="mode.set('login')"
+              (click)="setMode('login')"
             >{{ 'auth.signIn' | t }}</button>
             <button
               class="flex-1 py-2 text-sm font-semibold rounded-lg transition-all"
@@ -71,7 +74,7 @@ import { LucideSun, LucideMoon } from '@lucide/angular';
               [class.text-ink]="mode() === 'register'"
               [class.shadow-sm]="mode() === 'register'"
               [class.text-ink-muted]="mode() !== 'register'"
-              (click)="mode.set('register')"
+              (click)="setMode('register')"
             >{{ 'auth.createAccount' | t }}</button>
           </div>
         }
@@ -106,11 +109,20 @@ import { LucideSun, LucideMoon } from '@lucide/angular';
                 [disabled]="loading()"
                 (click)="sendReset(forgotEmail.value)"
               >{{ loading() ? ('auth.loading' | t) : ('auth.sendLink' | t) }}</button>
-              <button class="w-full text-sm text-ink-muted py-1" (click)="mode.set('login'); error.set(null)">
+              <button class="w-full text-sm text-ink-muted py-1" (click)="setMode('login')">
                 ← {{ 'auth.backToLogin' | t }}
               </button>
             </div>
           }
+        } @else if (awaitingConfirmation()) {
+          <div class="text-center py-4 space-y-3">
+            <div class="text-4xl">📬</div>
+            <p class="font-semibold text-ink">{{ 'auth.confirmTitle' | t }}</p>
+            <p class="text-sm text-ink-muted">{{ 'auth.confirmHint' | t }}</p>
+            <button class="w-full text-sm text-ink-muted py-1 mt-2" (click)="backToLogin()">
+              ← {{ 'auth.backToLogin' | t }}
+            </button>
+          </div>
         } @else {
           @if (error()) {
             <p class="text-sm text-danger bg-danger-muted rounded-xl px-3 py-2.5 mb-4">{{ error() }}</p>
@@ -120,31 +132,72 @@ import { LucideSun, LucideMoon } from '@lucide/angular';
             <div>
               <label class="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-1.5 block">{{ 'auth.email' | t }}</label>
               <input
-                class="w-full bg-canvas border border-edge rounded-xl px-4 py-3 text-base text-ink outline-none focus:border-brand transition"
-                type="email" placeholder="tu@email.com" #email
+                class="w-full bg-canvas border rounded-xl px-4 py-3 text-base text-ink outline-none transition"
+                [class.border-edge]="!emailError()"
+                [class.focus:border-brand]="!emailError()"
+                [class.border-danger]="emailError()"
+                type="email" inputmode="email" autocomplete="email" placeholder="tu@email.com"
+                [value]="email()"
+                (input)="email.set($any($event.target).value)"
               />
+              @if (emailError(); as err) {
+                <p class="text-xs text-danger mt-1.5">{{ err }}</p>
+              }
             </div>
             <div>
               <div class="flex items-center justify-between mb-1.5">
                 <label class="text-xs font-semibold text-ink-muted uppercase tracking-wider">{{ 'auth.password' | t }}</label>
                 @if (mode() === 'login') {
-                  <button class="text-xs text-brand font-medium" (click)="mode.set('forgot'); error.set(null)">
+                  <button class="text-xs text-brand font-medium" (click)="setMode('forgot')">
                     {{ 'auth.forgotPassword' | t }}
                   </button>
                 }
               </div>
-              <input
-                class="w-full bg-canvas border border-edge rounded-xl px-4 py-3 text-base text-ink outline-none focus:border-brand transition"
-                type="password" placeholder="••••••••" #password
-                (keyup.enter)="submit(email.value, password.value)"
-              />
+              <div class="relative">
+                <input
+                  class="w-full bg-canvas border rounded-xl pl-4 pr-12 py-3 text-base text-ink outline-none transition"
+                  [class.border-edge]="!passwordError()"
+                  [class.focus:border-brand]="!passwordError()"
+                  [class.border-danger]="passwordError()"
+                  [type]="showPassword() ? 'text' : 'password'"
+                  [autocomplete]="mode() === 'register' ? 'new-password' : 'current-password'"
+                  placeholder="••••••••"
+                  [value]="password()"
+                  (input)="password.set($any($event.target).value)"
+                  (keyup.enter)="submit()"
+                />
+                <button
+                  type="button"
+                  class="absolute right-1.5 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center rounded-lg text-ink-muted hover:text-ink transition"
+                  [attr.aria-label]="(showPassword() ? 'auth.hidePassword' : 'auth.showPassword') | t"
+                  [title]="(showPassword() ? 'auth.hidePassword' : 'auth.showPassword') | t"
+                  (click)="showPassword.update(v => !v)"
+                >
+                  @if (showPassword()) {
+                    <svg lucideEyeOff [size]="17" [strokeWidth]="1.8"></svg>
+                  } @else {
+                    <svg lucideEye [size]="17" [strokeWidth]="1.8"></svg>
+                  }
+                </button>
+              </div>
+
+              @if (passwordError(); as err) {
+                <p class="text-xs text-danger mt-1.5">{{ err }}</p>
+              } @else if (mode() === 'register') {
+                <p class="text-xs mt-1.5 flex items-center gap-1.5"
+                   [class.text-ink-muted]="!passwordLongEnough()"
+                   [class.text-green-500]="passwordLongEnough()">
+                  <span>{{ passwordLongEnough() ? '✓' : '•' }}</span>
+                  {{ 'auth.passwordHint' | t }}
+                </p>
+              }
             </div>
 
             <button
               class="w-full bg-brand text-white py-3.5 rounded-xl font-semibold cursor-pointer transition-all disabled:opacity-50 shadow-lg shadow-brand/25 mt-2"
               style="margin-top: 8px"
               [disabled]="loading()"
-              (click)="submit(email.value, password.value)"
+              (click)="submit()"
             >
               {{ loading() ? ('auth.loading' | t) : (mode() === 'login' ? ('auth.signIn' | t) : ('auth.createAccount' | t)) }}
             </button>
@@ -158,31 +211,90 @@ import { LucideSun, LucideMoon } from '@lucide/angular';
 export class LoginComponent {
   private auth = inject(AuthService);
   private router = inject(Router);
+  private ls = inject(LanguageService);
   readonly theme = inject(ThemeService);
 
   mode = signal<'login' | 'register' | 'forgot'>('login');
   loading = signal(false);
   error = signal<string | null>(null);
   sent = signal(false);
+  awaitingConfirmation = signal(false);
 
-  async submit(email: string, password: string) {
-    if (!email.trim() || !password.trim()) return;
-    this.loading.set(true);
+  email = signal('');
+  password = signal('');
+  showPassword = signal(false);
+
+  // Nothing is flagged until the first attempt: complaining while someone is still typing
+  // their email reads as the form arguing with them.
+  private attempted = signal(false);
+
+  readonly passwordLongEnough = computed(() => this.password().length >= MIN_PASSWORD);
+
+  readonly emailError = computed(() => {
+    if (!this.attempted()) return null;
+    const value = this.email().trim();
+    if (!value) return this.ls.t('auth.emailRequired');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return this.ls.t('auth.invalidEmail');
+    return null;
+  });
+
+  readonly passwordError = computed(() => {
+    if (!this.attempted()) return null;
+    if (!this.password()) return this.ls.t('auth.passwordRequired');
+    if (this.mode() === 'register' && !this.passwordLongEnough()) return this.ls.t('auth.passwordShort');
+    return null;
+  });
+
+  async submit() {
+    this.attempted.set(true);
     this.error.set(null);
+    if (this.emailError() || this.passwordError()) return;
+
+    this.loading.set(true);
     try {
       if (this.mode() === 'login') {
-        await this.auth.signIn(email, password);
+        await this.auth.signIn(this.email().trim(), this.password());
       } else {
-        await this.auth.signUp(email, password);
+        const { needsConfirmation } = await this.auth.signUp(this.email().trim(), this.password());
+        if (needsConfirmation) {
+          this.awaitingConfirmation.set(true);
+          return;
+        }
       }
       const redirect = sessionStorage.getItem('redirectAfterLogin') || '/routines';
       sessionStorage.removeItem('redirectAfterLogin');
       this.router.navigateByUrl(redirect);
     } catch (e: any) {
-      this.error.set(e.message ?? 'Error desconocido');
+      this.error.set(this.friendlyError(e));
     } finally {
       this.loading.set(false);
     }
+  }
+
+  setMode(mode: 'login' | 'register' | 'forgot') {
+    this.mode.set(mode);
+    // Warnings belong to the attempt that produced them, not to the next form.
+    this.attempted.set(false);
+    this.error.set(null);
+  }
+
+  backToLogin() {
+    this.awaitingConfirmation.set(false);
+    this.password.set('');
+    this.setMode('login');
+  }
+
+  /** Supabase speaks English and in API terms; say what the person can do about it instead. */
+  private friendlyError(e: unknown): string {
+    const raw = String((e as { message?: string })?.message ?? '').toLowerCase();
+    if (raw.includes('already registered') || raw.includes('already been registered')) return this.ls.t('auth.emailInUse');
+    if (raw.includes('invalid login credentials')) return this.ls.t('auth.wrongCredentials');
+    if (raw.includes('email not confirmed')) return this.ls.t('auth.emailNotConfirmed');
+    if (raw.includes('password should be at least')) return this.ls.t('auth.passwordShort');
+    if (raw.includes('invalid email') || raw.includes('unable to validate email')) return this.ls.t('auth.invalidEmail');
+    if (raw.includes('rate limit') || raw.includes('too many') || raw.includes('for security purposes')) return this.ls.t('auth.tooManyAttempts');
+    if (raw.includes('failed to fetch') || raw.includes('network')) return this.ls.t('auth.networkError');
+    return this.ls.t('auth.genericError');
   }
 
   async sendReset(email: string) {
@@ -193,7 +305,7 @@ export class LoginComponent {
       await this.auth.resetPassword(email.trim());
       this.sent.set(true);
     } catch (e: any) {
-      this.error.set(e.message ?? 'Error');
+      this.error.set(this.friendlyError(e));
     } finally {
       this.loading.set(false);
     }
