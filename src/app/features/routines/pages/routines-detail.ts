@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RoutinesStore } from '../stores/routines.store';
 import { SessionsStore } from '../../sessions/stores/sessions.store';
 import { formatDuration } from '../../sessions/models/WorkoutSession';
-import { LucidePencil, LucideTrash, LucideCheck, LucideX, LucideGripVertical, LucideChevronDown, LucidePlay, LucideSquare, LucideRotateCcw, LucideFolderInput, LucideArrowRightLeft, LucideCopy, LucideLink, LucideShare2 } from '@lucide/angular';
+import { LucidePencil, LucideTrash, LucideCheck, LucideX, LucideGripVertical, LucideChevronDown, LucidePlay, LucideSquare, LucideRotateCcw, LucideFolderInput, LucideArrowRightLeft, LucideCopy, LucideLink, LucideShare2, LucideGlobe } from '@lucide/angular';
 import { PlatformIconComponent } from '../components/platform-icon/platform-icon';
 import { EmojiPickerComponent } from '../../../shared/components/emoji-picker/emoji-picker';
 import { detectPlatform, fetchVideoInfo, fetchVideoTitle, getPlatformName, getThumbnailUrl, toExerciseName, VideoInfo } from '../utils/platform';
@@ -19,7 +19,7 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
   selector: 'app-routines-detail',
   imports: [LucidePencil, LucideTrash, LucideCheck, LucideX, LucideGripVertical, LucideChevronDown,
             LucidePlay, LucideSquare, LucideRotateCcw, LucideFolderInput, LucideArrowRightLeft, LucideCopy,
-            LucideLink, LucideShare2,
+            LucideLink, LucideShare2, LucideGlobe,
             PlatformIconComponent, EmojiPickerComponent, CdkDropListGroup, CdkDropList, CdkDrag, CdkDragHandle,
             NgTemplateOutlet, TranslatePipe],
   template: `
@@ -44,7 +44,7 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
             [class.hover:text-brand]="!isPublic()"
             [class.hover:bg-brand-light]="!isPublic()"
             (click)="showShareSheet.set(true)"
-            title="Compartir"
+            [title]="'detail.shareRoutine' | t"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
               <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
@@ -97,7 +97,18 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
                 </button>
               </div>
             }
-            <p class="text-sm text-ink-muted mt-0.5">{{ exerciseCount() }} {{ 'detail.exercises' | t }}</p>
+            <div class="flex items-center gap-2 mt-0.5">
+              <p class="text-sm text-ink-muted">{{ exerciseCount() }} {{ 'detail.exercises' | t }}</p>
+              @if (isPublic()) {
+                <button
+                  class="flex items-center gap-1 shrink-0 text-[10px] font-bold text-brand bg-brand/10 px-2 py-0.5 rounded-full uppercase tracking-wide transition hover:bg-brand/20"
+                  (click)="showShareSheet.set(true)"
+                >
+                  <svg lucideGlobe [size]="10" [strokeWidth]="3"></svg>
+                  {{ 'detail.sharedBadge' | t }}
+                </button>
+              }
+            </div>
           </div>
         </div>
 
@@ -323,7 +334,7 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
         <div class="bg-surface rounded-t-3xl border-t border-edge shadow-2xl px-5 pt-6 pb-14" (click)="$event.stopPropagation()">
 
           <div class="flex items-center justify-between mb-6">
-            <h2 class="text-lg font-bold text-ink">Compartir rutina</h2>
+            <h2 class="text-lg font-bold text-ink">{{ 'detail.shareRoutine' | t }}</h2>
             <button class="w-8 h-8 flex items-center justify-center rounded-xl bg-canvas text-ink-muted" (click)="showShareSheet.set(false)">
               <svg lucideX [size]="16" [strokeWidth]="2.5"></svg>
             </button>
@@ -332,8 +343,8 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
           <!-- Toggle -->
           <div class="flex items-center justify-between bg-canvas rounded-2xl px-4 py-3.5 mb-4 border border-edge">
             <div>
-              <p class="text-sm font-semibold text-ink">{{ isPublic() ? 'Rutina pública' : 'Rutina privada' }}</p>
-              <p class="text-xs text-ink-muted mt-0.5">{{ isPublic() ? 'Cualquiera con el enlace puede verla' : 'Solo tú puedes verla' }}</p>
+              <p class="text-sm font-semibold text-ink">{{ (isPublic() ? 'detail.publicRoutine' : 'detail.privateRoutine') | t }}</p>
+              <p class="text-xs text-ink-muted mt-0.5">{{ (isPublic() ? 'detail.publicHint' : 'detail.privateHint') | t }}</p>
             </div>
             <button
               class="w-12 h-6 rounded-full transition-all duration-200 flex items-center shrink-0 ml-4"

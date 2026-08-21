@@ -79,7 +79,13 @@
       "copyAction": "Duplicate",
       "moveTarget": "Choose a routine",
       "moveNoTargets": "You have no other routines yet. Create one first.",
-      "moveError": "Could not do it. Please try again."
+      "moveError": "Could not do it. Please try again.",
+      "sharedBadge": "Shared",
+      "shareRoutine": "Share routine",
+      "publicRoutine": "Public routine",
+      "privateRoutine": "Private routine",
+      "publicHint": "Anyone with the link can view it",
+      "privateHint": "Only you can see it"
     },
     "explore": {
       "title": "Explore",
@@ -291,7 +297,13 @@
       "copyAction": "Duplicar",
       "moveTarget": "Elige una rutina",
       "moveNoTargets": "Aún no tienes otras rutinas. Crea una primero.",
-      "moveError": "No se pudo hacer. Inténtalo de nuevo."
+      "moveError": "No se pudo hacer. Inténtalo de nuevo.",
+      "sharedBadge": "Compartida",
+      "shareRoutine": "Compartir rutina",
+      "publicRoutine": "Rutina pública",
+      "privateRoutine": "Rutina privada",
+      "publicHint": "Cualquiera con el enlace puede verla",
+      "privateHint": "Solo tú puedes verla"
     },
     "explore": {
       "title": "Explorar",
@@ -503,7 +515,13 @@
       "copyAction": "Dupliquer",
       "moveTarget": "Choisissez une routine",
       "moveNoTargets": "Vous n'avez pas encore d'autres routines. Créez-en une d'abord.",
-      "moveError": "Échec de l'opération. Réessayez."
+      "moveError": "Échec de l'opération. Réessayez.",
+      "sharedBadge": "Partagée",
+      "shareRoutine": "Partager la routine",
+      "publicRoutine": "Routine publique",
+      "privateRoutine": "Routine privée",
+      "publicHint": "Toute personne ayant le lien peut la voir",
+      "privateHint": "Vous seul pouvez la voir"
     },
     "explore": {
       "title": "Explorer",
@@ -715,7 +733,13 @@
       "copyAction": "Duplizieren",
       "moveTarget": "Routine auswählen",
       "moveNoTargets": "Du hast noch keine anderen Routinen. Erstelle zuerst eine.",
-      "moveError": "Hat nicht geklappt. Bitte erneut versuchen."
+      "moveError": "Hat nicht geklappt. Bitte erneut versuchen.",
+      "sharedBadge": "Geteilt",
+      "shareRoutine": "Routine teilen",
+      "publicRoutine": "Öffentliche Routine",
+      "privateRoutine": "Private Routine",
+      "publicHint": "Jeder mit dem Link kann sie sehen",
+      "privateHint": "Nur du kannst sie sehen"
     },
     "explore": {
       "title": "Entdecken",
@@ -927,7 +951,13 @@
       "copyAction": "Duplicar",
       "moveTarget": "Escolhe uma rotina",
       "moveNoTargets": "Ainda não tens outras rotinas. Cria uma primeiro.",
-      "moveError": "Não foi possível. Tenta novamente."
+      "moveError": "Não foi possível. Tenta novamente.",
+      "sharedBadge": "Partilhada",
+      "shareRoutine": "Partilhar rotina",
+      "publicRoutine": "Rotina pública",
+      "privateRoutine": "Rotina privada",
+      "publicHint": "Qualquer pessoa com o link pode vê-la",
+      "privateHint": "Só tu podes vê-la"
     },
     "explore": {
       "title": "Explorar",
@@ -1139,7 +1169,13 @@
       "copyAction": "Duplica",
       "moveTarget": "Scegli una routine",
       "moveNoTargets": "Non hai ancora altre routine. Creane una prima.",
-      "moveError": "Operazione non riuscita. Riprova."
+      "moveError": "Operazione non riuscita. Riprova.",
+      "sharedBadge": "Condivisa",
+      "shareRoutine": "Condividi routine",
+      "publicRoutine": "Routine pubblica",
+      "privateRoutine": "Routine privata",
+      "publicHint": "Chiunque abbia il link può vederla",
+      "privateHint": "Solo tu puoi vederla"
     },
     "explore": {
       "title": "Esplora",
@@ -1351,7 +1387,13 @@
       "copyAction": "複製",
       "moveTarget": "ルーティンを選択",
       "moveNoTargets": "他のルーティンがまだありません。先に作成してください。",
-      "moveError": "実行できませんでした。もう一度お試しください。"
+      "moveError": "実行できませんでした。もう一度お試しください。",
+      "sharedBadge": "共有中",
+      "shareRoutine": "ルーティンを共有",
+      "publicRoutine": "公開ルーティン",
+      "privateRoutine": "非公開ルーティン",
+      "publicHint": "リンクを知っている人なら誰でも閲覧できます",
+      "privateHint": "自分だけが閲覧できます"
     },
     "explore": {
       "title": "探索",
@@ -1563,7 +1605,13 @@
       "copyAction": "复制",
       "moveTarget": "选择计划",
       "moveNoTargets": "您还没有其他计划，请先创建一个。",
-      "moveError": "操作失败，请重试。"
+      "moveError": "操作失败，请重试。",
+      "sharedBadge": "已分享",
+      "shareRoutine": "分享计划",
+      "publicRoutine": "公开计划",
+      "privateRoutine": "私密计划",
+      "publicHint": "任何拥有链接的人都能查看",
+      "privateHint": "只有您可以查看"
     },
     "explore": {
       "title": "探索",
