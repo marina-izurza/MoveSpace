@@ -1,0 +1,77 @@
+<!--
+  Supabase → Authentication → Emails → "Confirm signup".
+  Paste the body below into the template editor. {{ .ConfirmationURL }} is filled in by Supabase.
+
+  Written with table layout and inline styles on purpose: Gmail strips <style> blocks and most
+  clients ignore flexbox. The logo is a PNG served by the app because Gmail does not render SVG.
+-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f5f4ff;margin:0;padding:32px 12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <tr>
+    <td align="center">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:480px;background-color:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 2px 12px rgba(16,15,30,0.08);">
+
+        <!-- Brand header -->
+        <tr>
+          <td align="center" style="background-color:#100f1e;padding:36px 24px 32px;">
+            <img src="https://movespace-app.vercel.app/icons/icon-192.png"
+                 width="64" height="64" alt="MoveSpace"
+                 style="display:block;border:0;border-radius:16px;" />
+            <div style="color:#ffffff;font-size:20px;font-weight:700;letter-spacing:-0.2px;padding-top:14px;">
+              MoveSpace
+            </div>
+          </td>
+        </tr>
+
+        <!-- Body -->
+        <tr>
+          <td style="padding:32px 32px 8px;">
+            <h1 style="margin:0 0 12px;color:#100f1e;font-size:22px;font-weight:700;line-height:1.3;">
+              Confirma tu cuenta
+            </h1>
+            <p style="margin:0 0 24px;color:#5b5772;font-size:15px;line-height:1.6;">
+              Ya casi está. Pulsa el botón para activar tu cuenta y empezar a guardar rutinas.
+            </p>
+          </td>
+        </tr>
+
+        <!-- Button -->
+        <tr>
+          <td align="center" style="padding:0 32px 28px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td align="center" style="background-color:#7b6cf6;border-radius:14px;">
+                  <a href="{{ .ConfirmationURL }}"
+                     style="display:inline-block;padding:15px 36px;color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;border-radius:14px;">
+                    Confirmar mi cuenta
+                  </a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Fallback link: some clients strip the button -->
+        <tr>
+          <td style="padding:0 32px 28px;">
+            <p style="margin:0 0 6px;color:#8a86a0;font-size:12px;line-height:1.5;">
+              ¿No funciona el botón? Copia esta dirección en tu navegador:
+            </p>
+            <p style="margin:0;font-size:12px;line-height:1.5;word-break:break-all;">
+              <a href="{{ .ConfirmationURL }}" style="color:#7b6cf6;text-decoration:underline;">{{ .ConfirmationURL }}</a>
+            </p>
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td style="border-top:1px solid #eceaf6;padding:20px 32px 28px;">
+            <p style="margin:0;color:#8a86a0;font-size:12px;line-height:1.6;">
+              Si no has creado ninguna cuenta en MoveSpace, puedes ignorar este correo sin hacer nada.
+            </p>
+          </td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
