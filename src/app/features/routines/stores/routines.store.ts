@@ -1,6 +1,7 @@
 import { Injectable, inject, signal, computed, resource } from '@angular/core';
 import { RoutinesApiService } from '../services/routines-api.service';
 import { AuthService } from '../../../core/auth.service';
+import { LanguageService } from '../../../core/language.service';
 import { Routine } from '../models/Routine';
 import { RoutineItem } from '../models/RoutineItem';
 import { Exercise } from '../models/Exercise';
@@ -10,6 +11,7 @@ import { Section } from '../models/Section';
 export class RoutinesStore {
   private api = inject(RoutinesApiService);
   private auth = inject(AuthService);
+  private language = inject(LanguageService);
 
   // ── Lista de rutinas ──────────────────────────────────────────────────────
 
@@ -21,7 +23,10 @@ export class RoutinesStore {
     loader: () => this.api.getRoutines()
   });
 
-  readonly routines = computed(() => this._listResource.value() ?? []);
+  // The inbox name is data, but an untouched one should follow the interface language.
+  readonly routines = computed(() => (this._listResource.value() ?? []).map(r =>
+    r.isInbox ? { ...r, name: this.language.inboxName(r.name) } : r
+  ));
   readonly listLoading = this._listResource.isLoading;
   readonly listError = this._listResource.error;
   readonly listLoaded = computed(() => {
@@ -59,7 +64,13 @@ export class RoutinesStore {
     loader: ({ params }) => this.api.getRoutine(params)
   });
 
-  readonly routine = computed(() => this._detailResource.value() ?? null);
+  readonly routine = computed(() => {
+    const detail = this._detailResource.value();
+    if (!detail) return null;
+    // getRoutine does not select is_inbox, so the summary is what identifies it.
+    const summary = this.routines().find(r => r.id === detail.id);
+    return summary?.isInbox ? { ...detail, name: summary.name } : detail;
+  });
   readonly routineLoading = this._detailResource.isLoading;
 
   loadRoutine(id: string): void {
@@ -277,6 +288,14 @@ export class RoutinesStore {
   }
 
   // ── Visibilidad / compartir ───────────────────────────────────────────────
+
+  /** Unshares everything at once. Each call rotates its token, so the old links die too. */
+  async makeAllPrivate(): Promise<void> {
+    const publicOnes = this.routines().filter(r => r.isPublic);
+    for (const routine of publicOnes) {
+      await this.setPublic(routine.id, false);
+    }
+  }
 
   async setPublic(routineId: string, isPublic: boolean): Promise<void> {
     const token = await this.api.setPublic(routineId, isPublic);

@@ -7,10 +7,11 @@ import { Section } from '../models/Section';
 import { Exercise } from '../models/Exercise';
 import { getThumbnailUrl, fetchVideoInfo, VideoInfo } from '../utils/platform';
 import { appOrigin } from '../../../core/app-origin';
+import { LucideLink, LucideCheck } from '@lucide/angular';
 
 @Component({
   selector: 'app-routine-public',
-  imports: [],
+  imports: [LucideLink, LucideCheck],
   template: `
     <div class="min-h-screen bg-canvas flex flex-col">
 
@@ -79,7 +80,11 @@ import { appOrigin } from '../../../core/app-origin';
             class="flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-surface border border-edge font-semibold text-sm text-ink"
             (click)="copyLink()"
           >
-            <span class="text-lg">{{ copied() ? '✅' : '🔗' }}</span>
+            @if (copied()) {
+              <svg lucideCheck [size]="16" [strokeWidth]="2.5"></svg>
+            } @else {
+              <svg lucideLink [size]="16" [strokeWidth]="2"></svg>
+            }
             <span>{{ copied() ? 'Copiado' : 'Copiar' }}</span>
           </button>
         </div>

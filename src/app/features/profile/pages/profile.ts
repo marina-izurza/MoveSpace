@@ -7,10 +7,11 @@ import { AccentService, Accent } from '../../../core/accent.service';
 import { RoutinesStore } from '../../routines/stores/routines.store';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 import { appOrigin } from '../../../core/app-origin';
+import { ConfirmService } from '../../../core/confirm.service';
 import {
   LucideSun, LucideMoon, LucideLogOut, LucideBell, LucideShield,
   LucideChevronRight, LucideChevronDown, LucideLanguages, LucidePencil,
-  LucideMail, LucideKeyRound, LucideSettings2, LucideX
+  LucideMail, LucideKeyRound, LucideSettings2, LucideX, LucideLink, LucideCheck
 } from '@lucide/angular';
 
 @Component({
@@ -18,7 +19,7 @@ import {
   imports: [
     LucideSun, LucideMoon, LucideLogOut, LucideBell, LucideShield,
     LucideChevronRight, LucideChevronDown, LucideLanguages, LucidePencil,
-    LucideMail, LucideKeyRound, LucideSettings2, LucideX, TranslatePipe
+    LucideMail, LucideKeyRound, LucideSettings2, LucideX, LucideLink, LucideCheck, TranslatePipe
   ],
   template: `
     <div class="flex flex-col min-h-full">
@@ -94,7 +95,11 @@ import {
                   [class.bg-brand-light]="copiedId() !== r.id"
                   (click)="copyShareLink(r)"
                 >
-                  <span class="text-base leading-none">{{ copiedId() === r.id ? '✅' : '🔗' }}</span>
+                  @if (copiedId() === r.id) {
+                    <svg lucideCheck [size]="15" [strokeWidth]="2.5"></svg>
+                  } @else {
+                    <svg lucideLink [size]="15" [strokeWidth]="2"></svg>
+                  }
                 </button>
               </div>
             }
@@ -358,15 +363,64 @@ import {
               <span class="text-xs bg-brand-light text-brand px-2.5 py-1 rounded-full font-semibold">{{ 'profile.soon' | t }}</span>
             </div>
             <div class="border-t border-edge mx-4"></div>
-            <div class="px-4 py-3.5 flex items-center justify-between opacity-50">
+
+            <!-- Privacy -->
+            <button class="w-full px-4 py-3.5 flex items-center justify-between" (click)="showPrivacy.update(v => !v)">
               <div class="flex items-center gap-3">
                 <div class="w-9 h-9 rounded-xl bg-brand-light flex items-center justify-center">
                   <svg lucideShield [size]="17" class="text-brand" [strokeWidth]="1.8"></svg>
                 </div>
                 <span class="text-sm font-medium text-ink">{{ 'profile.privacy' | t }}</span>
               </div>
-              <svg lucideChevronRight [size]="16" class="text-ink-muted" [strokeWidth]="2"></svg>
-            </div>
+              <svg lucideChevronDown [size]="16" class="text-ink-muted transition-transform" [class.rotate-180]="showPrivacy()" [strokeWidth]="2"></svg>
+            </button>
+
+            @if (showPrivacy()) {
+              <div class="px-4 pb-4 space-y-3">
+                <p class="text-xs text-ink-muted leading-relaxed">{{ 'profile.privacyIntro' | t }}</p>
+
+                <!-- Public routines -->
+                <div class="bg-canvas rounded-xl border border-edge px-3.5 py-3">
+                  <div class="flex items-center justify-between gap-3">
+                    <div class="min-w-0">
+                      <p class="text-sm font-medium text-ink">{{ 'profile.publicRoutines' | t }}</p>
+                      <p class="text-xs text-ink-muted mt-0.5">
+                        {{ publicRoutines().length }} {{ 'profile.ofTotal' | t }} {{ store.routines().length }}
+                      </p>
+                    </div>
+                    <button
+                      class="shrink-0 text-xs font-semibold px-3 py-2 rounded-lg transition disabled:opacity-40"
+                      [class.bg-danger-muted]="publicRoutines().length > 0"
+                      [class.text-danger]="publicRoutines().length > 0"
+                      [class.bg-surface]="publicRoutines().length === 0"
+                      [class.text-ink-muted]="publicRoutines().length === 0"
+                      [disabled]="publicRoutines().length === 0 || privacyBusy()"
+                      (click)="makeAllPrivate()"
+                    >{{ privacyBusy() ? ('auth.loading' | t) : ('profile.makeAllPrivate' | t) }}</button>
+                  </div>
+                  <p class="text-xs text-ink-muted mt-2 leading-relaxed">{{ 'profile.makeAllPrivateHint' | t }}</p>
+                </div>
+
+                <!-- Sessions -->
+                <div class="bg-canvas rounded-xl border border-edge px-3.5 py-3">
+                  <div class="flex items-center justify-between gap-3">
+                    <p class="text-sm font-medium text-ink min-w-0">{{ 'profile.signOutEverywhere' | t }}</p>
+                    <button
+                      class="shrink-0 text-xs font-semibold px-3 py-2 rounded-lg bg-danger-muted text-danger transition disabled:opacity-40"
+                      [disabled]="privacyBusy()"
+                      (click)="signOutEverywhere()"
+                    >{{ 'profile.signOutEverywhereAction' | t }}</button>
+                  </div>
+                  <p class="text-xs text-ink-muted mt-2 leading-relaxed">{{ 'profile.signOutEverywhereHint' | t }}</p>
+                </div>
+
+                @if (privacyMsg(); as msg) {
+                  <p class="text-xs rounded-lg px-3 py-2"
+                     [class.text-brand]="msg.ok" [class.bg-brand-light]="msg.ok"
+                     [class.text-danger]="!msg.ok" [class.bg-danger-muted]="!msg.ok">{{ msg.text }}</p>
+                }
+              </div>
+            }
           </div>
 
           <!-- Sign out -->
@@ -390,6 +444,7 @@ export class ProfileComponent {
   readonly accentSvc = inject(AccentService);
   private auth = inject(AuthService);
   private router = inject(Router);
+  private confirm = inject(ConfirmService);
 
   showSettings = signal(false);
   showLangPicker = signal(false);
@@ -405,6 +460,10 @@ export class ProfileComponent {
   currentLang = computed(() => this.ls.available.find(l => l.code === this.ls.locale())!);
   publicRoutines = computed(() => this.store.routines().filter(r => r.isPublic && !r.isInbox));
   copiedId = signal<string | null>(null);
+
+  showPrivacy = signal(false);
+  privacyBusy = signal(false);
+  privacyMsg = signal<{ ok: boolean; text: string } | null>(null);
 
   closeSettings() {
     this.showSettings.set(false);
@@ -499,6 +558,46 @@ export class ProfileComponent {
   setAccent(id: Accent) {
     this.accentSvc.set(id);
     this.auth.savePreferences({ accent: id });
+  }
+
+  async makeAllPrivate() {
+    if (this.privacyBusy()) return;
+    const count = this.publicRoutines().length;
+    const ok = await this.confirm.confirm(
+      this.ls.t('profile.makeAllPrivateConfirm'),
+      this.ls.t('profile.makeAllPrivate')
+    );
+    if (!ok) return;
+
+    this.privacyBusy.set(true);
+    this.privacyMsg.set(null);
+    try {
+      await this.store.makeAllPrivate();
+      this.privacyMsg.set({ ok: true, text: `${this.ls.t('profile.madePrivate')} (${count})` });
+    } catch {
+      this.privacyMsg.set({ ok: false, text: this.ls.t('auth.genericError') });
+    } finally {
+      this.privacyBusy.set(false);
+    }
+  }
+
+  async signOutEverywhere() {
+    if (this.privacyBusy()) return;
+    const ok = await this.confirm.confirm(
+      this.ls.t('profile.signOutEverywhereConfirm'),
+      this.ls.t('profile.signOutEverywhereAction')
+    );
+    if (!ok) return;
+
+    this.privacyBusy.set(true);
+    try {
+      await this.auth.signOutEverywhere();
+      this.router.navigate(['/login']);
+    } catch {
+      this.privacyMsg.set({ ok: false, text: this.ls.t('auth.genericError') });
+    } finally {
+      this.privacyBusy.set(false);
+    }
   }
 
   async signOut() {

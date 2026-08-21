@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RoutinesStore } from '../stores/routines.store';
 import { SessionsStore } from '../../sessions/stores/sessions.store';
 import { formatDuration } from '../../sessions/models/WorkoutSession';
-import { LucidePencil, LucideTrash, LucideCheck, LucideX, LucideGripVertical, LucideChevronDown, LucidePlay, LucideSquare, LucideRotateCcw, LucideFolderInput, LucideArrowRightLeft, LucideCopy } from '@lucide/angular';
+import { LucidePencil, LucideTrash, LucideCheck, LucideX, LucideGripVertical, LucideChevronDown, LucidePlay, LucideSquare, LucideRotateCcw, LucideFolderInput, LucideArrowRightLeft, LucideCopy, LucideLink, LucideShare2 } from '@lucide/angular';
 import { PlatformIconComponent } from '../components/platform-icon/platform-icon';
 import { EmojiPickerComponent } from '../../../shared/components/emoji-picker/emoji-picker';
 import { detectPlatform, fetchVideoInfo, fetchVideoTitle, getPlatformName, getThumbnailUrl, toExerciseName, VideoInfo } from '../utils/platform';
@@ -19,6 +19,7 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
   selector: 'app-routines-detail',
   imports: [LucidePencil, LucideTrash, LucideCheck, LucideX, LucideGripVertical, LucideChevronDown,
             LucidePlay, LucideSquare, LucideRotateCcw, LucideFolderInput, LucideArrowRightLeft, LucideCopy,
+            LucideLink, LucideShare2,
             PlatformIconComponent, EmojiPickerComponent, CdkDropListGroup, CdkDropList, CdkDrag, CdkDragHandle,
             NgTemplateOutlet, TranslatePipe],
   template: `
@@ -359,15 +360,21 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
                   class="flex-1 flex items-center justify-center gap-2 bg-brand text-white py-3.5 rounded-2xl font-semibold text-sm shadow-sm shadow-brand/20 transition"
                   (click)="copyShareUrl()"
                 >
-                  <span>{{ shareCopied() ? '✅' : '🔗' }}</span>
-                  <span>{{ shareCopied() ? 'Copiado' : 'Copiar enlace' }}</span>
+                  @if (shareCopied()) {
+                    <svg lucideCheck [size]="16" [strokeWidth]="2.5"></svg>
+                  } @else {
+                    <svg lucideLink [size]="16" [strokeWidth]="2"></svg>
+                  }
+                  <span>{{ (shareCopied() ? 'share.copied' : 'share.copyLink') | t }}</span>
                 </button>
                 @if (canNativeShare) {
                   <button
                     class="flex items-center justify-center px-4 py-3.5 rounded-2xl bg-canvas border border-edge text-ink font-semibold text-sm"
+                    [title]="'share.shareVia' | t"
+                    [attr.aria-label]="'share.shareVia' | t"
                     (click)="nativeShare()"
                   >
-                    <span>📤</span>
+                    <svg lucideShare2 [size]="16" [strokeWidth]="2"></svg>
                   </button>
                 }
               </div>

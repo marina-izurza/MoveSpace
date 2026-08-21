@@ -154,7 +154,18 @@
       "tapSettings": "Tap the ⚙️ icon to access your settings",
       "sharedRoutines": "Shared routines",
       "noShared": "No shared routines yet",
-      "noSharedHint": "Open a routine and toggle it public to share it here"
+      "noSharedHint": "Open a routine and toggle it public to share it here",
+      "privacyIntro": "Your routines are private. Only the ones you share get a link anyone can open.",
+      "publicRoutines": "Public routines",
+      "ofTotal": "of",
+      "makeAllPrivate": "Make all private",
+      "makeAllPrivateHint": "Existing links stop working, even if you share the routine again later.",
+      "makeAllPrivateConfirm": "Stop sharing every routine? Links already sent will stop working.",
+      "madePrivate": "Routines made private",
+      "signOutEverywhere": "Sign out on all devices",
+      "signOutEverywhereHint": "Closes your session everywhere, including devices you no longer have.",
+      "signOutEverywhereAction": "Sign out",
+      "signOutEverywhereConfirm": "Sign out on all devices?"
     },
     "session": {
       "start": "Start workout",
@@ -194,7 +205,10 @@
       "addToRoutine": "Add to routine",
       "adding": "Adding…",
       "quickSave": "Quick save",
-      "saveError": "Could not save. Please try again."
+      "saveError": "Could not save. Please try again.",
+      "copyLink": "Copy link",
+      "copied": "Copied",
+      "shareVia": "Share"
     }
   },
   "es": {
@@ -352,7 +366,18 @@
       "tapSettings": "Pulsa el ⚙️ para acceder a los ajustes",
       "sharedRoutines": "Rutinas compartidas",
       "noShared": "Aún no has compartido ninguna rutina",
-      "noSharedHint": "Abre una rutina y activa el modo público para compartirla aquí"
+      "noSharedHint": "Abre una rutina y activa el modo público para compartirla aquí",
+      "privacyIntro": "Tus rutinas son privadas. Solo las que compartes tienen un enlace que cualquiera puede abrir.",
+      "publicRoutines": "Rutinas públicas",
+      "ofTotal": "de",
+      "makeAllPrivate": "Hacer todas privadas",
+      "makeAllPrivateHint": "Los enlaces existentes dejan de funcionar, aunque vuelvas a compartir la rutina más tarde.",
+      "makeAllPrivateConfirm": "¿Dejar de compartir todas las rutinas? Los enlaces que ya enviaste dejarán de funcionar.",
+      "madePrivate": "Rutinas hechas privadas",
+      "signOutEverywhere": "Cerrar sesión en todos los dispositivos",
+      "signOutEverywhereHint": "Cierra tu sesión en todas partes, incluidos dispositivos que ya no tengas.",
+      "signOutEverywhereAction": "Cerrar",
+      "signOutEverywhereConfirm": "¿Cerrar sesión en todos los dispositivos?"
     },
     "session": {
       "start": "Empezar entrenamiento",
@@ -392,7 +417,10 @@
       "addToRoutine": "Añadir a la rutina",
       "adding": "Añadiendo…",
       "quickSave": "Guardar rápido",
-      "saveError": "No se pudo guardar. Inténtalo de nuevo."
+      "saveError": "No se pudo guardar. Inténtalo de nuevo.",
+      "copyLink": "Copiar enlace",
+      "copied": "Copiado",
+      "shareVia": "Compartir"
     }
   },
   "fr": {
@@ -550,7 +578,18 @@
       "tapSettings": "Appuyez sur ⚙️ pour accéder aux paramètres",
       "sharedRoutines": "Routines partagées",
       "noShared": "Aucune routine partagée pour l'instant",
-      "noSharedHint": "Ouvrez une routine et activez le mode public pour la partager ici"
+      "noSharedHint": "Ouvrez une routine et activez le mode public pour la partager ici",
+      "privacyIntro": "Vos routines sont privées. Seules celles que vous partagez ont un lien ouvrable par tous.",
+      "publicRoutines": "Routines publiques",
+      "ofTotal": "sur",
+      "makeAllPrivate": "Tout rendre privé",
+      "makeAllPrivateHint": "Les liens existants cessent de fonctionner, même si vous repartagez la routine plus tard.",
+      "makeAllPrivateConfirm": "Cesser de partager toutes les routines ? Les liens déjà envoyés cesseront de fonctionner.",
+      "madePrivate": "Routines rendues privées",
+      "signOutEverywhere": "Déconnexion sur tous les appareils",
+      "signOutEverywhereHint": "Ferme votre session partout, y compris sur les appareils que vous n’avez plus.",
+      "signOutEverywhereAction": "Déconnecter",
+      "signOutEverywhereConfirm": "Se déconnecter sur tous les appareils ?"
     },
     "session": {
       "start": "Commencer l'entraînement",
@@ -590,7 +629,10 @@
       "addToRoutine": "Ajouter à la routine",
       "adding": "Ajout en cours…",
       "quickSave": "Rapide",
-      "saveError": "Échec de l'enregistrement. Réessayez."
+      "saveError": "Échec de l'enregistrement. Réessayez.",
+      "copyLink": "Copier le lien",
+      "copied": "Copié",
+      "shareVia": "Partager"
     }
   },
   "de": {
@@ -748,7 +790,18 @@
       "tapSettings": "Tippe auf ⚙️ um auf die Einstellungen zuzugreifen",
       "sharedRoutines": "Geteilte Routinen",
       "noShared": "Noch keine geteilten Routinen",
-      "noSharedHint": "Öffne eine Routine und aktiviere den öffentlichen Modus, um sie hier zu teilen"
+      "noSharedHint": "Öffne eine Routine und aktiviere den öffentlichen Modus, um sie hier zu teilen",
+      "privacyIntro": "Deine Routinen sind privat. Nur geteilte bekommen einen Link, den jeder öffnen kann.",
+      "publicRoutines": "Öffentliche Routinen",
+      "ofTotal": "von",
+      "makeAllPrivate": "Alle privat machen",
+      "makeAllPrivateHint": "Bestehende Links funktionieren nicht mehr, auch wenn du die Routine später erneut teilst.",
+      "makeAllPrivateConfirm": "Alle Routinen nicht mehr teilen? Bereits verschickte Links funktionieren dann nicht mehr.",
+      "madePrivate": "Routinen auf privat gesetzt",
+      "signOutEverywhere": "Auf allen Geräten abmelden",
+      "signOutEverywhereHint": "Beendet deine Sitzung überall, auch auf Geräten, die du nicht mehr hast.",
+      "signOutEverywhereAction": "Abmelden",
+      "signOutEverywhereConfirm": "Auf allen Geräten abmelden?"
     },
     "session": {
       "start": "Training starten",
@@ -788,7 +841,10 @@
       "addToRoutine": "Zur Routine hinzufügen",
       "adding": "Wird hinzugefügt…",
       "quickSave": "Schnell",
-      "saveError": "Speichern fehlgeschlagen. Bitte erneut versuchen."
+      "saveError": "Speichern fehlgeschlagen. Bitte erneut versuchen.",
+      "copyLink": "Link kopieren",
+      "copied": "Kopiert",
+      "shareVia": "Teilen"
     }
   },
   "pt": {
@@ -946,7 +1002,18 @@
       "tapSettings": "Toque em ⚙️ para acessar as configurações",
       "sharedRoutines": "Rotinas compartilhadas",
       "noShared": "Nenhuma rotina compartilhada ainda",
-      "noSharedHint": "Abra uma rotina e ative o modo público para compartilhá-la aqui"
+      "noSharedHint": "Abra uma rotina e ative o modo público para compartilhá-la aqui",
+      "privacyIntro": "As tuas rotinas são privadas. Só as que partilhas têm um link que qualquer pessoa pode abrir.",
+      "publicRoutines": "Rotinas públicas",
+      "ofTotal": "de",
+      "makeAllPrivate": "Tornar todas privadas",
+      "makeAllPrivateHint": "Os links existentes deixam de funcionar, mesmo que voltes a partilhar a rotina depois.",
+      "makeAllPrivateConfirm": "Deixar de partilhar todas as rotinas? Os links já enviados deixarão de funcionar.",
+      "madePrivate": "Rotinas tornadas privadas",
+      "signOutEverywhere": "Terminar sessão em todos os dispositivos",
+      "signOutEverywhereHint": "Termina a tua sessão em todo o lado, incluindo dispositivos que já não tens.",
+      "signOutEverywhereAction": "Terminar",
+      "signOutEverywhereConfirm": "Terminar sessão em todos os dispositivos?"
     },
     "session": {
       "start": "Iniciar treino",
@@ -986,7 +1053,10 @@
       "addToRoutine": "Adicionar à rotina",
       "adding": "Adicionando…",
       "quickSave": "Rápido",
-      "saveError": "Não foi possível guardar. Tenta novamente."
+      "saveError": "Não foi possível guardar. Tenta novamente.",
+      "copyLink": "Copiar link",
+      "copied": "Copiado",
+      "shareVia": "Partilhar"
     }
   },
   "it": {
@@ -1144,7 +1214,18 @@
       "tapSettings": "Tocca ⚙️ per accedere alle impostazioni",
       "sharedRoutines": "Routine condivise",
       "noShared": "Nessuna routine condivisa ancora",
-      "noSharedHint": "Apri una routine e attiva la modalità pubblica per condividerla qui"
+      "noSharedHint": "Apri una routine e attiva la modalità pubblica per condividerla qui",
+      "privacyIntro": "Le tue routine sono private. Solo quelle che condividi hanno un link apribile da chiunque.",
+      "publicRoutines": "Routine pubbliche",
+      "ofTotal": "di",
+      "makeAllPrivate": "Rendi tutte private",
+      "makeAllPrivateHint": "I link esistenti smettono di funzionare, anche se ricondividi la routine più avanti.",
+      "makeAllPrivateConfirm": "Smettere di condividere tutte le routine? I link già inviati smetteranno di funzionare.",
+      "madePrivate": "Routine rese private",
+      "signOutEverywhere": "Esci da tutti i dispositivi",
+      "signOutEverywhereHint": "Chiude la sessione ovunque, compresi dispositivi che non hai più.",
+      "signOutEverywhereAction": "Esci",
+      "signOutEverywhereConfirm": "Uscire da tutti i dispositivi?"
     },
     "session": {
       "start": "Inizia allenamento",
@@ -1184,7 +1265,10 @@
       "addToRoutine": "Aggiungi alla routine",
       "adding": "Aggiunta in corso…",
       "quickSave": "Rapido",
-      "saveError": "Salvataggio non riuscito. Riprova."
+      "saveError": "Salvataggio non riuscito. Riprova.",
+      "copyLink": "Copia link",
+      "copied": "Copiato",
+      "shareVia": "Condividi"
     }
   },
   "ja": {
@@ -1342,7 +1426,18 @@
       "tapSettings": "⚙️ をタップして設定を開く",
       "sharedRoutines": "共有中のルーティン",
       "noShared": "まだ共有しているルーティンがありません",
-      "noSharedHint": "ルーティンを開いて公開モードをオンにするとここに表示されます"
+      "noSharedHint": "ルーティンを開いて公開モードをオンにするとここに表示されます",
+      "privacyIntro": "ルーティンは非公開です。共有したものだけが、誰でも開けるリンクを持ちます。",
+      "publicRoutines": "公開中のルーティン",
+      "ofTotal": "/",
+      "makeAllPrivate": "すべて非公開にする",
+      "makeAllPrivateHint": "既存のリンクは無効になります。あとで再共有しても元には戻りません。",
+      "makeAllPrivateConfirm": "すべてのルーティンの共有を停止しますか？送信済みのリンクは使えなくなります。",
+      "madePrivate": "非公開にしました",
+      "signOutEverywhere": "すべての端末からログアウト",
+      "signOutEverywhereHint": "手元にない端末も含め、すべてのセッションを終了します。",
+      "signOutEverywhereAction": "ログアウト",
+      "signOutEverywhereConfirm": "すべての端末からログアウトしますか？"
     },
     "session": {
       "start": "トレーニング開始",
@@ -1382,7 +1477,10 @@
       "addToRoutine": "ルーティンに追加",
       "adding": "追加中…",
       "quickSave": "クイック",
-      "saveError": "保存できませんでした。もう一度お試しください。"
+      "saveError": "保存できませんでした。もう一度お試しください。",
+      "copyLink": "リンクをコピー",
+      "copied": "コピーしました",
+      "shareVia": "共有"
     }
   },
   "zh": {
@@ -1540,7 +1638,18 @@
       "tapSettings": "点击 ⚙️ 进入设置",
       "sharedRoutines": "已分享的计划",
       "noShared": "还没有分享的计划",
-      "noSharedHint": "打开一个计划并开启公开模式，即可在此处显示"
+      "noSharedHint": "打开一个计划并开启公开模式，即可在此处显示",
+      "privacyIntro": "您的计划默认私密。只有分享过的才会有任何人都能打开的链接。",
+      "publicRoutines": "公开的计划",
+      "ofTotal": "/",
+      "makeAllPrivate": "全部设为私密",
+      "makeAllPrivateHint": "已有链接将失效，即使之后重新分享也不会恢复。",
+      "makeAllPrivateConfirm": "停止分享所有计划？已发送的链接将失效。",
+      "madePrivate": "已设为私密",
+      "signOutEverywhere": "在所有设备退出登录",
+      "signOutEverywhereHint": "结束所有设备上的会话，包括您已不再持有的设备。",
+      "signOutEverywhereAction": "退出",
+      "signOutEverywhereConfirm": "在所有设备退出登录？"
     },
     "session": {
       "start": "开始训练",
@@ -1580,7 +1689,10 @@
       "addToRoutine": "添加到计划",
       "adding": "添加中…",
       "quickSave": "快速",
-      "saveError": "保存失败，请重试。"
+      "saveError": "保存失败，请重试。",
+      "copyLink": "复制链接",
+      "copied": "已复制",
+      "shareVia": "分享"
     }
   }
 }

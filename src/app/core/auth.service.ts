@@ -76,6 +76,12 @@ export class AuthService {
     await this.supabase.auth.signOut();
   }
 
+  /** Revokes the refresh tokens everywhere, not just on this device. */
+  async signOutEverywhere() {
+    const { error } = await this.supabase.auth.signOut({ scope: 'global' });
+    if (error) throw error;
+  }
+
   async resetPassword(email: string) {
     const { error } = await this.supabase.auth.resetPasswordForEmail(email, {
       // Goes into an email opened on any device — it can never point at the WebView's origin.

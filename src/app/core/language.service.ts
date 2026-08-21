@@ -21,6 +21,11 @@ function isLocale(code: unknown): code is Locale {
   return typeof code === 'string' && LOCALES.some(l => l.code === code);
 }
 
+// Every locale's default inbox name, so a stored one can be recognised as never renamed.
+const DEFAULT_INBOX_NAMES = new Set(
+  LOCALES.map(l => (translations as any)[l.code]?.routines?.inboxDefault).filter(Boolean)
+);
+
 /**
  * First launch only: follow the device. Tags carry a region (`es-ES`, `pt-BR`, `zh-Hans-CN`)
  * while the catalogue is keyed by language, so compare on the primary subtag. English when
@@ -54,6 +59,15 @@ export class LanguageService {
   /** Apply a code of unknown provenance, ignoring anything unsupported. */
   setIfSupported(code: unknown): void {
     if (isLocale(code)) this.locale.set(code);
+  }
+
+  /**
+   * The inbox name is written to the database when the routine is created, in whatever
+   * language was active then, so switching language later left the old wording on screen.
+   * Translate it while it is still one of the defaults; a renamed inbox keeps its name.
+   */
+  inboxName(stored: string): string {
+    return DEFAULT_INBOX_NAMES.has(stored) ? this.t('routines.inboxDefault') : stored;
   }
 
   t(key: string): string {
