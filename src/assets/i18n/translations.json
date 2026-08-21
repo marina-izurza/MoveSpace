@@ -171,7 +171,12 @@
       "signOutEverywhere": "Sign out on all devices",
       "signOutEverywhereHint": "Closes your session everywhere, including devices you no longer have.",
       "signOutEverywhereAction": "Sign out",
-      "signOutEverywhereConfirm": "Sign out on all devices?"
+      "signOutEverywhereConfirm": "Sign out on all devices?",
+      "deleteAccount": "Delete account",
+      "deleteAccountHint": "Removes your account and every routine, video and session. This cannot be undone.",
+      "deleteAccountConfirm": "Type your email to confirm",
+      "deleteAccountAction": "Delete",
+      "deleteNotConfigured": "Account deletion is not available right now."
     },
     "session": {
       "start": "Start workout",
@@ -389,7 +394,12 @@
       "signOutEverywhere": "Cerrar sesión en todos los dispositivos",
       "signOutEverywhereHint": "Cierra tu sesión en todas partes, incluidos dispositivos que ya no tengas.",
       "signOutEverywhereAction": "Cerrar",
-      "signOutEverywhereConfirm": "¿Cerrar sesión en todos los dispositivos?"
+      "signOutEverywhereConfirm": "¿Cerrar sesión en todos los dispositivos?",
+      "deleteAccount": "Eliminar cuenta",
+      "deleteAccountHint": "Borra tu cuenta y todas tus rutinas, vídeos y sesiones. Esto no se puede deshacer.",
+      "deleteAccountConfirm": "Escribe tu correo para confirmar",
+      "deleteAccountAction": "Eliminar",
+      "deleteNotConfigured": "Ahora mismo no se puede eliminar la cuenta."
     },
     "session": {
       "start": "Empezar entrenamiento",
@@ -607,7 +617,12 @@
       "signOutEverywhere": "Déconnexion sur tous les appareils",
       "signOutEverywhereHint": "Ferme votre session partout, y compris sur les appareils que vous n’avez plus.",
       "signOutEverywhereAction": "Déconnecter",
-      "signOutEverywhereConfirm": "Se déconnecter sur tous les appareils ?"
+      "signOutEverywhereConfirm": "Se déconnecter sur tous les appareils ?",
+      "deleteAccount": "Supprimer le compte",
+      "deleteAccountHint": "Supprime votre compte et toutes vos routines, vidéos et séances. Irréversible.",
+      "deleteAccountConfirm": "Saisissez votre e-mail pour confirmer",
+      "deleteAccountAction": "Supprimer",
+      "deleteNotConfigured": "La suppression du compte n'est pas disponible pour le moment."
     },
     "session": {
       "start": "Commencer l'entraînement",
@@ -825,7 +840,12 @@
       "signOutEverywhere": "Auf allen Geräten abmelden",
       "signOutEverywhereHint": "Beendet deine Sitzung überall, auch auf Geräten, die du nicht mehr hast.",
       "signOutEverywhereAction": "Abmelden",
-      "signOutEverywhereConfirm": "Auf allen Geräten abmelden?"
+      "signOutEverywhereConfirm": "Auf allen Geräten abmelden?",
+      "deleteAccount": "Konto löschen",
+      "deleteAccountHint": "Löscht dein Konto und alle Routinen, Videos und Einheiten. Das lässt sich nicht rückgängig machen.",
+      "deleteAccountConfirm": "Gib zur Bestätigung deine E-Mail ein",
+      "deleteAccountAction": "Löschen",
+      "deleteNotConfigured": "Das Löschen des Kontos ist derzeit nicht möglich."
     },
     "session": {
       "start": "Training starten",
@@ -1043,7 +1063,12 @@
       "signOutEverywhere": "Terminar sessão em todos os dispositivos",
       "signOutEverywhereHint": "Termina a tua sessão em todo o lado, incluindo dispositivos que já não tens.",
       "signOutEverywhereAction": "Terminar",
-      "signOutEverywhereConfirm": "Terminar sessão em todos os dispositivos?"
+      "signOutEverywhereConfirm": "Terminar sessão em todos os dispositivos?",
+      "deleteAccount": "Eliminar conta",
+      "deleteAccountHint": "Apaga a tua conta e todas as rotinas, vídeos e sessões. Isto não pode ser desfeito.",
+      "deleteAccountConfirm": "Escreve o teu email para confirmar",
+      "deleteAccountAction": "Eliminar",
+      "deleteNotConfigured": "De momento não é possível eliminar a conta."
     },
     "session": {
       "start": "Iniciar treino",
@@ -1261,7 +1286,12 @@
       "signOutEverywhere": "Esci da tutti i dispositivi",
       "signOutEverywhereHint": "Chiude la sessione ovunque, compresi dispositivi che non hai più.",
       "signOutEverywhereAction": "Esci",
-      "signOutEverywhereConfirm": "Uscire da tutti i dispositivi?"
+      "signOutEverywhereConfirm": "Uscire da tutti i dispositivi?",
+      "deleteAccount": "Elimina account",
+      "deleteAccountHint": "Cancella il tuo account e tutte le routine, i video e le sessioni. Non è reversibile.",
+      "deleteAccountConfirm": "Scrivi la tua email per confermare",
+      "deleteAccountAction": "Elimina",
+      "deleteNotConfigured": "L'eliminazione dell'account non è disponibile al momento."
     },
     "session": {
       "start": "Inizia allenamento",
@@ -1479,7 +1509,12 @@
       "signOutEverywhere": "すべての端末からログアウト",
       "signOutEverywhereHint": "手元にない端末も含め、すべてのセッションを終了します。",
       "signOutEverywhereAction": "ログアウト",
-      "signOutEverywhereConfirm": "すべての端末からログアウトしますか？"
+      "signOutEverywhereConfirm": "すべての端末からログアウトしますか？",
+      "deleteAccount": "アカウントを削除",
+      "deleteAccountHint": "アカウントと、すべてのルーティン・動画・セッションを削除します。元に戻せません。",
+      "deleteAccountConfirm": "確認のためメールアドレスを入力してください",
+      "deleteAccountAction": "削除",
+      "deleteNotConfigured": "現在アカウントを削除できません。"
     },
     "session": {
       "start": "トレーニング開始",
@@ -1697,7 +1732,12 @@
       "signOutEverywhere": "在所有设备退出登录",
       "signOutEverywhereHint": "结束所有设备上的会话，包括您已不再持有的设备。",
       "signOutEverywhereAction": "退出",
-      "signOutEverywhereConfirm": "在所有设备退出登录？"
+      "signOutEverywhereConfirm": "在所有设备退出登录？",
+      "deleteAccount": "删除账户",
+      "deleteAccountHint": "将删除您的账户以及全部计划、视频和记录。此操作无法撤销。",
+      "deleteAccountConfirm": "输入邮箱以确认",
+      "deleteAccountAction": "删除",
+      "deleteNotConfigured": "目前无法删除账户。"
     },
     "session": {
       "start": "开始训练",

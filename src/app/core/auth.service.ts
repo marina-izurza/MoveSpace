@@ -76,6 +76,25 @@ export class AuthService {
     await this.supabase.auth.signOut();
   }
 
+  /**
+   * Irreversible. Runs server-side because removing an auth user needs the service_role key;
+   * the access token is what proves whose account it is.
+   */
+  async deleteAccount(): Promise<void> {
+    const token = this.session()?.access_token;
+    if (!token) throw new Error('no_session');
+
+    const res = await fetch(`${appOrigin()}/api/delete-account`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.error ?? `http_${res.status}`);
+    }
+    await this.supabase.auth.signOut();
+  }
+
   /** Revokes the refresh tokens everywhere, not just on this device. */
   async signOutEverywhere() {
     const { error } = await this.supabase.auth.signOut({ scope: 'global' });

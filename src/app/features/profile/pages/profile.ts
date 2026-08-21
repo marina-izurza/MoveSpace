@@ -414,6 +414,43 @@ import {
                   <p class="text-xs text-ink-muted mt-2 leading-relaxed">{{ 'profile.signOutEverywhereHint' | t }}</p>
                 </div>
 
+                <!-- Delete account -->
+                <div class="bg-canvas rounded-xl border border-danger/25 px-3.5 py-3">
+                  <div class="flex items-center justify-between gap-3">
+                    <p class="text-sm font-medium text-danger min-w-0">{{ 'profile.deleteAccount' | t }}</p>
+                    @if (!showDeleteAccount()) {
+                      <button
+                        class="shrink-0 text-xs font-semibold px-3 py-2 rounded-lg bg-danger-muted text-danger transition"
+                        (click)="showDeleteAccount.set(true)"
+                      >{{ 'profile.deleteAccountAction' | t }}</button>
+                    }
+                  </div>
+                  <p class="text-xs text-ink-muted mt-2 leading-relaxed">{{ 'profile.deleteAccountHint' | t }}</p>
+
+                  @if (showDeleteAccount()) {
+                    <div class="mt-3 space-y-2">
+                      <label class="text-xs text-ink-muted block">{{ 'profile.deleteAccountConfirm' | t }}</label>
+                      <input
+                        class="w-full bg-surface border border-edge rounded-xl px-3 py-2.5 text-sm text-ink outline-none focus:border-danger transition"
+                        type="email" autocomplete="off" [placeholder]="email()"
+                        [value]="deleteConfirmText()"
+                        (input)="deleteConfirmText.set($any($event.target).value)"
+                      />
+                      <div class="flex gap-2">
+                        <button
+                          class="flex-1 text-xs font-bold py-2.5 rounded-xl bg-danger text-white transition disabled:opacity-40"
+                          [disabled]="!canDeleteAccount() || privacyBusy()"
+                          (click)="deleteAccount()"
+                        >{{ privacyBusy() ? ('auth.loading' | t) : ('profile.deleteAccountAction' | t) }}</button>
+                        <button
+                          class="px-3 py-2.5 text-xs font-semibold text-ink-muted rounded-xl bg-surface border border-edge"
+                          (click)="showDeleteAccount.set(false); deleteConfirmText.set('')"
+                        >{{ 'routines.cancel' | t }}</button>
+                      </div>
+                    </div>
+                  }
+                </div>
+
                 @if (privacyMsg(); as msg) {
                   <p class="text-xs rounded-lg px-3 py-2"
                      [class.text-brand]="msg.ok" [class.bg-brand-light]="msg.ok"
@@ -464,6 +501,14 @@ export class ProfileComponent {
   showPrivacy = signal(false);
   privacyBusy = signal(false);
   privacyMsg = signal<{ ok: boolean; text: string } | null>(null);
+
+  showDeleteAccount = signal(false);
+  deleteConfirmText = signal('');
+  // Typing the address is the guard: this cannot be undone, so a stray tap must not do it.
+  readonly canDeleteAccount = computed(() =>
+    this.deleteConfirmText().trim().toLowerCase() === (this.email() ?? '').trim().toLowerCase()
+    && !!this.email()
+  );
 
   closeSettings() {
     this.showSettings.set(false);
@@ -595,6 +640,25 @@ export class ProfileComponent {
       this.router.navigate(['/login']);
     } catch {
       this.privacyMsg.set({ ok: false, text: this.ls.t('auth.genericError') });
+    } finally {
+      this.privacyBusy.set(false);
+    }
+  }
+
+  async deleteAccount() {
+    if (!this.canDeleteAccount() || this.privacyBusy()) return;
+
+    this.privacyBusy.set(true);
+    this.privacyMsg.set(null);
+    try {
+      await this.auth.deleteAccount();
+      this.router.navigate(['/login']);
+    } catch (e: any) {
+      const notConfigured = String(e?.message) === 'not_configured';
+      this.privacyMsg.set({
+        ok: false,
+        text: this.ls.t(notConfigured ? 'profile.deleteNotConfigured' : 'auth.genericError'),
+      });
     } finally {
       this.privacyBusy.set(false);
     }
