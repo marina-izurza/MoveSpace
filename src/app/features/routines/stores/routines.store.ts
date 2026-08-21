@@ -222,6 +222,47 @@ export class RoutinesStore {
     await this.api.updateExercise(exerciseId, data);
   }
 
+  /**
+   * Sends an exercise to another routine. The point of the inbox is to empty it, so this drops
+   * the exercise from the routine on screen and shifts both counters.
+   */
+  async moveExerciseToRoutine(fromRoutineId: string, exerciseId: string, toRoutineId: string): Promise<void> {
+    if (fromRoutineId === toRoutineId) return;
+
+    const order = await this.api.getNextOrder(toRoutineId, null);
+
+    this.patch(fromRoutineId, r => ({
+      ...r,
+      items: r.items
+        .filter(i => !(i.type === 'exercise' && i.id === exerciseId))
+        .map(i => i.type === 'section' ? { ...i, exercises: i.exercises.filter(e => e.id !== exerciseId) } : i)
+    }));
+    this._listResource.set(this.routines().map(r => {
+      if (r.id === fromRoutineId) return { ...r, exerciseCount: Math.max(0, r.exerciseCount - 1) };
+      if (r.id === toRoutineId) return { ...r, exerciseCount: r.exerciseCount + 1 };
+      return r;
+    }));
+
+    try {
+      await this.api.moveExerciseToRoutine(exerciseId, toRoutineId, order);
+    } catch (err) {
+      // The exercise is already off the screen, so a silent failure would look like data loss.
+      // Pull the real state back instead of trying to reconstruct it.
+      this._detailResource.reload();
+      this._listResource.reload();
+      throw err;
+    }
+  }
+
+  /** Same video in two routines: a new row, so editing one will not touch the other. */
+  async copyExerciseToRoutine(exercise: Exercise, toRoutineId: string): Promise<void> {
+    await this.addExercise(toRoutineId, {
+      name: exercise.name,
+      videoUrl: exercise.videoUrl,
+      notes: exercise.notes
+    });
+  }
+
   async deleteExercise(routineId: string, exerciseId: string): Promise<void> {
     this.patch(routineId, r => ({
       ...r,

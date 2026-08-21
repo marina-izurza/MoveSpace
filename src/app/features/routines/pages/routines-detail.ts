@@ -3,13 +3,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RoutinesStore } from '../stores/routines.store';
 import { SessionsStore } from '../../sessions/stores/sessions.store';
 import { formatDuration } from '../../sessions/models/WorkoutSession';
-import { LucidePencil, LucideTrash, LucideCheck, LucideX, LucideGripVertical, LucideChevronDown, LucidePlay, LucideSquare, LucideRotateCcw } from '@lucide/angular';
+import { LucidePencil, LucideTrash, LucideCheck, LucideX, LucideGripVertical, LucideChevronDown, LucidePlay, LucideSquare, LucideRotateCcw, LucideFolderInput, LucideArrowRightLeft, LucideCopy } from '@lucide/angular';
 import { PlatformIconComponent } from '../components/platform-icon/platform-icon';
 import { EmojiPickerComponent } from '../../../shared/components/emoji-picker/emoji-picker';
 import { detectPlatform, fetchVideoInfo, fetchVideoTitle, getPlatformName, getThumbnailUrl, toExerciseName, VideoInfo } from '../utils/platform';
 import { CdkDragDrop, CdkDropList, CdkDropListGroup, CdkDrag, CdkDragHandle, moveItemInArray } from '@angular/cdk/drag-drop';
 import { NgTemplateOutlet } from '@angular/common';
 import { Section } from '../models/Section';
+import { Exercise } from '../models/Exercise';
 import { ConfirmService } from '../../../core/confirm.service';
 import { appOrigin } from '../../../core/app-origin';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
@@ -17,7 +18,7 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 @Component({
   selector: 'app-routines-detail',
   imports: [LucidePencil, LucideTrash, LucideCheck, LucideX, LucideGripVertical, LucideChevronDown,
-            LucidePlay, LucideSquare, LucideRotateCcw,
+            LucidePlay, LucideSquare, LucideRotateCcw, LucideFolderInput, LucideArrowRightLeft, LucideCopy,
             PlatformIconComponent, EmojiPickerComponent, CdkDropListGroup, CdkDropList, CdkDrag, CdkDragHandle,
             NgTemplateOutlet, TranslatePipe],
   template: `
@@ -377,6 +378,75 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
       </div>
     }
 
+    <!-- Move / duplicate to another routine -->
+    @if (movingExercise(); as moving) {
+      <div class="fixed inset-0 z-200 flex flex-col justify-end bg-black/40 backdrop-blur-sm" (click)="closeMoveSheet()">
+        <div class="bg-surface rounded-t-3xl border-t border-edge shadow-2xl px-5 pt-6 pb-14 max-h-[80vh] flex flex-col" (click)="$event.stopPropagation()">
+
+          <div class="flex items-start justify-between gap-3 mb-5">
+            <div class="min-w-0">
+              <h2 class="text-lg font-bold text-ink">{{ 'detail.moveTitle' | t }}</h2>
+              <p class="text-xs text-ink-muted truncate mt-0.5">{{ moving.name }}</p>
+            </div>
+            <button class="w-8 h-8 flex items-center justify-center rounded-xl bg-canvas text-ink-muted shrink-0" (click)="closeMoveSheet()">
+              <svg lucideX [size]="16" [strokeWidth]="2.5"></svg>
+            </button>
+          </div>
+
+          <!-- Move vs duplicate -->
+          <div class="flex bg-canvas rounded-xl p-1 mb-4 border border-edge">
+            <button
+              class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-semibold transition"
+              [class.bg-brand]="moveMode() === 'move'"
+              [class.text-white]="moveMode() === 'move'"
+              [class.text-ink-muted]="moveMode() !== 'move'"
+              (click)="moveMode.set('move')"
+            >
+              <svg lucideArrowRightLeft [size]="14" [strokeWidth]="2"></svg>
+              {{ 'detail.moveAction' | t }}
+            </button>
+            <button
+              class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-semibold transition"
+              [class.bg-brand]="moveMode() === 'copy'"
+              [class.text-white]="moveMode() === 'copy'"
+              [class.text-ink-muted]="moveMode() !== 'copy'"
+              (click)="moveMode.set('copy')"
+            >
+              <svg lucideCopy [size]="14" [strokeWidth]="2"></svg>
+              {{ 'detail.copyAction' | t }}
+            </button>
+          </div>
+
+          <p class="text-[10px] font-bold text-ink-muted uppercase tracking-widest mb-2">{{ 'detail.moveTarget' | t }}</p>
+
+          @if (otherRoutines().length === 0) {
+            <p class="text-sm text-ink-muted py-4 text-center">{{ 'detail.moveNoTargets' | t }}</p>
+          } @else {
+            <div class="flex-1 overflow-y-auto -mx-1 px-1">
+              <div class="space-y-2">
+                @for (target of otherRoutines(); track target.id) {
+                  <button
+                    class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-canvas border border-edge text-left transition disabled:opacity-50"
+                    [disabled]="moveLoading()"
+                    (click)="confirmMove(target.id)"
+                  >
+                    <span class="text-lg leading-none shrink-0">{{ target.isInbox ? '⚡' : (target.emoji || '📋') }}</span>
+                    <span class="flex-1 text-sm font-medium text-ink truncate">{{ target.name }}</span>
+                    <span class="text-xs text-ink-muted shrink-0">{{ target.exerciseCount }}</span>
+                  </button>
+                }
+              </div>
+            </div>
+          }
+
+          @if (moveError()) {
+            <p class="text-xs text-danger mt-3 text-center">{{ 'detail.moveError' | t }}</p>
+          }
+
+        </div>
+      </div>
+    }
+
     <!-- Shared exercise row template -->
     <ng-template #exerciseRow let-exercise let-cache="cache">
       <div>
@@ -403,10 +473,16 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
               }
             </div>
           </div>
-          <button class="flex items-center justify-center w-8 h-8 rounded-xl text-ink-muted hover:text-brand hover:bg-brand-light transition cursor-pointer shrink-0"
-            (click)="editingItemId.set(exercise.id); $event.stopPropagation()" title="Edit">
-            <svg lucidePencil [size]="14" [strokeWidth]="2"></svg>
-          </button>
+          <div class="flex items-center shrink-0">
+            <button class="flex items-center justify-center w-8 h-8 rounded-xl text-ink-muted hover:text-brand hover:bg-brand-light transition cursor-pointer"
+              (click)="openMoveSheet(exercise, $event)" [title]="'detail.moveTitle' | t">
+              <svg lucideFolderInput [size]="14" [strokeWidth]="2"></svg>
+            </button>
+            <button class="flex items-center justify-center w-8 h-8 rounded-xl text-ink-muted hover:text-brand hover:bg-brand-light transition cursor-pointer"
+              (click)="editingItemId.set(exercise.id); $event.stopPropagation()" title="Edit">
+              <svg lucidePencil [size]="14" [strokeWidth]="2"></svg>
+            </button>
+          </div>
         </div>
         @if (expandedExerciseId() === exercise.id) {
           <div class="mt-2 pt-2 border-t border-edge/50 space-y-2">
@@ -518,6 +594,13 @@ export class RoutinesDetailComponent implements OnDestroy, AfterViewInit {
   showShareSheet = signal(false);
   shareLoading = signal(false);
   shareCopied = signal(false);
+
+  movingExercise = signal<Exercise | null>(null);
+  moveMode = signal<'move' | 'copy'>('move');
+  moveLoading = signal(false);
+  moveError = signal(false);
+
+  readonly otherRoutines = computed(() => this.store.routines().filter(r => r.id !== this.id()));
 
   readonly isPublic = computed(() => this.store.routine()?.isPublic ?? false);
   readonly shareToken = computed(() => this.store.routine()?.shareToken ?? null);
@@ -651,6 +734,39 @@ export class RoutinesDetailComponent implements OnDestroy, AfterViewInit {
 
   toggleExpanded(id: string) {
     this.expandedExerciseId.update(curr => curr === id ? null : id);
+  }
+
+  openMoveSheet(exercise: Exercise, event: Event) {
+    event.stopPropagation();
+    this.moveError.set(false);
+    this.moveMode.set('move');
+    this.movingExercise.set(exercise);
+  }
+
+  closeMoveSheet() {
+    if (this.moveLoading()) return;
+    this.movingExercise.set(null);
+    this.moveError.set(false);
+  }
+
+  async confirmMove(targetRoutineId: string) {
+    const exercise = this.movingExercise();
+    if (!exercise || this.moveLoading()) return;
+
+    this.moveLoading.set(true);
+    this.moveError.set(false);
+    try {
+      if (this.moveMode() === 'move') {
+        await this.store.moveExerciseToRoutine(this.id(), exercise.id, targetRoutineId);
+      } else {
+        await this.store.copyExerciseToRoutine(exercise, targetRoutineId);
+      }
+      this.movingExercise.set(null);
+    } catch {
+      this.moveError.set(true);
+    } finally {
+      this.moveLoading.set(false);
+    }
   }
 
   async autoFillTitle(url: string, nameInput: HTMLInputElement) {

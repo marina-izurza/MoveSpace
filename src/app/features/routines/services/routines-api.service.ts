@@ -266,6 +266,14 @@ export class RoutinesApiService {
     if (error) throw error;
   }
 
+  /** Reparents an exercise. It lands at the root of the target routine, never inside a section. */
+  async moveExerciseToRoutine(id: string, toRoutineId: string, order: number): Promise<void> {
+    const { error } = await this.db.from('exercises')
+      .update({ routine_id: toRoutineId, section_id: null, order })
+      .eq('id', id);
+    if (error) throw error;
+  }
+
   async updateExercise(id: string, data: { name: string; videoUrl: string; notes?: string }): Promise<void> {
     const { error } = await this.db.from('exercises')
       .update({ name: data.name, video_url: data.videoUrl, notes: data.notes ?? null })
