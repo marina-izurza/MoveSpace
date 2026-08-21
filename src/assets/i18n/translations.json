@@ -2,7 +2,7 @@
   "en": {
     "nav": {
       "home": "Home",
-      "explore": "Explore",
+      "progress": "Progress",
       "saved": "Saved",
       "profile": "Profile"
     },
@@ -200,7 +200,7 @@
   "es": {
     "nav": {
       "home": "Inicio",
-      "explore": "Explorar",
+      "progress": "Progreso",
       "saved": "Guardados",
       "profile": "Perfil"
     },
@@ -398,7 +398,7 @@
   "fr": {
     "nav": {
       "home": "Accueil",
-      "explore": "Explorer",
+      "progress": "Progrès",
       "saved": "Enregistrés",
       "profile": "Profil"
     },
@@ -538,6 +538,7 @@
       "quickSave": "Sauvegarde rapide",
       "quickSaveHint": "Renommez votre routine de sauvegarde rapide",
       "save": "Enregistrer",
+      "accentColor": "Couleur d'accent",
       "account": "Compte",
       "changeEmail": "Changer l'e-mail",
       "changePassword": "Changer le mot de passe",
@@ -595,7 +596,7 @@
   "de": {
     "nav": {
       "home": "Startseite",
-      "explore": "Entdecken",
+      "progress": "Fortschritt",
       "saved": "Gespeichert",
       "profile": "Profil"
     },
@@ -735,6 +736,7 @@
       "quickSave": "Schnellspeichern",
       "quickSaveHint": "Benenne deine Schnellspeicher-Routine um",
       "save": "Speichern",
+      "accentColor": "Akzentfarbe",
       "account": "Konto",
       "changeEmail": "E-Mail ändern",
       "changePassword": "Passwort ändern",
@@ -792,7 +794,7 @@
   "pt": {
     "nav": {
       "home": "Início",
-      "explore": "Explorar",
+      "progress": "Progresso",
       "saved": "Salvos",
       "profile": "Perfil"
     },
@@ -932,6 +934,7 @@
       "quickSave": "Salvar rápido",
       "quickSaveHint": "Renomeie sua rotina de salvamento rápido",
       "save": "Salvar",
+      "accentColor": "Cor de destaque",
       "account": "Conta",
       "changeEmail": "Alterar e-mail",
       "changePassword": "Alterar senha",
@@ -989,7 +992,7 @@
   "it": {
     "nav": {
       "home": "Home",
-      "explore": "Esplora",
+      "progress": "Progressi",
       "saved": "Salvati",
       "profile": "Profilo"
     },
@@ -1129,6 +1132,7 @@
       "quickSave": "Salvataggio rapido",
       "quickSaveHint": "Rinomina la tua routine di salvataggio rapido",
       "save": "Salva",
+      "accentColor": "Colore d'accento",
       "account": "Account",
       "changeEmail": "Cambia email",
       "changePassword": "Cambia password",
@@ -1186,7 +1190,7 @@
   "ja": {
     "nav": {
       "home": "ホーム",
-      "explore": "探索",
+      "progress": "進捗",
       "saved": "保存済み",
       "profile": "プロフィール"
     },
@@ -1326,6 +1330,7 @@
       "quickSave": "クイック保存",
       "quickSaveHint": "クイック保存ルーティンを名前変更",
       "save": "保存",
+      "accentColor": "アクセントカラー",
       "account": "アカウント",
       "changeEmail": "メールアドレスを変更",
       "changePassword": "パスワードを変更",
@@ -1383,7 +1388,7 @@
   "zh": {
     "nav": {
       "home": "首页",
-      "explore": "探索",
+      "progress": "进度",
       "saved": "已保存",
       "profile": "我的"
     },
@@ -1523,6 +1528,7 @@
       "quickSave": "快速保存",
       "quickSaveHint": "重命名您的快速保存计划",
       "save": "保存",
+      "accentColor": "强调色",
       "account": "账户",
       "changeEmail": "更改邮箱",
       "changePassword": "更改密码",

@@ -2,7 +2,7 @@ import { Component, inject, computed, effect, signal, untracked } from '@angular
 import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs';
-import { LucideHome, LucideCompass, LucideBookmark, LucideUser, LucideX } from '@lucide/angular';
+import { LucideHome, LucideChartColumn, LucideHeart, LucideUser, LucideX } from '@lucide/angular';
 import { AuthService } from './core/auth.service';
 import { ThemeService } from './core/theme.service';
 import { TranslatePipe } from './shared/pipes/translate.pipe';
@@ -12,7 +12,7 @@ import { ConfirmService } from './core/confirm.service';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, RouterLink, RouterLinkActive,
-            LucideHome, LucideCompass, LucideBookmark, LucideUser, LucideX, TranslatePipe],
+            LucideHome, LucideChartColumn, LucideHeart, LucideUser, LucideX, TranslatePipe],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
