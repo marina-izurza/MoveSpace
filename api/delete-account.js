@@ -15,6 +15,14 @@ const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const OWNED_TABLES = ['exercises', 'sections', 'routine_likes', 'workout_sessions', 'routines'];
 
 module.exports = async (req, res) => {
+  // The native app is served from https://localhost, a different origin than this
+  // function — the Authorization header alone forces the browser to preflight with
+  // OPTIONS, which must get an explicit answer or the real POST never goes out.
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+  if (req.method === 'OPTIONS') return res.status(204).end();
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'method_not_allowed' });
   }

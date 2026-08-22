@@ -568,7 +568,8 @@ export class ProfileComponent {
 
   constructor() {
     effect(() => {
-      if (this.auth.user()) this.profileApi.getMyUsername().then(u => this.username.set(u));
+      const user = this.auth.user();
+      if (user) this.profileApi.getUsername(user.id).then(u => this.username.set(u));
       else this.username.set(null);
     });
   }
@@ -597,7 +598,7 @@ export class ProfileComponent {
     this.accountLoading.set(true);
     this.accountMsg.set(null);
     try {
-      await this.profileApi.setUsername(name);
+      await this.profileApi.setUsername(this.auth.user()!.id, name);
       this.username.set(name);
       this.accountMsg.set({ ok: true, text: this.ls.t('profile.usernameSaved') });
     } catch (e: any) {

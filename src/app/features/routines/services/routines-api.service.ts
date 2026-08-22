@@ -27,15 +27,24 @@ export class RoutinesApiService {
   // ── List ──────────────────────────────────────────────────────────────────
 
   async getRoutines(): Promise<RoutineSummary[]> {
-    const [{ data: routines, error: rErr }, { data: exercises, error: eErr }] = await Promise.all([
-      this.db.from('routines').select('id, name, is_inbox, emoji, is_public, share_token').order('created_at'),
-      this.db.from('exercises').select('routine_id')
-    ]);
+    // RLS also allows reading rows where is_public = true — that's for the /r/:token
+    // share page and getLikedRoutines(), not for "my routines," so it must be scoped
+    // here explicitly or every account would see everyone else's shared routines too.
+    const { data: routines, error: rErr } = await this.db
+      .from('routines').select('id, name, is_inbox, emoji, is_public, share_token')
+      .eq('user_id', this.userId).order('created_at');
     if (rErr) throw rErr;
 
+    const routineIds = routines!.map(r => r.id);
     const countMap = new Map<string, number>();
-    for (const e of (eErr ? [] : exercises!)) {
-      countMap.set(e.routine_id, (countMap.get(e.routine_id) ?? 0) + 1);
+    if (routineIds.length) {
+      // Scoped to my own routine ids for the same reason as above — no need to pull
+      // every public routine's exercises across the whole app just to ignore them.
+      const { data: exercises } = await this.db
+        .from('exercises').select('routine_id').in('routine_id', routineIds);
+      for (const e of exercises ?? []) {
+        countMap.set(e.routine_id, (countMap.get(e.routine_id) ?? 0) + 1);
+      }
     }
 
     return routines!.map(r => ({
@@ -60,7 +69,7 @@ export class RoutinesApiService {
   async ensureInboxRoutine(defaultName: string): Promise<RoutineSummary> {
     const { data, error } = await this.db
       .from('routines').select('id, name, is_inbox, emoji')
-      .eq('is_inbox', true).maybeSingle();
+      .eq('is_inbox', true).eq('user_id', this.userId).maybeSingle();
     if (error) throw error;
     if (data) return { id: data.id, name: data.name, isInbox: true, emoji: data.emoji ?? undefined, exerciseCount: 0 };
     return this.createRoutine(defaultName, true);
@@ -86,7 +95,10 @@ export class RoutinesApiService {
   async getRoutine(id: string): Promise<Routine> {
     const [{ data: r, error: rErr }, { data: sections, error: sErr }, { data: exercises, error: eErr }] =
       await Promise.all([
-        this.db.from('routines').select('id, name, is_public, share_token, emoji').eq('id', id).single(),
+        // This is the authenticated editor, never the public share view — that's
+        // getPublicRoutineByToken(), a separate method — so it must never resolve to a
+        // routine that happens to be public but belongs to someone else.
+        this.db.from('routines').select('id, name, is_public, share_token, emoji').eq('id', id).eq('user_id', this.userId).single(),
         this.db.from('sections').select('*').eq('routine_id', id).order('order'),
         this.db.from('exercises').select('*').eq('routine_id', id).order('order')
       ]);

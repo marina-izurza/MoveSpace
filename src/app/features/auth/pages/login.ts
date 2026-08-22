@@ -4,6 +4,7 @@ import { AuthService } from '../../../core/auth.service';
 import { ThemeService } from '../../../core/theme.service';
 import { LanguageService } from '../../../core/language.service';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
+import { ProfileApiService, USERNAME_PATTERN } from '../../profile/services/profile-api.service';
 import { LucideSun, LucideMoon, LucideEye, LucideEyeOff } from '@lucide/angular';
 
 const MIN_PASSWORD = 6;
@@ -149,6 +150,26 @@ const MIN_PASSWORD = 6;
                 <p class="text-xs text-danger mt-1.5">{{ err }}</p>
               }
             </div>
+            @if (mode() === 'register') {
+              <div>
+                <label class="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-1.5 block">{{ 'profile.username' | t }}</label>
+                <input
+                  class="w-full bg-canvas border rounded-xl px-4 py-3 text-base text-ink outline-none transition"
+                  [class.border-edge]="!usernameError()"
+                  [class.focus:border-brand]="!usernameError()"
+                  [class.border-danger]="usernameError()"
+                  type="text" autocomplete="username" maxlength="20"
+                  [placeholder]="'profile.usernamePlaceholder' | t"
+                  [value]="username()"
+                  (input)="username.set($any($event.target).value)"
+                />
+                @if (usernameError(); as err) {
+                  <p class="text-xs text-danger mt-1.5">{{ err }}</p>
+                } @else {
+                  <p class="text-xs text-ink-muted mt-1.5">{{ 'profile.usernameHint' | t }}</p>
+                }
+              </div>
+            }
             <div>
               <div class="flex items-center justify-between mb-1.5">
                 <label class="text-xs font-semibold text-ink-muted uppercase tracking-wider">{{ 'auth.password' | t }}</label>
@@ -217,6 +238,7 @@ export class LoginComponent {
   private auth = inject(AuthService);
   private router = inject(Router);
   private ls = inject(LanguageService);
+  private profileApi = inject(ProfileApiService);
   readonly theme = inject(ThemeService);
 
   mode = signal<'login' | 'register' | 'forgot'>('login');
@@ -227,6 +249,7 @@ export class LoginComponent {
 
   email = signal('');
   password = signal('');
+  username = signal('');
   showPassword = signal(false);
 
   // Nothing is flagged until the first attempt: complaining while someone is still typing
@@ -246,6 +269,14 @@ export class LoginComponent {
     return this.ls.t(this.mode() === 'login' ? 'auth.invalidEmailOrUsername' : 'auth.invalidEmail');
   });
 
+  readonly usernameError = computed(() => {
+    if (!this.attempted() || this.mode() !== 'register') return null;
+    const value = this.username().trim();
+    if (!value) return this.ls.t('profile.usernameRequired');
+    if (!USERNAME_PATTERN.test(value)) return this.ls.t('profile.usernameInvalid');
+    return null;
+  });
+
   readonly passwordError = computed(() => {
     if (!this.attempted()) return null;
     if (!this.password()) return this.ls.t('auth.passwordRequired');
@@ -256,14 +287,22 @@ export class LoginComponent {
   async submit() {
     this.attempted.set(true);
     this.error.set(null);
-    if (this.emailError() || this.passwordError()) return;
+    if (this.emailError() || this.passwordError() || this.usernameError()) return;
 
     this.loading.set(true);
     try {
       if (this.mode() === 'login') {
         await this.auth.signIn(this.email().trim(), this.password());
       } else {
-        const { needsConfirmation } = await this.auth.signUp(this.email().trim(), this.password());
+        const username = this.username().trim();
+        // Checked here rather than left to the DB constraint: finding out after typing
+        // an email, a password, and waiting for the confirmation email would be a much
+        // worse way to learn a username is taken than a message right on this form.
+        if (!(await this.profileApi.isUsernameAvailable(username))) {
+          this.error.set(this.ls.t('profile.usernameTaken'));
+          return;
+        }
+        const { needsConfirmation } = await this.auth.signUp(this.email().trim(), this.password(), username);
         if (needsConfirmation) {
           this.awaitingConfirmation.set(true);
           return;

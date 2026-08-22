@@ -5,6 +5,7 @@ import { ThemeService } from './theme.service';
 import { AccentService, Accent } from './accent.service';
 import { LanguageService } from './language.service';
 import { appOrigin } from './app-origin';
+import { ProfileApiService } from '../features/profile/services/profile-api.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -12,6 +13,7 @@ export class AuthService {
   private themeService = inject(ThemeService);
   private accentService = inject(AccentService);
   private languageService = inject(LanguageService);
+  private profileApi = inject(ProfileApiService);
   private zone = inject(NgZone);
 
   session = signal<Session | null>(null);
@@ -25,7 +27,7 @@ export class AuthService {
         this.session.set(data.session);
         this.user.set(data.session?.user ?? null);
         if (data.session?.user?.user_metadata) {
-          this.applyUserPreferences(data.session.user.user_metadata);
+          this.applyUserPreferences(data.session.user.id, data.session.user.user_metadata);
         }
         this._initialized.set(true);
       });
@@ -36,13 +38,13 @@ export class AuthService {
         this.session.set(session);
         this.user.set(session?.user ?? null);
         if (event === 'SIGNED_IN' && session?.user?.user_metadata) {
-          this.applyUserPreferences(session.user.user_metadata);
+          this.applyUserPreferences(session.user.id, session.user.user_metadata);
         }
       });
     });
   }
 
-  private applyUserPreferences(meta: Record<string, any>) {
+  private applyUserPreferences(userId: string, meta: Record<string, any>) {
     if (meta['theme']) {
       const wantDark = meta['theme'] === 'dark';
       if (this.themeService.dark() !== wantDark) this.themeService.toggle();
@@ -51,6 +53,16 @@ export class AuthService {
       this.accentService.set(meta['accent'] as Accent);
     }
     this.languageService.setIfSupported(meta['language']);
+
+    // The username chosen at signup can only be claimed once a real session exists
+    // (writing to `profiles` needs auth.uid()), which for an unconfirmed signup is
+    // exactly now — the first sign-in after confirming. Cleared right after so this
+    // doesn't retry forever if it's ever left set for some other reason.
+    if (meta['username']) {
+      this.profileApi.setUsername(userId, meta['username'])
+        .catch(() => {})
+        .finally(() => { void this.supabase.auth.updateUser({ data: { username: null } }); });
+    }
   }
 
   async savePreferences(prefs: { theme?: string; accent?: string; language?: string }) {
@@ -60,9 +72,15 @@ export class AuthService {
   /**
    * With email confirmation enabled Supabase creates the user but no session, so navigating
    * straight into the app would bounce off the auth guard and look like the sign-up failed.
+   * The username can't be written to `profiles` yet for the same reason (no session = no
+   * auth.uid() yet) — it rides along in user_metadata and gets claimed on first sign-in,
+   * see applyUserPreferences().
    */
-  async signUp(email: string, password: string): Promise<{ needsConfirmation: boolean }> {
-    const { data, error } = await this.supabase.auth.signUp({ email, password });
+  async signUp(email: string, password: string, username: string): Promise<{ needsConfirmation: boolean }> {
+    const { data, error } = await this.supabase.auth.signUp({
+      email, password,
+      options: { data: { username } },
+    });
     if (error) throw error;
     return { needsConfirmation: !data.session };
   }
