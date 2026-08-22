@@ -130,13 +130,18 @@ const MIN_PASSWORD = 6;
 
           <div class="space-y-3">
             <div>
-              <label class="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-1.5 block">{{ 'auth.email' | t }}</label>
+              <label class="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-1.5 block">
+                {{ (mode() === 'login' ? 'auth.emailOrUsername' : 'auth.email') | t }}
+              </label>
               <input
                 class="w-full bg-canvas border rounded-xl px-4 py-3 text-base text-ink outline-none transition"
                 [class.border-edge]="!emailError()"
                 [class.focus:border-brand]="!emailError()"
                 [class.border-danger]="emailError()"
-                type="email" inputmode="email" autocomplete="email" placeholder="tu@email.com"
+                [type]="mode() === 'login' ? 'text' : 'email'"
+                [attr.inputmode]="mode() === 'login' ? 'text' : 'email'"
+                autocomplete="username"
+                [placeholder]="(mode() === 'login' ? 'auth.emailOrUsernamePlaceholder' : 'auth.emailPlaceholder') | t"
                 [value]="email()"
                 (input)="email.set($any($event.target).value)"
               />
@@ -234,8 +239,11 @@ export class LoginComponent {
     if (!this.attempted()) return null;
     const value = this.email().trim();
     if (!value) return this.ls.t('auth.emailRequired');
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return this.ls.t('auth.invalidEmail');
-    return null;
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return null;
+    // Signing up always needs a real email — usernames only exist once an account does.
+    // Signing in accepts either, since a username uniquely identifies the account too.
+    if (this.mode() === 'login' && /^[a-zA-Z0-9_]{3,20}$/.test(value)) return null;
+    return this.ls.t(this.mode() === 'login' ? 'auth.invalidEmailOrUsername' : 'auth.invalidEmail');
   });
 
   readonly passwordError = computed(() => {
@@ -288,7 +296,7 @@ export class LoginComponent {
   private friendlyError(e: unknown): string {
     const raw = String((e as { message?: string })?.message ?? '').toLowerCase();
     if (raw.includes('already registered') || raw.includes('already been registered')) return this.ls.t('auth.emailInUse');
-    if (raw.includes('invalid login credentials')) return this.ls.t('auth.wrongCredentials');
+    if (raw.includes('invalid login credentials') || raw.includes('invalid_credentials')) return this.ls.t('auth.wrongCredentials');
     if (raw.includes('email not confirmed')) return this.ls.t('auth.emailNotConfirmed');
     if (raw.includes('password should be at least')) return this.ls.t('auth.passwordShort');
     if (raw.includes('invalid email') || raw.includes('unable to validate email')) return this.ls.t('auth.invalidEmail');

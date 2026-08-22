@@ -49,6 +49,9 @@ import { LucideLink, LucideCheck } from '@lucide/angular';
           <div class="flex-1 min-w-0 pt-1">
             <p class="text-xs font-semibold text-brand uppercase tracking-widest mb-1">Rutina compartida</p>
             <h1 class="text-2xl font-bold text-ink leading-tight">{{ routine()!.name }}</h1>
+            @if (routine()!.authorUsername; as author) {
+              <p class="text-sm text-ink-muted mt-1">por <span class="font-medium text-ink">&#64;{{ author }}</span></p>
+            }
             <div class="flex items-center gap-3 mt-2">
               <span class="text-sm text-ink-muted">{{ exerciseCount() }} ejercicios</span>
               <span class="text-ink-muted">·</span>

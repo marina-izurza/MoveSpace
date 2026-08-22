@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RoutinesStore } from '../stores/routines.store';
 import { SessionsStore } from '../../sessions/stores/sessions.store';
 import { formatDuration } from '../../sessions/models/WorkoutSession';
-import { LucidePencil, LucideTrash, LucideCheck, LucideX, LucideGripVertical, LucideChevronDown, LucidePlay, LucideSquare, LucideRotateCcw, LucideFolderInput, LucideArrowRightLeft, LucideCopy, LucideLink, LucideShare2, LucideGlobe } from '@lucide/angular';
+import { LucidePencil, LucideTrash, LucideCheck, LucideX, LucideGripVertical, LucideChevronDown, LucidePlay, LucideSquare, LucideRotateCcw, LucideFolderInput, LucideArrowRightLeft, LucideCopy, LucideLink, LucideShare2, LucideGlobe, LucidePlus, LucideFolderPlus } from '@lucide/angular';
 import { PlatformIconComponent } from '../components/platform-icon/platform-icon';
 import { EmojiPickerComponent } from '../../../shared/components/emoji-picker/emoji-picker';
 import { detectPlatform, fetchVideoInfo, fetchVideoTitle, getPlatformName, getThumbnailUrl, toExerciseName, VideoInfo } from '../utils/platform';
@@ -19,7 +19,7 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
   selector: 'app-routines-detail',
   imports: [LucidePencil, LucideTrash, LucideCheck, LucideX, LucideGripVertical, LucideChevronDown,
             LucidePlay, LucideSquare, LucideRotateCcw, LucideFolderInput, LucideArrowRightLeft, LucideCopy,
-            LucideLink, LucideShare2, LucideGlobe,
+            LucideLink, LucideShare2, LucideGlobe, LucidePlus, LucideFolderPlus,
             PlatformIconComponent, EmojiPickerComponent, CdkDropListGroup, CdkDropList, CdkDrag, CdkDragHandle,
             NgTemplateOutlet, TranslatePipe],
   template: `
@@ -36,22 +36,24 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
             {{ 'detail.back' | t }}
           </button>
-          <button
-            class="w-9 h-9 rounded-xl flex items-center justify-center transition cursor-pointer"
-            [class.text-brand]="isPublic()"
-            [class.bg-brand-light]="isPublic()"
-            [class.text-ink-muted]="!isPublic()"
-            [class.hover:text-brand]="!isPublic()"
-            [class.hover:bg-brand-light]="!isPublic()"
-            (click)="showShareSheet.set(true)"
-            [title]="'detail.shareRoutine' | t"
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
-              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
-              <polyline points="16 6 12 2 8 6"/>
-              <line x1="12" y1="2" x2="12" y2="15"/>
-            </svg>
-          </button>
+          @if (!isInbox()) {
+            <button
+              class="w-9 h-9 rounded-xl flex items-center justify-center transition cursor-pointer"
+              [class.text-brand]="isPublic()"
+              [class.bg-brand-light]="isPublic()"
+              [class.text-ink-muted]="!isPublic()"
+              [class.hover:text-brand]="!isPublic()"
+              [class.hover:bg-brand-light]="!isPublic()"
+              (click)="showShareSheet.set(true)"
+              [title]="'detail.shareRoutine' | t"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                <polyline points="16 6 12 2 8 6"/>
+                <line x1="12" y1="2" x2="12" y2="15"/>
+              </svg>
+            </button>
+          }
         </div>
 
         <div class="flex items-center gap-3">
@@ -110,6 +112,16 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
               }
             </div>
           </div>
+
+          @if (!sessions.activeSession()) {
+            <button
+              class="w-11 h-11 rounded-2xl bg-brand flex items-center justify-center text-white shrink-0 shadow-sm shadow-brand/30 transition hover:bg-brand-dark"
+              (click)="startSession()"
+              [title]="'session.start' | t"
+            >
+              <svg lucidePlay [size]="18" [strokeWidth]="2" class="fill-white"></svg>
+            </button>
+          }
         </div>
 
         @if (showEmojiPicker()) {
@@ -120,22 +132,31 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
       </div>
 
       <!-- Add root exercise -->
-      <div class="mx-5 mb-4 bg-surface border border-edge rounded-2xl p-4 shadow-sm">
-        <p class="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-3">{{ 'detail.addExercise' | t }}</p>
-        <div class="space-y-2">
-          <input class="w-full bg-canvas border border-edge rounded-xl px-3 py-2.5 text-base text-ink outline-none focus:border-brand transition" [placeholder]="'detail.namePlaceholder' | t" #name />
-          <input class="w-full bg-canvas border border-edge rounded-xl px-3 py-2.5 text-base text-ink outline-none focus:border-brand transition" [placeholder]="'detail.urlPlaceholder' | t" #url (blur)="autoFillTitle(url.value, name)" />
-          <input class="w-full bg-canvas border border-edge rounded-xl px-3 py-2.5 text-base text-ink outline-none focus:border-brand transition" [placeholder]="'detail.notesPlaceholder' | t" #notes />
-          <button
-            class="bg-brand text-white px-4 py-2 rounded-xl cursor-pointer text-sm font-semibold shadow-sm shadow-brand/20 hover:bg-brand-dark transition"
-            (click)="addRootExercise(name.value, url.value, notes.value); name.value=''; url.value=''; notes.value=''"
-          >{{ 'detail.add' | t }}</button>
+      @if (addingExercise()) {
+        <div class="px-5 mb-4">
+          <div class="bg-surface border border-edge rounded-2xl p-4 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+              <p class="text-xs font-semibold text-ink-muted uppercase tracking-wider">{{ 'detail.addExercise' | t }}</p>
+              <button class="text-ink-muted hover:text-ink cursor-pointer p-1 transition" (click)="addingExercise.set(false)">
+                <svg lucideX [size]="16" [strokeWidth]="2"></svg>
+              </button>
+            </div>
+            <div class="space-y-2">
+              <input class="w-full bg-canvas border border-edge rounded-xl px-3 py-2.5 text-base text-ink outline-none focus:border-brand transition" [placeholder]="'detail.namePlaceholder' | t" #name />
+              <input class="w-full bg-canvas border border-edge rounded-xl px-3 py-2.5 text-base text-ink outline-none focus:border-brand transition" [placeholder]="'detail.urlPlaceholder' | t" #url (blur)="autoFillTitle(url.value, name)" />
+              <input class="w-full bg-canvas border border-edge rounded-xl px-3 py-2.5 text-base text-ink outline-none focus:border-brand transition" [placeholder]="'detail.notesPlaceholder' | t" #notes />
+              <button
+                class="bg-brand text-white px-4 py-2 rounded-xl cursor-pointer text-sm font-semibold shadow-sm shadow-brand/20 hover:bg-brand-dark transition"
+                (click)="addRootExercise(name.value, url.value, notes.value); name.value=''; url.value=''; notes.value=''"
+              >{{ 'detail.add' | t }}</button>
+            </div>
+          </div>
         </div>
-      </div>
+      }
 
       <!-- Add section -->
-      <div class="px-5 mb-4">
-        @if (addingSection()) {
+      @if (addingSection()) {
+        <div class="px-5 mb-4">
           <div class="flex items-center gap-2">
             <input
               class="flex-1 bg-surface border border-edge rounded-xl px-3 py-2.5 text-base text-ink outline-none focus:border-brand transition"
@@ -144,19 +165,15 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
               (keyup.enter)="addSection(sectionInput.value)"
               (keyup.escape)="addingSection.set(false)"
             />
-            <button class="text-green-500 cursor-pointer p-1.5" (click)="addSection(sectionInput.value)">
-              <svg lucideCheck [size]="18" [strokeWidth]="2"></svg>
+            <button class="w-9 h-9 rounded-xl bg-brand flex items-center justify-center text-white shrink-0 shadow-sm shadow-brand/30 transition hover:bg-brand-dark" (click)="addSection(sectionInput.value)">
+              <svg lucideCheck [size]="16" [strokeWidth]="2.5"></svg>
             </button>
-            <button class="text-ink-muted cursor-pointer p-1.5" (click)="addingSection.set(false)">
-              <svg lucideX [size]="18" [strokeWidth]="2"></svg>
+            <button class="w-9 h-9 rounded-xl bg-canvas flex items-center justify-center text-ink-muted shrink-0 transition hover:bg-edge" (click)="addingSection.set(false)">
+              <svg lucideX [size]="16" [strokeWidth]="2.5"></svg>
             </button>
           </div>
-        } @else {
-          <button class="text-sm text-brand font-medium cursor-pointer" (click)="addingSection.set(true)">
-            {{ 'detail.addSection' | t }}
-          </button>
-        }
-      </div>
+        </div>
+      }
 
       <!-- Root drop list -->
       <div class="px-5 pb-40" cdkDropListGroup>
@@ -212,11 +229,11 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
                     (keyup.enter)="saveSection(item.id, sectionEditInput.value)"
                     (keyup.escape)="editingItemId.set(null)"
                   />
-                  <button class="text-green-500 cursor-pointer p-1" (click)="saveSection(item.id, sectionEditInput.value)">
-                    <svg lucideCheck [size]="14" [strokeWidth]="2"></svg>
+                  <button class="text-brand/70 hover:text-brand cursor-pointer p-1 transition" (click)="saveSection(item.id, sectionEditInput.value)">
+                    <svg lucideCheck [size]="14" [strokeWidth]="2.5"></svg>
                   </button>
-                  <button class="text-ink-muted cursor-pointer p-1" (click)="editingItemId.set(null)">
-                    <svg lucideX [size]="14" [strokeWidth]="2"></svg>
+                  <button class="text-brand/50 hover:text-danger cursor-pointer p-1 transition" (click)="editingItemId.set(null)">
+                    <svg lucideX [size]="14" [strokeWidth]="2.5"></svg>
                   </button>
                 } @else {
                   <span class="flex-1 text-xs font-bold tracking-widest uppercase text-brand select-none">{{ item.name }}</span>
@@ -299,9 +316,9 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
       </div>
 
       <!-- Session FAB -->
-      <div class="fixed left-0 right-0 flex justify-center px-5 z-40 pointer-events-none"
-           style="bottom: calc(6rem + env(safe-area-inset-bottom))">
-        @if (isActiveSession()) {
+      @if (isActiveSession()) {
+        <div class="fixed left-0 right-0 flex justify-center px-5 z-40 pointer-events-none"
+             style="bottom: calc(6rem + env(safe-area-inset-bottom))">
           <div class="pointer-events-auto flex items-center gap-3 bg-surface border border-brand/20 rounded-2xl px-4 py-3 shadow-xl shadow-brand/15">
             <div class="flex flex-col min-w-0">
               <span class="text-[10px] font-bold text-brand uppercase tracking-widest">{{ 'session.inProgress' | t }}</span>
@@ -315,15 +332,37 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
               {{ 'session.finish' | t }}
             </button>
           </div>
-        } @else if (!sessions.activeSession()) {
+        </div>
+      }
+
+      <!-- Add (exercise / section) FAB -->
+      @if (showAddMenu()) {
+        <div class="fixed inset-0 z-40" (click)="showAddMenu.set(false)"></div>
+      }
+      <div class="fixed left-1/2 -translate-x-1/2 w-full max-w-107.5 flex flex-col items-end gap-2.5 px-5 pointer-events-none z-50"
+           style="bottom: calc(6rem + env(safe-area-inset-bottom))">
+        @if (showAddMenu()) {
           <button
-            class="pointer-events-auto flex items-center gap-2.5 bg-brand text-white px-7 py-3.5 rounded-2xl font-bold text-sm shadow-xl shadow-brand/30 transition hover:bg-brand-dark"
-            (click)="startSession()"
+            class="pointer-events-auto flex items-center gap-2 bg-surface border border-edge text-ink font-semibold text-sm pl-4 pr-5 py-3 rounded-2xl shadow-xl"
+            (click)="addingSection.set(true); showAddMenu.set(false)"
           >
-            <svg lucidePlay [size]="18" [strokeWidth]="2" class="fill-white"></svg>
-            {{ 'session.start' | t }}
+            <svg lucideFolderPlus [size]="16" [strokeWidth]="2"></svg>
+            {{ 'detail.addSection' | t }}
+          </button>
+          <button
+            class="pointer-events-auto flex items-center gap-2 bg-surface border border-edge text-ink font-semibold text-sm pl-4 pr-5 py-3 rounded-2xl shadow-xl"
+            (click)="addingExercise.set(true); showAddMenu.set(false)"
+          >
+            <svg lucidePlus [size]="16" [strokeWidth]="2"></svg>
+            {{ 'detail.addExercise' | t }}
           </button>
         }
+        <button
+          class="pointer-events-auto w-14 h-14 bg-brand rounded-2xl shadow-xl shadow-brand/35 flex items-center justify-center text-white transition"
+          (click)="showAddMenu.update(v => !v)"
+        >
+          <svg lucidePlus [size]="26" [strokeWidth]="2" class="transition-transform" [class.rotate-45]="showAddMenu()"></svg>
+        </button>
       </div>
 
     }
@@ -474,7 +513,7 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
               <svg lucideGripVertical [size]="16" [strokeWidth]="2"></svg>
             </button>
             @if (thumbFor(exercise.videoUrl, cache); as thumb) {
-              <img [src]="thumb" class="w-16 h-9 rounded-lg object-cover shrink-0 bg-edge" loading="lazy" />
+              <img [src]="thumb" class="w-20 h-20 rounded-xl object-cover shrink-0 bg-edge" loading="lazy" />
             } @else {
               <app-platform-icon [url]="exercise.videoUrl" mode="thumbnail" />
             }
@@ -605,6 +644,8 @@ export class RoutinesDetailComponent implements OnDestroy, AfterViewInit {
   editingRoutineName = signal(false);
   editingItemId = signal<string | null>(null);
   addingSection = signal(false);
+  addingExercise = signal(false);
+  showAddMenu = signal(false);
   addingToSection = signal<string | null>(null);
   expandedExerciseId = signal<string | null>(null);
   showEmojiPicker = signal(false);
@@ -621,6 +662,7 @@ export class RoutinesDetailComponent implements OnDestroy, AfterViewInit {
   readonly otherRoutines = computed(() => this.store.routines().filter(r => r.id !== this.id()));
 
   readonly isPublic = computed(() => this.store.routine()?.isPublic ?? false);
+  readonly isInbox = computed(() => this.store.routine()?.isInbox ?? false);
   readonly shareToken = computed(() => this.store.routine()?.shareToken ?? null);
   readonly shareUrl = computed(() => {
     const t = this.shareToken();
@@ -642,6 +684,7 @@ export class RoutinesDetailComponent implements OnDestroy, AfterViewInit {
     if (!videoUrl.trim()) return;
     const finalName = name.trim() || getPlatformName(detectPlatform(videoUrl));
     this.store.addExercise(this.id(), { name: finalName, videoUrl, notes: notes.trim() || undefined });
+    this.addingExercise.set(false);
   }
 
   async deleteExercise(exerciseId: string) {

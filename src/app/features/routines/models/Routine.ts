@@ -7,4 +7,5 @@ export interface Routine {
   isPublic?: boolean;
   shareToken?: string;
   emoji?: string;
+  isInbox?: boolean;
 }

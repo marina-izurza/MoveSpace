@@ -15,5 +15,6 @@ export interface PublicRoutine {
   shareToken: string;
   likeCount: number;
   isPublic: boolean;
+  authorUsername?: string;
   items?: import('./RoutineItem').RoutineItem[];
 }

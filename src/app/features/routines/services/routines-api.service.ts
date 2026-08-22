@@ -98,17 +98,19 @@ export class RoutinesApiService {
 
   async getPublicRoutineByToken(token: string): Promise<PublicRoutine | null> {
     const { data: r, error: rErr } = await this.db
-      .from('routines').select('id, name, emoji, share_token')
+      .from('routines').select('id, name, emoji, share_token, user_id')
       .eq('share_token', token).eq('is_public', true).maybeSingle();
     // Only a genuine miss returns null; a failed request must not be reported as a dead link.
     if (rErr) throw rErr;
     if (!r) return null;
 
-    const [{ data: sections }, { data: exercises }, { count: likeCount }] = await Promise.all([
+    const [{ data: sections }, { data: exercises }, { count: likeCount }, { data: profile }] = await Promise.all([
       this.db.from('sections').select('*').eq('routine_id', r.id).order('order'),
       this.db.from('exercises').select('*').eq('routine_id', r.id).order('order'),
       // head+count: a popular routine should not ship one row per like just to render a number
-      this.db.from('routine_likes').select('id', { count: 'exact', head: true }).eq('routine_id', r.id)
+      this.db.from('routine_likes').select('id', { count: 'exact', head: true }).eq('routine_id', r.id),
+      // Public by design (RLS): a share link is opened by people with no session at all.
+      this.db.from('profiles').select('username').eq('user_id', r.user_id).maybeSingle()
     ]);
 
     const base = this.buildRoutine(r, (sections ?? []) as DbSection[], (exercises ?? []) as DbExercise[]);
@@ -118,6 +120,7 @@ export class RoutinesApiService {
       shareToken: r.share_token,
       isPublic: true,
       likeCount: likeCount ?? 0,
+      authorUsername: profile?.username ?? undefined,
       items: base.items,
     };
   }

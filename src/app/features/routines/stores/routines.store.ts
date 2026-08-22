@@ -1,4 +1,4 @@
-import { Injectable, inject, signal, computed, resource } from '@angular/core';
+import { Injectable, inject, signal, computed, resource, effect } from '@angular/core';
 import { RoutinesApiService } from '../services/routines-api.service';
 import { AuthService } from '../../../core/auth.service';
 import { LanguageService } from '../../../core/language.service';
@@ -35,6 +35,20 @@ export class RoutinesStore {
   });
   readonly inboxRoutine = computed(() => this.routines().find(r => r.isInbox) ?? null);
 
+  private _healedInboxIds = new Set<string>();
+
+  constructor() {
+    // The inbox is an internal bucket for unsorted videos, never a routine to share —
+    // if one was ever made public (bug, or manual DB edit) fix it as soon as we see it.
+    effect(() => {
+      const inbox = this.inboxRoutine();
+      if (inbox?.isPublic && !this._healedInboxIds.has(inbox.id)) {
+        this._healedInboxIds.add(inbox.id);
+        void this.setPublic(inbox.id, false);
+      }
+    });
+  }
+
   reloadList(): void { this._listResource.reload(); }
 
   async addRoutine(name: string, emoji?: string): Promise<void> {
@@ -69,7 +83,7 @@ export class RoutinesStore {
     if (!detail) return null;
     // getRoutine does not select is_inbox, so the summary is what identifies it.
     const summary = this.routines().find(r => r.id === detail.id);
-    return summary?.isInbox ? { ...detail, name: summary.name } : detail;
+    return summary?.isInbox ? { ...detail, name: summary.name, isInbox: true } : { ...detail, isInbox: false };
   });
   readonly routineLoading = this._detailResource.isLoading;
 
@@ -298,6 +312,9 @@ export class RoutinesStore {
   }
 
   async setPublic(routineId: string, isPublic: boolean): Promise<void> {
+    if (isPublic && this.routines().find(r => r.id === routineId)?.isInbox) {
+      throw new Error('inbox_not_shareable');
+    }
     const token = await this.api.setPublic(routineId, isPublic);
     this.patch(routineId, r => ({ ...r, isPublic, shareToken: token ?? undefined }));
     this._listResource.set(this.routines().map(r =>

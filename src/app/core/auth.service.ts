@@ -67,8 +67,27 @@ export class AuthService {
     return { needsConfirmation: !data.session };
   }
 
-  async signIn(email: string, password: string) {
-    const { error } = await this.supabase.auth.signInWithPassword({ email, password });
+  /** Accepts an email as-is; anything else is treated as a username and resolved server-side,
+   *  since Supabase Auth itself only ever signs in by email (or phone). */
+  async signIn(identifier: string, password: string) {
+    if (identifier.includes('@')) {
+      const { error } = await this.supabase.auth.signInWithPassword({ email: identifier, password });
+      if (error) throw error;
+      return;
+    }
+
+    const res = await fetch(`${appOrigin()}/api/login-with-username`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: identifier, password }),
+    });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(body.error ?? `http_${res.status}`);
+
+    const { error } = await this.supabase.auth.setSession({
+      access_token: body.session.access_token,
+      refresh_token: body.session.refresh_token,
+    });
     if (error) throw error;
   }
 

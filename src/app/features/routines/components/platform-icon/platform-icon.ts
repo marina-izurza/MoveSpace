@@ -12,9 +12,9 @@ const PLATFORM_COLOR: Record<string, string> = {
   imports: [NgTemplateOutlet],
   template: `
     @if (mode() === 'thumbnail') {
-      <!-- Thumbnail-sized fallback card (w-16 h-9) -->
-      <span class="w-16 h-9 rounded-lg flex items-center justify-center shrink-0" [style.background]="color()">
-        <ng-container *ngTemplateOutlet="iconSvg; context: { size: 22 }"></ng-container>
+      <!-- Thumbnail-sized fallback card (w-20 h-20) -->
+      <span class="w-20 h-20 rounded-xl flex items-center justify-center shrink-0" [style.background]="color()">
+        <ng-container *ngTemplateOutlet="iconSvg; context: { size: 28 }"></ng-container>
       </span>
     } @else {
       <!-- Small inline icon (20×20) -->

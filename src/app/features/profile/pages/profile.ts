@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth.service';
 import { ThemeService } from '../../../core/theme.service';
@@ -8,10 +8,11 @@ import { RoutinesStore } from '../../routines/stores/routines.store';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 import { appOrigin } from '../../../core/app-origin';
 import { ConfirmService } from '../../../core/confirm.service';
+import { ProfileApiService } from '../services/profile-api.service';
 import {
   LucideSun, LucideMoon, LucideLogOut, LucideBell, LucideShield,
   LucideChevronRight, LucideChevronDown, LucideLanguages, LucidePencil,
-  LucideMail, LucideKeyRound, LucideSettings2, LucideX, LucideLink, LucideCheck
+  LucideMail, LucideKeyRound, LucideSettings2, LucideX, LucideLink, LucideCheck, LucideAtSign
 } from '@lucide/angular';
 
 @Component({
@@ -19,7 +20,7 @@ import {
   imports: [
     LucideSun, LucideMoon, LucideLogOut, LucideBell, LucideShield,
     LucideChevronRight, LucideChevronDown, LucideLanguages, LucidePencil,
-    LucideMail, LucideKeyRound, LucideSettings2, LucideX, LucideLink, LucideCheck, TranslatePipe
+    LucideMail, LucideKeyRound, LucideSettings2, LucideX, LucideLink, LucideCheck, LucideAtSign, TranslatePipe
   ],
   template: `
     <div class="flex flex-col min-h-full">
@@ -134,6 +135,58 @@ import {
           <!-- ── CUENTA ── -->
           <div class="bg-surface rounded-2xl border border-edge shadow-sm overflow-hidden">
             <p class="px-4 pt-3.5 pb-1 text-[10px] font-bold text-ink-muted uppercase tracking-widest">{{ 'profile.account' | t }}</p>
+
+            <!-- Username -->
+            @if (editingAccount() === 'username') {
+              <div class="px-4 pt-2 pb-4 space-y-3">
+                @if (accountMsg(); as msg) {
+                  <p class="text-sm rounded-xl px-3 py-2.5"
+                     [class.text-brand]="msg.ok" [class.bg-brand-light]="msg.ok"
+                     [class.text-danger]="!msg.ok" [class.bg-danger-muted]="!msg.ok">
+                    {{ msg.text }}
+                  </p>
+                }
+                @if (!accountMsg()?.ok) {
+                  <div>
+                    <label class="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-1.5 block">{{ 'profile.username' | t }}</label>
+                    <input #usernameInput type="text" autocomplete="off" maxlength="20"
+                      class="w-full bg-canvas border border-edge rounded-xl px-4 py-2.5 text-sm text-ink outline-none focus:border-brand transition"
+                      [placeholder]="'profile.usernamePlaceholder' | t"
+                      [value]="usernameDraft()"
+                      (input)="usernameDraft.set($any($event.target).value)"
+                      (keyup.enter)="saveUsername(usernameInput.value)"
+                    />
+                    <p class="text-xs text-ink-muted mt-1.5">{{ 'profile.usernameHint' | t }}</p>
+                  </div>
+                  <div class="flex gap-2">
+                    <button class="flex-1 bg-brand text-white text-sm py-2.5 rounded-xl font-semibold disabled:opacity-50"
+                      [disabled]="accountLoading()" (click)="saveUsername(usernameInput.value)">
+                      {{ accountLoading() ? ('auth.loading' | t) : ('profile.save' | t) }}
+                    </button>
+                    <button class="px-4 py-2.5 text-sm text-ink-muted rounded-xl bg-canvas font-medium" (click)="closeAccount()">
+                      {{ 'routines.cancel' | t }}
+                    </button>
+                  </div>
+                } @else {
+                  <button class="w-full text-sm text-ink-muted py-1 font-medium" (click)="closeAccount()">{{ 'routines.cancel' | t }}</button>
+                }
+              </div>
+            } @else {
+              <button class="w-full px-4 py-3.5 flex items-center justify-between" (click)="openUsername()">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-xl bg-brand-light flex items-center justify-center shrink-0">
+                    <svg lucideAtSign [size]="17" class="text-brand" [strokeWidth]="1.8"></svg>
+                  </div>
+                  <div class="text-left min-w-0">
+                    <p class="text-sm font-medium text-ink">{{ 'profile.username' | t }}</p>
+                    <p class="text-xs text-ink-muted truncate max-w-52">{{ username() ? '@' + username() : ('profile.usernameNotSet' | t) }}</p>
+                  </div>
+                </div>
+                <svg lucideChevronRight [size]="16" class="text-ink-muted shrink-0" [strokeWidth]="2"></svg>
+              </button>
+            }
+
+            <div class="border-t border-edge mx-4"></div>
 
             <!-- Email -->
             @if (editingAccount() === 'email') {
@@ -482,14 +535,17 @@ export class ProfileComponent {
   private auth = inject(AuthService);
   private router = inject(Router);
   private confirm = inject(ConfirmService);
+  private profileApi = inject(ProfileApiService);
 
   showSettings = signal(false);
   showLangPicker = signal(false);
   editingInbox = signal(false);
   inboxDraft = signal('');
-  editingAccount = signal<null | 'email' | 'password'>(null);
+  editingAccount = signal<null | 'email' | 'password' | 'username'>(null);
   accountLoading = signal(false);
   accountMsg = signal<{ ok: boolean; text: string } | null>(null);
+  username = signal<string | null>(null);
+  usernameDraft = signal('');
 
   email = computed(() => this.auth.user()?.email ?? '');
   initial = computed(() => this.email().charAt(0).toUpperCase() || '?');
@@ -510,6 +566,13 @@ export class ProfileComponent {
     && !!this.email()
   );
 
+  constructor() {
+    effect(() => {
+      if (this.auth.user()) this.profileApi.getMyUsername().then(u => this.username.set(u));
+      else this.username.set(null);
+    });
+  }
+
   closeSettings() {
     this.showSettings.set(false);
     this.closeAccount();
@@ -520,6 +583,31 @@ export class ProfileComponent {
   openAccount(section: 'email' | 'password') {
     this.accountMsg.set(null);
     this.editingAccount.set(section);
+  }
+
+  openUsername() {
+    this.accountMsg.set(null);
+    this.usernameDraft.set(this.username() ?? '');
+    this.editingAccount.set('username');
+  }
+
+  async saveUsername(value: string) {
+    const name = value.trim();
+    if (!name) return;
+    this.accountLoading.set(true);
+    this.accountMsg.set(null);
+    try {
+      await this.profileApi.setUsername(name);
+      this.username.set(name);
+      this.accountMsg.set({ ok: true, text: this.ls.t('profile.usernameSaved') });
+    } catch (e: any) {
+      const key = e?.message === 'username_taken' ? 'profile.usernameTaken'
+        : e?.message === 'invalid_username' ? 'profile.usernameInvalid'
+        : 'auth.genericError';
+      this.accountMsg.set({ ok: false, text: this.ls.t(key) });
+    } finally {
+      this.accountLoading.set(false);
+    }
   }
 
   closeAccount() {
