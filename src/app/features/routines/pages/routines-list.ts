@@ -14,9 +14,18 @@ import { LanguageService } from '../../../core/language.service';
     <div class="flex flex-col min-h-full">
 
       <!-- Header -->
-      <div class="px-5 pt-10 pb-2">
-        <p class="text-ink-muted text-sm">{{ 'routines.welcome' | t }}</p>
-        <h1 class="text-2xl font-bold text-ink mt-0.5">{{ 'routines.title' | t }}</h1>
+      <div class="px-5 pt-10 pb-2 flex items-start justify-between gap-3">
+        <div>
+          <p class="text-ink-muted text-sm">{{ 'routines.welcome' | t }}</p>
+          <h1 class="text-2xl font-bold text-ink mt-0.5">{{ 'routines.title' | t }}</h1>
+        </div>
+        <button
+          class="w-10 h-10 mt-1 rounded-xl bg-brand flex items-center justify-center text-white shadow-sm shadow-brand/30 transition hover:bg-brand-dark shrink-0"
+          (click)="adding.update(v => !v)"
+          [title]="'routines.newRoutine' | t"
+        >
+          <svg lucidePlus [size]="20" [strokeWidth]="2.5"></svg>
+        </button>
       </div>
 
       <!-- Add routine form (expandable) -->
@@ -125,19 +134,6 @@ import { LanguageService } from '../../../core/language.service';
           </div>
         }
       </div>
-
-      <!-- FAB -->
-      @if (!adding()) {
-        <div class="fixed left-1/2 -translate-x-1/2 w-full max-w-107.5 flex justify-end px-5 pointer-events-none z-40"
-             style="bottom: calc(6rem + env(safe-area-inset-bottom))">
-          <button
-            class="pointer-events-auto w-14 h-14 bg-brand rounded-2xl shadow-xl shadow-brand/35 flex items-center justify-center text-white"
-            (click)="adding.set(true)"
-          >
-            <svg lucidePlus [size]="26" [strokeWidth]="2"></svg>
-          </button>
-        </div>
-      }
 
     </div>
   `

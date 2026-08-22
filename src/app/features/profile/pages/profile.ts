@@ -93,7 +93,9 @@ import {
                 <button
                   class="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center transition-colors"
                   [class.bg-brand]="copiedId() === r.id"
+                  [class.text-white]="copiedId() === r.id"
                   [class.bg-brand-light]="copiedId() !== r.id"
+                  [class.text-brand]="copiedId() !== r.id"
                   (click)="copyShareLink(r)"
                 >
                   @if (copiedId() === r.id) {
